@@ -1,52 +1,57 @@
-# Project: [ชื่อโปรเจกต์ของคุณ]
-_A brief, one-sentence description of what your project does._
+# ข้อตกลงการทำงานของทีม (Ways of Working): โปรเจกต์ Community Connector
 
-## Team: [ชื่อทีมของคุณ]
-- [ชื่อ-นามสกุล], GitHub: `[github_username]`
-- [ชื่อ-นามสกุล], GitHub: `[github_username]`
-- [ชื่อ-นามสกุล], GitHub: `[github_username]`
+ยินดีต้อนรับสู่ทีม "Community Connector"! เอกสารฉบับนี้สรุปข้อตกลงร่วมกันว่าเราจะทำงานร่วมกัน สื่อสาร เขียนโค้ด และตัดสินใจอย่างไร การเคารพกฎเหล่านี้จะช่วยให้บรรยากาศการทำงานของเราลื่นไหล ให้เกียรติกัน และมีประสิทธิภาพสำหรับทุกคน
 
----
+## 1. ตารางการประชุม (Meeting Cadence)
+*เราเข้าใจดีว่าในฐานะนักศึกษา ทุกคนมีตารางเรียนที่แน่น การประชุมของเราจึงออกแบบมาให้กระชับ เน้นผลลัพธ์ และจำกัดเวลาอย่างเคร่งครัด*
 
-## 🚀 Getting Started
+* **ความยาวของสปริ้นต์ (Sprint Length):** 2 สัปดาห์
+* **การวางแผนสปริ้นต์ (Sprint Planning):**
+  * **เมื่อไหร่:** ทุกวันจันทร์ (สัปดาห์เว้นสัปดาห์)  |  เวลา 17:00 น.
+  * **ระยะเวลา:** 45–60 นาที
+  * **เป้าหมาย:** ตัดสินใจว่าจะทำฟีเจอร์ไหนในสปริ้นต์นี้ จ่ายงาน และทำความเข้าใจ Requirement ให้ตรงกัน
+* **การอัปเดตงาน (Sync-Ups / อิงจาก Daily Stand-up):**
+  * **เมื่อไหร่:** วันพุธและศุกร์ (คุยสดผ่าน Voice/Video) + วันอื่นๆ อัปเดตแบบ Async ผ่านช่องทางแชท
+  * **ระยะเวลา:** ไม่เกิน 15 นาที
+  * **เป้าหมาย:** ตอบคำถาม 3 ข้อ: *เมื่อวานทำอะไรไป? วันนี้จะทำอะไรต่อ? ติดปัญหา (Blocker) อะไรอยู่ไหม?*
+* **การรีวิวและประเมินผล (Sprint Review & Retrospective):**
+  * **เมื่อไหร่:** วันศุกร์สุดท้ายของรอบ Sprint
+  * **ระยะเวลา:** 60 นาที
+  * **เป้าหมาย:** Demo ผลงานที่ทำเสร็จ (Review) และพูดคุยกันว่าอะไรทำได้ดี อะไรควรปรับปรุงสำหรับสปริ้นต์ถัดไป (Retro)
 
-This section explains how to get a local copy of the project up and running for development and testing purposes.
+## 2. กฎการสื่อสาร (Communication Rules)
+*การสื่อสารที่ดีคือรากฐานของทุกคอมมูนิตี้ ทีมของเราจะเน้นความโปร่งใสเป็นหลัก*
 
-### Prerequisites
+* **ช่องทางหลัก:** Discord: https://discord.com/invite/UretdkgUsy
+* **ความคาดหวังในการตอบกลับ:** การเรียนต้องมาก่อน ขอให้ตอบรับข้อความภายใน **24 ชั่วโมง** แต่ถ้าหากคุณติดปัญหาหรือทำงานต่อไม่ได้ ให้แจ้งทีมทันทีโดยไม่ต้องรอให้ถึงเวลาประชุม
+* **คุยในที่สาธารณะดีกว่าส่วนตัว:** ให้คุยเรื่องโปรเจกต์ในช่องแชทหลักของทีม **หลีกเลี่ยงการใช้ Direct Messages (DMs)** สำหรับคำถามเรื่องโค้ดหรือการตัดสินใจเรื่อง Design เพื่อให้ทุกคนได้เรียนรู้และสามารถค้นหาข้อมูลย้อนหลังได้ (เก็บ DM ไว้สำหรับเรื่องฉุกเฉินส่วนตัวเท่านั้น)
+* **ใช้ Threads:** เวลาตอบข้อความ ให้ Reply ใน Thread เสมอ เพื่อให้ช่องแชทหลักดูเป็นระเบียบและไม่อ่านยากจนเกินไป
+* **การลางาน/สอบ (AFK/OOH):** หากช่วงไหนมีสอบหนักหรือต้องการพัก ให้พิมพ์แจ้งในแชทล่วงหน้าอย่างน้อย 3 วัน เพื่อให้ทีมปรับเปลี่ยนแผนและปริมาณงานได้ทัน
 
-- Git
-- Python 3.10+
-- Docker & Docker Compose
+## 3. การจัดการ Git และ Code (Git Workflow)
+*เราจะใช้ Feature Branch Workflow แบบเรียบง่าย เพื่อป้องกันปัญหา Merge Conflict และปกป้องโค้ดหลักไม่ให้พัง*
 
-### Running the Application (with Docker)
+* **กลยุทธ์การแบ่ง Branch (Branching Strategy):**
+  * `main`: โค้ดที่พร้อมใช้งานจริง (Production) โค้ดในนี้ต้อง *รันผ่านเสมอ*
+  * `dev`: สาขาหลักสำหรับการนำโค้ดมารวมกัน (Integration branch)
+  * `feature/...`: สำหรับทำฟีเจอร์ใหม่ (เช่น `feature/user-login`)
+  * `fix/...`: สำหรับแก้บั๊ก (เช่น `fix/header-alignment`)
+* **การเขียน Commit Messages:** เราจะใช้รูปแบบ Conventional Commits เพื่อให้ประวัติการทำงานอ่านง่าย:
+  * `feat: added user authentication` (เพิ่มฟีเจอร์)
+  * `fix: resolved crashing issue on profile page` (แก้บั๊ก)
+  * `docs: updated README with setup instructions` (อัปเดตเอกสาร)
+* **Pull Requests (PRs) และ Code Reviews:**
+  * **ห้าม Push โค้ดตรงเข้า `main` หรือ `dev` เด็ดขาด** ต้องเปิด PR เสมอ
+  * **กฎการอนุมัติ (Approval Rule):** ต้องมีเพื่อนในทีม **อย่างน้อย 1 คน** ช่วยรีวิวและกด Approve PR ของคุณก่อนถึงจะรวมโค้ดได้
+  * **กฎการ Merge:** คุณไม่สามารถกด Merge PR ของตัวเองได้ คนที่ช่วยรีวิวและ Approve จะเป็นคนกด Merge ให้ (หรือให้ Tech Lead เป็นคนกด)
+  * **ทำ PR ให้เล็กเข้าไว้:** พยายามให้ PR หนึ่งตัวมีโค้ดไม่เกิน 300 บรรทัด PR ที่เล็กจะตรวจง่ายกว่าและมีบั๊กน้อยกว่า
 
-1.  **Clone the repository:**
-    ```bash
-    git clone [your-repository-url]
-    cd [your-project-folder]
-    ```
+## 4. การตัดสินใจ (Decision Making)
+*เราเน้นให้งานเดินหน้า มากกว่าความสมบูรณ์แบบ เราจะไม่ปล่อยให้อาการ "คิดมากจนไม่ได้ทำอะไรเลย (Analysis Paralysis)" มาดึงรั้งทีมไว้*
 
-2.  **Run the services:**
-    *(This section will be updated in later weeks when using Docker Compose)*
-    ```bash
-    # Example for a single service
-    cd services/stats-service
-    docker build -t your-team/stats-service .
-    docker run -p 5001:5000 your-team/stats-service
-    ```
-
----
-
-## 🏛️ Architecture & Design
-
-Key architectural decisions and diagrams are documented in the `/docs/architecture` directory.
-
-- **[C4 Models & Tech Stack](./docs/architecture/README.md)**
-- **[Architectural Decision Records (ADRs)](./docs/architecture/adr/)**
-
-## 👥 Requirements
-
-User personas and key scenarios that drive our development are located in the `/docs/requirements` directory.
-
-- **[User Personas](./docs/requirements/personas/)**
-- **[Main User Scenario](./docs/requirements/main_scenario.md)**
+* **เน้นความยินยอม (Consent) ไม่ใช่เอกฉันท์ (Consensus):** เราไม่จำเป็นต้องเห็นตรงกัน 100% ในทุกเรื่องทางเทคนิค ขอแค่ "ไม่มีใครคัดค้านเด็ดขาดว่าสิ่งนี้จะส่งผลเสียร้ายแรงต่อโปรเจกต์" ก็พอแล้ว
+* **Disagree and Commit:** หากทีมตัดสินใจไปในทางที่คุณไม่ได้โหวตให้ ขอให้ทิ้งอีโก้ไว้ข้างหลัง สนับสนุนทีม และลุยไปกับเส้นทางที่ทีมเลือกอย่างเต็มที่
+* **วิธีแก้ปัญหาเวลาตกลงกันไม่ได้ (Resolving Deadlocks):**
+  * **ขั้นตอนที่ 1:** จับเวลาถกเถียง (เช่น กำหนดให้เถียงกันได้ไม่เกิน 15 นาทีในที่ประชุม)
+  * **ขั้นตอนที่ 2:** หากเป็นปัญหาเชิงเทคนิค ให้ทำ "Spike" (การทดลองเขียนโค้ดเร็วๆ 1 ชั่วโมง) เพื่อพิสูจน์ว่าไอเดียไหนเวิร์คกว่ากัน
+  * **ขั้นตอนที่ 3:** หากยังหาข้อสรุปไม่ได้ เราจะใช้วิธีโหวต และในกรณีที่คะแนนเสียงเท่ากัน ผู้ที่รับหน้าที่ ญาณาธร ภาชนะ จะเป็นคนตัดสินใจชี้ขาด เพื่อให้ทีมเดินหน้าต่อไปได้
