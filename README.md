@@ -1,5 +1,5 @@
 # Project: Jobs Wanted Up
-_A brief, one-sentence description of what your project does._
+Theme : Community Conector
 
  Team: 2 หาร
 - ญาณาธร ภาชนะ, GitHub: `YanathronPhachana`
@@ -23,24 +23,35 @@ This section explains how to get a local copy of the project up and running for 
 - VisualCode Studio
 - Antigravity CLI
 
-### Running the Application (with Docker)
+---------------------------------------------------------------------------------------------------------------------------
 
-1.  **Clone the repository:**
-    ```bash
+# Step Github command and Befor running the Application
+
+1.  ** Clone the repository: **
     git clone [your-repository-url]
-    cd [your-project-folder]
-    ```
 
-2.  **Run the services:**
-    *(This section will be updated in later weeks when using Docker Compose)*
-    ```bash
+2.  ** .env  add**
+   เพิ่มไฟล์ใหม่ที่ @root folder แล้วตั้งชื่อไฟล์ว่า .env
+   และนำ code ข้างล่างนี้ไปว่างไว้ในไฟล์ .env
+   [API KEY for Firebase]
+
+3.  ** install firebase framework **
+   ใช้คำสั่ง npm install firebase
+
+4.  ** install nodejs.module libary **
+   ใช้คำสั่ง npm install
+    
+# Running the Application
+
+1.  ** Run the services: **
+    
     # Example for a single service
     cd services/stats-service
     docker build -t your-team/stats-service .
     docker run -p 5001:5000 your-team/stats-service
     ```
 
----
+-----------------------------------------------------------------------------------------------------------------------------
 
 ## 🏛️ Architecture & Design
 
