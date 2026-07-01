@@ -1,22 +1,27 @@
-# Project: [ชื่อโปรเจกต์ของคุณ]
+# Project: Jobs Wanted Up
 _A brief, one-sentence description of what your project does._
 
-## Team: [ชื่อทีมของคุณ]
-- [ชื่อ-นามสกุล], GitHub: `[github_username]`
-- [ชื่อ-นามสกุล], GitHub: `[github_username]`
-- [ชื่อ-นามสกุล], GitHub: `[github_username]`
+ Team: 2 หาร
+- ญาณาธร ภาชนะ, GitHub: `YanathronPhachana`
+- กมลชนก คำนาค, GitHub: `67020724-glitch`
+- ภูมินทร์ อุ่นคำ, GitHub: `phoomin2005`
+- ทักษ์ดนัย พรมปัญญา, GitHub: `67020971`
 
----
+--------------------------------------------------------------------------------------------------------------------------
 
 ## 🚀 Getting Started
 
 This section explains how to get a local copy of the project up and running for development and testing purposes.
 
-### Prerequisites
+🔧 Tool
 
 - Git
-- Python 3.10+
-- Docker & Docker Compose
+- NodeJS
+- NextJs
+- Firebase
+- Typesript
+- VisualCode Studio
+- Antigravity CLI
 
 ### Running the Application (with Docker)
 
