@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Project: Jobs Wanted Up
+Theme : Community Conector
 
-## Getting Started
+ Team: 2 หาร
+- ญาณาธร ภาชนะ, GitHub: `YanathronPhachana`
+- กมลชนก คำนาค, GitHub: `67020724-glitch`
+- ภูมินทร์ อุ่นคำ, GitHub: `phoomin2005`
+- ทักษ์ดนัย พรมปัญญา, GitHub: `67020971`
 
-First, run the development server:
+--------------------------------------------------------------------------------------------------------------------------
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Getting Started
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This section explains how to get a local copy of the project up and running for development and testing purposes.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+🔧 Tool
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Git
+- NodeJS
+- NextJs
+- Firebase
+- Typesript
+- VisualCode Studio
+- Antigravity CLI
 
-## Learn More
+---------------------------------------------------------------------------------------------------------------------------
 
-To learn more about Next.js, take a look at the following resources:
+# Step Github command and Befor running the Application
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1.  ** Clone the repository: **
+    git clone [your-repository-url]
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2.  ** .env  add**
+   เพิ่มไฟล์ใหม่ที่ @root folder แล้วตั้งชื่อไฟล์ว่า .env
+   และนำ code ข้างล่างนี้ไปว่างไว้ในไฟล์ .env
+   [API KEY for Firebase]
 
-## Deploy on Vercel
+3.  ** install firebase framework **
+   ใช้คำสั่ง npm install firebase
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4.  ** install nodejs.module libary **
+   ใช้คำสั่ง npm install
+    
+# Running the Application
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1.  ** Run the services: **
+    
+    # Example for a single service
+    cd services/stats-service
+    docker build -t your-team/stats-service .
+    docker run -p 5001:5000 your-team/stats-service
+    ```
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+## 🏛️ Architecture & Design
+
+Key architectural decisions and diagrams are documented in the `/docs/architecture` directory.
+
+- **[C4 Models & Tech Stack](./docs/architecture/README.md)**
+- **[Architectural Decision Records (ADRs)](./docs/architecture/adr/)**
+
+## 👥 Requirements
+
+User personas and key scenarios that drive our development are located in the `/docs/requirements` directory.
+
+- **[User Personas](./docs/requirements/personas/)**
+- **[Main User Scenario](./docs/requirements/main_scenario.md)**
