@@ -18,3 +18,8 @@ dist/
 # OS Header files
 .DS_Store
 Thumbs.db
+
+# IDE and OS specific files
+.vscode/
+.idea/
+*.DS_Store
