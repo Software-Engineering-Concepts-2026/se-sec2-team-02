@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOB UP - เพิ่มประกาศงาน</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <button class="back-btn" onclick="goBack()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="20" height="20">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+      </svg>
+      <span>กลับ</span>
+    </button>
+    <div class="brand">
+      <h1>JOB UP</h1>
+      <p>หางานหน้าม.พะเยา</p>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main>
+    <h2 class="page-title">เพิ่มประกาศงาน</h2>
+
+    <!-- Form Section -->
+    <form id="jobForm" class="job-form-container" onsubmit="handleFormSubmit(event)">
+      
+      <!-- Left Column: Upload Images & Contacts -->
+      <div class="left-col">
+        
+        <!-- Image Upload Group -->
+        <div class="image-upload-wrapper">
+          <span class="image-label">รูปภาพประกอบประกาศ</span>
+          
+          <!-- Main Image Upload -->
+          <div class="main-upload-box" id="mainUploadContainer">
+            <input type="file" id="mainImageInput" accept="image/*" onchange="previewMainImage(event)">
+            <div class="upload-placeholder" id="mainPlaceholder">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375 0 11-.75 0 .375 0 01.75 0z" />
+              </svg>
+              <span class="title">คลิกเพื่ออัปโหลดรูปหลัก</span>
+              <span class="desc">รองรับไฟล์ JPG, PNG (แนะนำสัดส่วน 4:3)</span>
+            </div>
+            <img id="mainImagePreview" class="image-preview" alt="Main Preview">
+          </div>
+
+          <!-- Secondary Images Upload (3 Items Grid) -->
+          <div class="preview-grid">
+            <div class="sub-upload-box" id="subUpload1">
+              <input type="file" accept="image/*" onchange="previewSubImage(event, 1)">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" id="subIcon1">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              <img id="subPreview1" class="image-preview" alt="Sub Preview 1">
+            </div>
+            <div class="sub-upload-box" id="subUpload2">
+              <input type="file" accept="image/*" onchange="previewSubImage(event, 2)">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" id="subIcon2">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              <img id="subPreview2" class="image-preview" alt="Sub Preview 2">
+            </div>
+            <div class="sub-upload-box" id="subUpload3">
+              <input type="file" accept="image/*" onchange="previewSubImage(event, 3)">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" id="subIcon3">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              <img id="subPreview3" class="image-preview" alt="Sub Preview 3">
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-section">
+          <span class="contact-title">ช่องทางการติดต่อ</span>
+          
+          <!-- LINE ID -->
+          <div class="input-icon-group line-group">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="24" height="24">
+              <path d="M19.7 10c.1-.4.2-.8.2-1.2C20 5.1 16.4 2 12 2S4 5.1 4 8.8c0 3.3 2.8 6.1 6.7 6.7.3.1.5.2.6.4l.2 1.3c.1.4-.1.9-.5 1.1-.2.1-.4.1-.6 0l-1.9-.9c-.2-.1-.5-.1-.7.1C6.2 18.5 4.1 19 2 19c-.3 0-.6-.2-.7-.5-.1-.3 0-.6.2-.8l1.4-1.4c.1-.1.2-.3.2-.5C1.8 14.1.8 11.7.9 9.2.9 4.8 5.9.8 12 .8s11.1 4 11.1 8.4c0 1.2-.2 2.3-.7 3.4-.1.3-.4.5-.8.4-.3-.1-.5-.4-.4-.8.4-.9.6-1.8.6-2.6zM18 10h-2V7.5c0-.3-.2-.5-.5-.5s-.5.2-.5.5V10c0 .3.2.5.5.5h2.5c.3 0 .5-.2.5-.5s-.2-.5-.5-.5zm-4.5.5c.3 0 .5-.2.5-.5V7.5c0-.3-.2-.5-.5-.5s-.5.2-.5.5V10c0 .3.2.5.5.5zm-4.5 0c.3 0 .5-.2.5-.5V7.5c0-.3-.2-.5-.5-.5S8 7.2 8 7.5V10c0 .3.2.5.5.5z"/>
+            </svg>
+            <input type="text" id="lineId" placeholder="ระบุ LINE ID" required>
+          </div>
+
+          <!-- Facebook -->
+          <div class="input-icon-group facebook-group">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="24" height="24">
+              <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/>
+            </svg>
+            <input type="text" id="facebook" placeholder="ระบุ Facebook" required>
+          </div>
+
+          <!-- Telephone -->
+          <div class="input-icon-group">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="24" height="24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.824-1.557-5.187-3.92-6.743-6.743l1.293-.97c.362-.271.528-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+            </svg>
+            <input type="tel" id="telephone" placeholder="ระบุเบอร์โทรศัพท์" pattern="[0-9]{9,10}" required>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Form Fields -->
+      <div class="right-col">
+        
+        <!-- Job Title -->
+        <div class="form-group full-width">
+          <label for="jobTitle" class="required">หัวข้อประกาศ</label>
+          <input type="text" id="jobTitle" class="form-input" placeholder="เช่น พนักงานร้านกาแฟ, ติวเตอร์ภาษาอังกฤษ" required>
+        </div>
+
+        <!-- Job Type -->
+        <div class="form-group">
+          <label for="jobType" class="required">ประเภทงาน</label>
+          <select id="jobType" class="form-select" required>
+            <option value="" disabled selected>เลือกประเภทงาน</option>
+            <option value="food">ร้านอาหาร / คาเฟ่</option>
+            <option value="tutor">ติวเตอร์ / สอนพิเศษ</option>
+            <option value="delivery">ส่งของ / Delivery</option>
+            <option value="event">งานอีเวนต์ / จัดบูธ</option>
+            <option value="general">งานพาร์ทไทม์ทั่วไป</option>
+          </select>
+        </div>
+
+        <!-- Compensation -->
+        <div class="form-group">
+          <label for="compensationAmount" class="required">ค่าตอบแทน</label>
+          <div class="compensation-group">
+            <input type="number" id="compensationAmount" class="form-input" placeholder="ระบุจำนวน" min="0" required>
+            <select id="compensationUnit" class="form-select">
+              <option value="baht_hr">บาท / ชั่วโมง</option>
+              <option value="baht_day">บาท / วัน</option>
+              <option value="baht_job">บาท / งาน</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Job Details -->
+        <div class="form-group full-width">
+          <label for="jobDetails" class="required">รายละเอียดงาน</label>
+          <textarea id="jobDetails" class="form-textarea" placeholder="ระบุรายละเอียดของงาน หน้าที่รับผิดชอบ คุณสมบัติผู้สมัคร..." required></textarea>
+        </div>
+
+        <!-- Working Hours / Time -->
+        <div class="form-group">
+          <label for="workingTime">เวลาทำงาน</label>
+          <input type="text" id="workingTime" class="form-input" placeholder="เช่น 17:00 - 22:00 น.">
+        </div>
+
+        <!-- Location -->
+        <div class="form-group">
+          <label for="location" class="required">สถานที่</label>
+          <div class="location-input-wrapper">
+            <input type="text" id="location" class="form-input" placeholder="ระบุสถานที่ทำงาน" required>
+            <button type="button" class="pin-map-btn" onclick="openMapModal()">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+              </svg>
+              <span>ปักหมุดแผนที่</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Date Range (Start Date / End Date) -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="startDate">วันที่เริ่มงาน</label>
+            <input type="date" id="startDate" class="form-input">
+          </div>
+          <div class="form-group">
+            <label for="endDate">วันที่สิ้นสุดงาน</label>
+            <input type="date" id="endDate" class="form-input">
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="button-row">
+          <button type="button" class="btn btn-cancel" onclick="handleCancel()">ยกเลิก</button>
+          <button type="submit" class="btn btn-submit">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" width="18" height="18">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+            </svg>
+            <span>โพสต์ประกาศ</span>
+          </button>
+        </div>
+
+      </div>
+
+    </form>
+  </main>
+
+  <!-- Map Selection Modal -->
+  <div class="modal-overlay" id="mapModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>ปักหมุดตำแหน่งที่ตั้งร้าน/งาน</h3>
+        <button class="close-modal-btn" onclick="closeMapModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">คลิกบนแผนที่สมมติเพื่อเลือกจุดพิกัดตำแหน่งงาน</p>
+        <div class="mock-map-area" id="mockMap" onclick="dropPin(event)">
+          <div class="map-placeholder-text">
+            📍 คลิกเพื่อปักหมุดพิกัดรอบ ม.พะเยา<br>
+            <span style="font-size: 0.75rem; color: #94a3b8;">(ระบบจำลองพิกัดอัตโนมัติ)</span>
+          </div>
+          <div class="map-pin-indicator" id="mapPin">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+              <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742c1.085-.77 2.82-2.137 4.117-4.221C19.312 14.542 20.25 12.067 20.25 9.5C20.25 4.668 16.291 1 11.5 1S2.75 4.668 2.75 9.5c0 2.567.938 5.042 2.658 7.917 1.297 2.084 3.031 3.451 4.116 4.221a16.974 16.974 0 001.143.742zM12 12.75a3.25 3.25 0 100-6.5 3.25 3.25 0 000 6.5z" clip-rule="evenodd" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" onclick="closeMapModal()" style="padding: 8px 20px; font-size: 0.9rem;">ยกเลิก</button>
+        <button class="btn btn-submit" onclick="savePinnedLocation()" style="padding: 8px 20px; font-size: 0.9rem;">บันทึกตำแหน่ง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Toast -->
+  <div class="toast" id="successToast">
+    <div class="toast-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+      </svg>
+    </div>
+    <div class="toast-content">
+      <h4>โพสต์ประกาศงานเสร็จสิ้น!</h4>
+      <p>ประกาศของคุณพร้อมใช้งานแล้ว</p>
+    </div>
+  </div>
+
+  <script>
+    // Image Upload Previews
+    function previewMainImage(event) {
+      const input = event.target;
+      const preview = document.getElementById('mainImagePreview');
+      const placeholder = document.getElementById('mainPlaceholder');
+      
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+          placeholder.style.display = 'none';
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function previewSubImage(event, index) {
+      const input = event.target;
+      const preview = document.getElementById(`subPreview${index}`);
+      const icon = document.getElementById(`subIcon${index}`);
+      
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+          icon.style.display = 'none';
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // Go back action
+    function goBack() {
+      if (confirm('คุณต้องการละทิ้งการเขียนประกาศนี้และกลับไปหน้าก่อนหน้าหรือไม่?')) {
+        alert('กลับสู่หน้าหลักระบบ JOB UP (จำลอง)');
+      }
+    }
+
+    // Cancel action
+    function handleCancel() {
+      if (confirm('ต้องการยกเลิกการกรอกข้อมูลและรีเซ็ตฟอร์มหรือไม่?')) {
+        document.getElementById('jobForm').reset();
+        
+        // Reset main image preview
+        const mainPreview = document.getElementById('mainImagePreview');
+        const mainPlaceholder = document.getElementById('mainPlaceholder');
+        mainPreview.style.display = 'none';
+        mainPreview.src = '';
+        mainPlaceholder.style.display = 'flex';
+        
+        // Reset sub image previews
+        for(let i=1; i<=3; i++) {
+          const subPreview = document.getElementById(`subPreview${i}`);
+          const subIcon = document.getElementById(`subIcon${i}`);
+          subPreview.style.display = 'none';
+          subPreview.src = '';
+          subIcon.style.display = 'block';
+        }
+      }
+    }
+
+    // Form Submit handling with beautiful Toast
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      
+      // Select files check (just warning, not error for prototype)
+      const mainImage = document.getElementById('mainImageInput').files[0];
+      
+      // Trigger Toast
+      const toast = document.getElementById('successToast');
+      toast.classList.add('show');
+      
+      // Reset form fields after 2.5 seconds, hide toast
+      setTimeout(() => {
+        toast.classList.remove('show');
+        document.getElementById('jobForm').reset();
+        
+        // Reset previews
+        document.getElementById('mainImagePreview').style.display = 'none';
+        document.getElementById('mainPlaceholder').style.display = 'flex';
+        for(let i=1; i<=3; i++) {
+          document.getElementById(`subPreview${i}`).style.display = 'none';
+          document.getElementById(`subIcon${i}`).style.display = 'block';
+        }
+      }, 3000);
+    }
+
+    // Map Modal logic
+    let tempCoordinates = null;
+
+    function openMapModal() {
+      document.getElementById('mapModal').classList.add('show');
+    }
+
+    function closeMapModal() {
+      document.getElementById('mapModal').classList.remove('show');
+    }
+
+    function dropPin(event) {
+      const mockMap = document.getElementById('mockMap');
+      const mapPin = document.getElementById('mapPin');
+      
+      // Calculate coordinates relative to the map div
+      const rect = mockMap.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      
+      // Set pin position
+      mapPin.style.left = `${x}px`;
+      mapPin.style.top = `${y}px`;
+      mapPin.style.display = 'block';
+      
+      // Simulating realistic Phayao coordinates
+      const baseLat = 19.0253;
+      const baseLng = 99.8945;
+      
+      // Small offset based on click position
+      const offsetLat = ((rect.height / 2) - y) * 0.00004;
+      const offsetLng = (x - (rect.width / 2)) * 0.00004;
+      
+      const lat = (baseLat + offsetLat).toFixed(5);
+      const lng = (baseLng + offsetLng).toFixed(5);
+      
+      // List of mock places based on click quadrants for extra immersion
+      let placeName = 'บริเวณใกล้เคียง ม.พะเยา';
+      if (x < rect.width / 2 && y < rect.height / 2) {
+        placeName = 'ซอยสวรรค์ หน้า ม.พะเยา';
+      } else if (x >= rect.width / 2 && y < rect.height / 2) {
+        placeName = 'ฝั่งตรงข้าม ม.พะเยา (โซนร้านอาหาร)';
+      } else if (x < rect.width / 2 && y >= rect.height / 2) {
+        placeName = 'แถวหอพักหลัง ม.พะเยา';
+      } else {
+        placeName = 'โซนตลาดหน้า ม.พะเยา';
+      }
+      
+      tempCoordinates = `${placeName} (พิกัด: ${lat}, ${lng})`;
+    }
+
+    function savePinnedLocation() {
+      if (tempCoordinates) {
+        document.getElementById('location').value = tempCoordinates;
+        closeMapModal();
+      } else {
+        alert('กรุณาคลิกบนแผนที่เพื่อปักหมุดตำแหน่งก่อนบันทึก');
+      }
+    }
+  </script>
+
+</body>
+</html>
