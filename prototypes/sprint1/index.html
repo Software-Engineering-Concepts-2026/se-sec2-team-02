@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
+  <title>ค้นหางาน | JOB UP - แพลตฟอร์มหางานสำหรับนิสิต ม.พะเยา</title>
+  <meta name="description" content="ค้นหาและสมัครงานพาร์ทไทม์ งานนอกเวลา และงานรับจ้างทั่วไป รอบตัวเมืองและในวิทยาเขตมหาวิทยาลัยพะเยา สะดวก ปลอดภัย สำหรับนิสิต">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header Area -->
+    <header class="app-header">
+      <button class="back-button" id="back-btn" aria-label="กลับหน้าหลัก">
+        <i data-lucide="arrow-left"></i>
+        <span>กลับ</span>
+      </button>
+      <div class="brand-section">
+        <div class="brand-logo">JOB UP</div>
+        <div class="brand-subtitle">หางานหน้าม.พะเยา</div>
+      </div>
+    </header>
+
+    <!-- Page Title and Search Header -->
+    <section class="search-hero-section">
+      <h1 class="page-title" id="page-title-main">ค้นหางาน</h1>
+      
+      <div class="search-sort-container">
+        <!-- Search Input -->
+        <div class="search-bar-wrapper">
+          <input 
+            type="text" 
+            id="search-input" 
+            class="search-input" 
+            placeholder="ค้นหาชื่อตำแหน่งงาน, ร้านค้า, หรือสถานที่..." 
+            aria-label="ค้นหางาน"
+          >
+          <button class="search-icon-btn" id="search-btn" aria-label="ค้นหา">
+            <i data-lucide="search"></i>
+          </button>
+        </div>
+
+        <!-- Sort Selection -->
+        <div class="sort-wrapper">
+          <select id="sort-select" class="sort-select" aria-label="เรียงลำดับผลการค้นหา">
+            <option value="latest">เรียงล่าสุด</option>
+            <option value="salary-desc">ค่าตอบแทน: สูง - ต่ำ</option>
+            <option value="salary-asc">ค่าตอบแทน: ต่ำ - สูง</option>
+            <option value="distance-asc">ระยะทาง: ใกล้ที่สุด</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Section with Sidebar and List -->
+    <main class="main-layout">
+      <!-- Left Column: Filters -->
+      <aside class="filters-sidebar" aria-label="ตัวกรองการค้นหา">
+        <div class="filters-header">
+          <h2 class="filters-title">ตัวกรอง</h2>
+          <button class="reset-filters-btn" id="reset-filters" type="button">ล้างตัวกรอง</button>
+        </div>
+
+        <!-- Job Type Filter -->
+        <div class="filter-group">
+          <label for="filter-type" class="filter-label">ประเภทงาน</label>
+          <select id="filter-type" class="filter-select">
+            <option value="all">เลือกประเภทงาน</option>
+            <option value="cafe-restaurant">ร้านกาแฟ / ร้านอาหาร</option>
+            <option value="delivery">ส่งอาหาร / รับส่งเอกสาร</option>
+            <option value="tutor">ติวเตอร์ / สอนหนังสือ</option>
+            <option value="admin-academic">งานธุรการ / ช่วยวิจัย</option>
+            <option value="general">งานบริการทั่วไป / อื่นๆ</option>
+          </select>
+        </div>
+
+        <!-- Salary Filter -->
+        <div class="filter-group">
+          <label for="filter-salary" class="filter-label">
+            ค่าตอบแทน 
+            <span class="value-label" id="salary-val">เริ่มต้น 0 บาท/ชม.</span>
+          </label>
+          <div class="range-slider-container">
+            <input 
+              type="range" 
+              id="filter-salary" 
+              class="range-slider" 
+              min="0" 
+              max="200" 
+              value="0" 
+              step="5"
+            >
+            <div class="range-labels">
+              <span>0</span>
+              <span>200+</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Distance Filter -->
+        <div class="filter-group">
+          <label for="filter-distance-select" class="filter-label">ระยะทาง</label>
+          <select id="filter-distance-select" class="filter-select">
+            <option value="all">ทั้งหมด</option>
+            <option value="500">ไม่เกิน 500 เมตร</option>
+            <option value="1000">ไม่เกิน 1 กิโลเมตร</option>
+            <option value="2000">ไม่เกิน 2 กิโลเมตร</option>
+            <option value="5000">ไม่เกิน 5 กิโลเมตร</option>
+          </select>
+          
+          <div class="range-slider-container">
+            <input 
+              type="range" 
+              id="filter-distance" 
+              class="range-slider" 
+              min="0" 
+              max="5000" 
+              value="5000" 
+              step="100"
+            >
+            <div class="range-labels">
+              <span>0 ม.</span>
+              <span>5,000+ ม.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Filter -->
+        <div class="filter-group">
+          <span class="filter-label">สถานะ</span>
+          <div class="checkbox-group">
+            <label class="checkbox-container">
+              เปิดรับ
+              <input type="checkbox" id="status-open" checked>
+              <span class="checkmark"></span>
+            </label>
+            <label class="checkbox-container">
+              ปิดรับ
+              <input type="checkbox" id="status-closed" checked>
+              <span class="checkmark"></span>
+            </label>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Column: Job Listings -->
+      <section class="listings-container" aria-label="รายการประกาศหางาน">
+        <div class="results-count" id="results-count">
+          กำลังโหลดผลการค้นหา...
+        </div>
+
+        <div class="job-list" id="job-list-container">
+          <!-- Job cards will be generated by JavaScript here -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Job Details Modal Dialog -->
+  <div class="modal-overlay" id="job-modal-overlay" aria-hidden="true" role="dialog">
+    <div class="modal-card" id="job-modal-card">
+      <button class="modal-close-btn" id="modal-close" aria-label="ปิดรายละเอียด">
+        <i data-lucide="x"></i>
+      </button>
+      
+      <!-- Banner image or visual area -->
+      <div class="modal-header-banner" id="modal-banner">
+        <div class="modal-header-banner-overlay">
+          <span class="modal-tag" id="modal-tag">ประเภทงาน</span>
+          <h2 class="modal-title" id="modal-title">ตำแหน่งงาน</h2>
+        </div>
+      </div>
+      
+      <div class="modal-body">
+        <!-- Quick stats grid -->
+        <div class="modal-details-grid">
+          <div class="modal-detail-item">
+            <div class="modal-detail-icon">
+              <i data-lucide="dollar-sign"></i>
+            </div>
+            <div class="modal-detail-info">
+              <span class="modal-detail-label">ค่าตอบแทน</span>
+              <span class="modal-detail-value" id="modal-salary">45 บาท/ชม.</span>
+            </div>
+          </div>
+          <div class="modal-detail-item">
+            <div class="modal-detail-icon">
+              <i data-lucide="map-pin"></i>
+            </div>
+            <div class="modal-detail-info">
+              <span class="modal-detail-label">สถานที่ปฏิบัติงาน</span>
+              <span class="modal-detail-value" id="modal-location">หน้า ม.พะเยา</span>
+            </div>
+          </div>
+          <div class="modal-detail-item">
+            <div class="modal-detail-icon">
+              <i data-lucide="navigation"></i>
+            </div>
+            <div class="modal-detail-info">
+              <span class="modal-detail-label">ระยะทางจาก ม.พะเยา</span>
+              <span class="modal-detail-value" id="modal-distance">800 เมตร</span>
+            </div>
+          </div>
+          <div class="modal-detail-item">
+            <div class="modal-detail-icon">
+              <i data-lucide="calendar"></i>
+            </div>
+            <div class="modal-detail-info">
+              <span class="modal-detail-label">วันที่ลงประกาศ</span>
+              <span class="modal-detail-value" id="modal-date">วันนี้</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="modal-description-box">
+          <h3 class="modal-section-title">รายละเอียดงาน</h3>
+          <p class="modal-description-text" id="modal-description">
+            รายละเอียดหน้าที่ความรับผิดชอบ...
+          </p>
+        </div>
+
+        <!-- Qualifications -->
+        <div class="modal-description-box">
+          <h3 class="modal-section-title">คุณสมบัติผู้สมัคร</h3>
+          <ul class="modal-description-text" id="modal-qualifications" style="padding-left: 20px;">
+            <li>ไม่จำกัดเพศและอายุ</li>
+            <li>เป็นนิสิต ม.พะเยา</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Action Button inside modal -->
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-secondary" id="modal-btn-cancel">ยกเลิก</button>
+        <button class="modal-btn modal-btn-primary" id="modal-btn-action">สมัครรับงานนี้</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div id="toast" style="
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translate(-50%, 50px);
+    background-color: #1e293b;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    z-index: 1100;
+    opacity: 0;
+    pointer-events: none;
+    font-weight: 500;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  ">
+    <i data-lucide="check-circle" style="color: var(--success); width: 20px; height: 20px;"></i>
+    <span id="toast-msg">บันทึกสำเร็จ</span>
+  </div>
+
+  <!-- JavaScript App Logic -->
+  <script>
+    // Mock Data List representing jobs around Phayao University (UP)
+    const mockJobsData = [
+      {
+        id: 1,
+        title: "พนักงานร้านกาแฟ (Barista)",
+        salary: 45,
+        location: "หน้ามหาวิทยาลัยพะเยา (ร้าน Slow Life Cafe)",
+        distance: 800,
+        status: "open",
+        type: "cafe-restaurant",
+        date: "2026-07-09T09:00:00",
+        description: "รับสมัครนิสิตทำงานพาร์ทไทม์ตำแหน่งบาริสต้าและดูแลหน้าร้านกาแฟ มีอัธยาศัยดี มีใจรักบริการ ยินดีรับผู้ไม่มีประสบการณ์ (มีสอนงานให้)",
+        qualifications: [
+          "เป็นนิสิต มหาวิทยาลัยพะเยา ทุกชั้นปี",
+          "สามารถทำงานช่วงเย็น 17:00 - 21:00 น. หรือวันเสาร์-อาทิตย์ได้",
+          "ซื่อสัตย์ ขยัน และตรงต่อเวลา"
+        ],
+        imagePath: "images/coffee_barista.jpg",
+        favorited: false
+      },
+      {
+        id: 2,
+        title: "ผู้ช่วยสัตวแพทย์ / ดูแลสัตว์เลี้ยง",
+        salary: 60,
+        location: "คลินิกรักษาสัตว์สี่แยกหน้า ม.พะเยา",
+        distance: 1200,
+        status: "open",
+        type: "general",
+        date: "2026-07-08T14:30:00",
+        description: "ช่วยเตรียมอุปกรณ์ สุขาภิบาลกรงสัตว์ และป้อนอาหาร/น้ำให้กับสัตว์ป่วยในคลินิก ทำงานร่วมกับสัตวแพทย์อย่างใกล้ชิด เหมาะสำหรับผู้ที่รักสัตว์และต้องการหาประสบการณ์เสริม",
+        qualifications: [
+          "รักสัตว์ ไม่กลัวสุนัขหรือแมว",
+          "ไม่แพ้ขนสัตว์และฝุ่น",
+          "หากกำลังเรียนสาขาสัตวแพทย์/วิทยาศาสตร์การแพทย์จะพิจารณาเป็นพิเศษ"
+        ],
+        imagePath: "images/pet_care.jpg",
+        favorited: false
+      },
+      {
+        id: 3,
+        title: "ติวเตอร์สอนวิชาคณิตศาสตร์ ม.ปลาย",
+        salary: 150,
+        location: "โครงการกุลวงศ์ทาวน์ หน้า ม.พะเยา",
+        distance: 950,
+        status: "open",
+        type: "tutor",
+        date: "2026-07-09T10:15:00",
+        description: "สอนพิเศษวิชาคณิตศาสตร์เพื่อเตรียมตัวสอบเข้ามหาวิทยาลัยให้กับนักเรียนชั้น ม.6 กลุ่มย่อย 2 คน สัปดาห์ละ 2 วัน วันละ 2 ชั่วโมง (ตกลงเวลาได้)",
+        qualifications: [
+          "เข้าใจเนื้อหาคณิตศาสตร์ ม.ปลาย เป็นอย่างดี",
+          "มีเทคนิคการสอนที่สนุกสนาน เข้าใจง่าย",
+          "หากมีประสบการณ์การสอนพิเศษมาก่อนจะรับพิจารณาทันที"
+        ],
+        imagePath: "images/tutor_math.jpg",
+        favorited: false
+      },
+      {
+        id: 4,
+        title: "ไรเดอร์ส่งของ/อาหาร ภายในมหาวิทยาลัย",
+        salary: 50,
+        location: "รอบวิทยาเขตมหาวิทยาลัยพะเยา",
+        distance: 300,
+        status: "open",
+        type: "delivery",
+        date: "2026-07-09T11:00:00",
+        description: "รับส่งอาหาร เครื่องดื่ม หรือชีทเอกสาร จากร้านค้าหน้ามอ ไปยังตึกเรียน คณะ หรือหอพักนิสิตภายในมหาวิทยาลัย (คิดเรทตามรอบและระยะทางเริ่มต้น 30-50 บาท/ออเดอร์)",
+        qualifications: [
+          "มีรถจักรยานยนต์ส่วนตัวและใบขับขี่",
+          "ชำนาญเส้นทางใน ม.พะเยา (หอใน, ตึกเรียนรวม, คณะต่างๆ)",
+          "สุภาพและจัดส่งของตรงเวลา"
+        ],
+        imagePath: "images/delivery_rider.jpg",
+        favorited: false
+      },
+      {
+        id: 5,
+        title: "ผู้ช่วยวิจัยคีย์ข้อมูลสถิติ",
+        salary: 80,
+        location: "ตึกคณะเทคโนโลยีสารสนเทศ ม.พะเยา",
+        distance: 100,
+        status: "open",
+        type: "admin-academic",
+        date: "2026-07-07T08:00:00",
+        description: "คีย์ข้อมูลแบบสอบถามงานวิจัยทางสังคมศาสตร์ลงโปรแกรม SPSS หรือ Excel จัดหมวดหมู่เอกสารวิจัย สามารถรับงานไปทำที่หอพักได้หลังคุยงานเสร็จ",
+        qualifications: [
+          "ใช้คอมพิวเตอร์พื้นฐานและโปรแกรม Excel ได้อย่างคล่องแคล่ว",
+          "มีความละเอียดรอบคอบในการทำงานเอกสาร",
+          "สามารถส่งงานได้ตรงเวลาที่กำหนด"
+        ],
+        imagePath: "images/data_entry.jpg",
+        favorited: false
+      },
+      {
+        id: 6,
+        title: "พนักงานเสิร์ฟและต้อนรับร้านหมูกระทะ",
+        salary: 40,
+        location: "หน้า ม.พะเยา (ร้านแชมป์หมูกระทะ)",
+        distance: 1500,
+        status: "closed",
+        type: "cafe-restaurant",
+        date: "2026-07-05T16:00:00",
+        description: "บริการเสิร์ฟ ต้อนรับลูกค้า และเก็บโต๊ะดูแลความสะอาดทั่วไป อาหารเย็นฟรี 1 มื้อ สามารถทำงานได้ทุกวันหรือสลับวันตามตารางเรียนได้",
+        qualifications: [
+          "ขยัน อดทน รองรับแรงกดดันช่วงลูกค้าหนาแน่นได้ดี",
+          "รักงานบริการและอัธยาศัยดี",
+          "พร้อมทำงานช่วงเวลา 17:00 - 23:00 น."
+        ],
+        imagePath: "images/hotpot_server.jpg",
+        favorited: false
+      },
+      {
+        id: 7,
+        title: "ช่างภาพถ่ายรูปรับปริญญานอกรอบ",
+        salary: 180,
+        location: "รอบอ่างเก็บน้ำและลานสมเด็จ ม.พะเยา",
+        distance: 500,
+        status: "open",
+        type: "general",
+        date: "2026-07-09T07:30:00",
+        description: "หาช่างภาพถ่ายรูปรับปริญญานอกรอบให้กลุ่มเพื่อน 4 คน ครึ่งวันเช้า (8.00 น. - 12.00 น.) ขอคนส่งรูปไฟล์ดิบและแต่งสีโทนละมุน อุปกรณ์กล้องตัวเอง",
+        qualifications: [
+          "มีกล้องถ่ายภาพดิจิตอลและเลนส์ที่พร้อมใช้งาน",
+          "มีพอร์ตการจัดวางมุมกล้องหรืองานถ่ายบุคคลมาแสดงประกอบ",
+          "อารมณ์ดี คุยสนุก และสามารถบรีฟท่าโพสให้นิสิตได้"
+        ],
+        imagePath: "images/photographer.jpg",
+        favorited: false
+      },
+      {
+        id: 8,
+        title: "พนักงานพาร์ทไทม์จัดหน้าร้านหนังสือ",
+        salary: 45,
+        location: "ศูนย์หนังสือ ม.พะเยา (อาคารสงวนเสริมศรี)",
+        distance: 250,
+        status: "closed",
+        type: "general",
+        date: "2026-07-04T10:00:00",
+        description: "จัดเรียงหนังสือและสื่อการเรียนรู้ขึ้นชั้นวาง เช็คยอดคงคลัง และช่วยเหลืองานเอกสารอื่นๆ ในศูนย์หนังสือในช่วงเปิดเทอมใหม่",
+        qualifications: [
+          "มีความเป็นระเบียบเรียบร้อย",
+          "รักความสะอาดและการอ่าน",
+          "สามารถทำงานในวันจันทร์-ศุกร์ ช่วงกลางวันได้"
+        ],
+        imagePath: "images/bookstore.jpg",
+        favorited: false
+      }
+    ];
+
+    // State Variables
+    let currentJobs = [...mockJobsData];
+    let selectedJob = null;
+
+    // DOM Elements
+    const jobListContainer = document.getElementById("job-list-container");
+    const resultsCountEl = document.getElementById("results-count");
+    
+    // Filter Elements
+    const searchInput = document.getElementById("search-input");
+    const sortSelect = document.getElementById("sort-select");
+    const filterType = document.getElementById("filter-type");
+    
+    const salarySlider = document.getElementById("filter-salary");
+    const salaryVal = document.getElementById("salary-val");
+    
+    const distanceSelect = document.getElementById("filter-distance-select");
+    const distanceSlider = document.getElementById("filter-distance");
+    
+    const statusOpen = document.getElementById("status-open");
+    const statusClosed = document.getElementById("status-closed");
+    
+    const resetFiltersBtn = document.getElementById("reset-filters");
+
+    // Modal Elements
+    const modalOverlay = document.getElementById("job-modal-overlay");
+    const modalCloseBtn = document.getElementById("modal-close");
+    const modalBanner = document.getElementById("modal-banner");
+    const modalTag = document.getElementById("modal-tag");
+    const modalTitle = document.getElementById("modal-title");
+    const modalSalary = document.getElementById("modal-salary");
+    const modalLocation = document.getElementById("modal-location");
+    const modalDistance = document.getElementById("modal-distance");
+    const modalDate = document.getElementById("modal-date");
+    const modalDescription = document.getElementById("modal-description");
+    const modalQualifications = document.getElementById("modal-qualifications");
+    const modalBtnCancel = document.getElementById("modal-btn-cancel");
+    const modalBtnAction = document.getElementById("modal-btn-action");
+
+    // Toast element
+    const toastEl = document.getElementById("toast");
+    const toastMsgEl = document.getElementById("toast-msg");
+
+    // Show Toast Function
+    function showToast(message, type = "success") {
+      toastMsgEl.textContent = message;
+      toastEl.style.opacity = "1";
+      toastEl.style.transform = "translate(-50%, 0)";
+      toastEl.style.pointerEvents = "auto";
+      
+      setTimeout(() => {
+        toastEl.style.opacity = "0";
+        toastEl.style.transform = "translate(-50%, 50px)";
+        toastEl.style.pointerEvents = "none";
+      }, 3000);
+    }
+
+    // Helper: Formatter for currency and distances
+    function formatDistance(meters) {
+      if (meters >= 1000) {
+        return `${(meters / 1000).toFixed(1)} กิโลเมตร`;
+      }
+      return `${meters} เมตร`;
+    }
+
+    function formatThaiDate(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 0) return "วันนี้";
+      if (diffDays === 1) return "เมื่อวานนี้";
+      return `เมื่อ ${diffDays} วันที่แล้ว`;
+    }
+
+    // Render job list cards
+    function renderJobs() {
+      jobListContainer.innerHTML = "";
+      
+      if (currentJobs.length === 0) {
+        jobListContainer.innerHTML = `
+          <div class="no-results fade-in">
+            <i data-lucide="folder-search"></i>
+            <h3 class="no-results-title">ไม่พบงานที่ตรงกับเงื่อนไข</h3>
+            <p>กรุณาลองเปลี่ยนคำค้นหาหรือปรับขนาดของตัวกรองตัวเลือกอื่น</p>
+          </div>
+        `;
+        resultsCountEl.textContent = "ผลการค้นหา 0 รายการ";
+        lucide.createIcons();
+        return;
+      }
+
+      resultsCountEl.textContent = `ผลการค้นหา ${currentJobs.length} รายการ`;
+
+      currentJobs.forEach((job) => {
+        const card = document.createElement("div");
+        card.className = "job-card fade-in";
+        card.setAttribute("data-id", job.id);
+        
+        const isFavorite = job.favorited ? "active" : "";
+        const statusText = job.status === "open" ? "เปิดรับ" : "ปิดรับ";
+        const statusClass = job.status === "open" ? "status-open" : "status-closed";
+        
+        card.innerHTML = `
+          <div class="job-image-container" style="background: var(--bg-app); border: 1px solid var(--border-color);">
+            <img src="${job.imagePath}" alt="${job.title}" style="width: 100%; height: 100%; object-fit: cover; transition: transform var(--transition-fast);">
+          </div>
+          <div class="job-info-container">
+            <h3 class="job-title">${job.title}</h3>
+            <div class="job-salary">
+              <i data-lucide="circle-dollar-sign"></i>
+              <span>${job.salary} บาท/ชม.</span>
+            </div>
+            <div class="job-meta-row">
+              <div class="job-meta-item">
+                <i data-lucide="map-pin"></i>
+                <span>${job.location}</span>
+              </div>
+              <div class="job-meta-item">
+                <i data-lucide="navigation-2"></i>
+                <span>${formatDistance(job.distance)}</span>
+              </div>
+            </div>
+          </div>
+          <div class="job-actions-container">
+            <button class="favorite-btn ${isFavorite}" data-id="${job.id}" aria-label="เพิ่มลงในรายการโปรด">
+              <i data-lucide="heart"></i>
+            </button>
+            <button class="job-status-btn ${statusClass}" data-id="${job.id}" ${job.status !== 'open' ? 'disabled' : ''}>
+              ${statusText}
+            </button>
+          </div>
+        `;
+        
+        // Handle Clicking the entire card to open detail modal (but avoid click events on buttons inside card)
+        card.addEventListener("click", (e) => {
+          if (e.target.closest(".favorite-btn") || e.target.closest(".job-status-btn")) {
+            return; // let button click handlers manage it
+          }
+          openModal(job.id);
+        });
+
+        jobListContainer.appendChild(card);
+      });
+
+      // Bind dynamic actions on rendered elements
+      bindCardActionEvents();
+      
+      // Refresh icons using Lucide
+      lucide.createIcons();
+    }
+
+    // Bind action buttons within the job card
+    function bindCardActionEvents() {
+      // Favorite Buttons Click Action
+      document.querySelectorAll(".favorite-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const jobId = parseInt(btn.getAttribute("data-id"));
+          const job = mockJobsData.find(j => j.id === jobId);
+          if (job) {
+            job.favorited = !job.favorited;
+            btn.classList.toggle("active");
+            if (job.favorited) {
+              showToast(`เพิ่ม "${job.title}" ลงในรายการโปรดแล้ว`, "success");
+            } else {
+              showToast(`นำออกจากรายการโปรดแล้ว`, "info");
+            }
+            // Update state in active array
+            const activeJob = currentJobs.find(j => j.id === jobId);
+            if (activeJob) activeJob.favorited = job.favorited;
+            
+            // Re-render icons since DOM content changed
+            lucide.createIcons();
+          }
+        });
+      });
+
+      // "เปิดรับ" Buttons Click Action
+      document.querySelectorAll(".job-status-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const jobId = parseInt(btn.getAttribute("data-id"));
+          const job = mockJobsData.find(j => j.id === jobId);
+          if (job && job.status === "open") {
+            // Apply for job
+            showToast(`สมัครงาน "${job.title}" สำเร็จ! ส่งข้อมูลไปยังผู้จ้างแล้ว`);
+          }
+        });
+      });
+    }
+
+    // Modal Control Functions
+    function openModal(jobId) {
+      const job = mockJobsData.find(j => j.id === jobId);
+      if (!job) return;
+      
+      selectedJob = job;
+      
+      // Populate Modal Content
+      modalTitle.textContent = job.title;
+      modalSalary.textContent = `${job.salary} บาท/ชม.`;
+      modalLocation.textContent = job.location;
+      modalDistance.textContent = formatDistance(job.distance);
+      modalDate.textContent = formatThaiDate(job.date);
+      modalDescription.textContent = job.description;
+      
+      // Map category tag text
+      let categoryText = "งานทั่วไป";
+      if (job.type === "cafe-restaurant") categoryText = "ร้านกาแฟ / อาหาร";
+      else if (job.type === "delivery") categoryText = "ส่งอาหาร / ส่งของ";
+      else if (job.type === "tutor") categoryText = "ติวเตอร์ / สอนพิเศษ";
+      else if (job.type === "admin-academic") categoryText = "งานเอกสาร / ช่วยวิจัย";
+      modalTag.textContent = categoryText;
+
+      // Set Banner Image with gradient overlay for text readability
+      modalBanner.style.backgroundImage = `linear-gradient(to top, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.5), transparent), url('${job.imagePath}')`;
+      modalBanner.style.backgroundSize = 'cover';
+      modalBanner.style.backgroundPosition = 'center';
+
+      // Qualifications list
+      modalQualifications.innerHTML = "";
+      if (job.qualifications && job.qualifications.length > 0) {
+        job.qualifications.forEach(q => {
+          const li = document.createElement("li");
+          li.textContent = q;
+          modalQualifications.appendChild(li);
+        });
+      } else {
+        modalQualifications.innerHTML = "<li>ไม่มีการระบุเงื่อนไขพิเศษ</li>";
+      }
+
+      // Configure Action Button
+      if (job.status === "open") {
+        modalBtnAction.textContent = "สมัครรับงานนี้";
+        modalBtnAction.className = "modal-btn modal-btn-primary";
+        modalBtnAction.disabled = false;
+      } else {
+        modalBtnAction.textContent = "ปิดรับสมัครชั่วคราว";
+        modalBtnAction.className = "modal-btn modal-btn-disabled";
+        modalBtnAction.disabled = true;
+      }
+
+      // Open overlay
+      modalOverlay.classList.add("active");
+      modalOverlay.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove("active");
+      modalOverlay.setAttribute("aria-hidden", "true");
+      selectedJob = null;
+    }
+
+    // Core Filtering and Sorting Engine
+    function filterAndSortJobs() {
+      const searchQuery = searchInput.value.trim().toLowerCase();
+      const jobCategory = filterType.value;
+      const minSalary = parseInt(salarySlider.value);
+      const maxDistance = parseInt(distanceSlider.value);
+      const isShowOpen = statusOpen.checked;
+      const isShowClosed = statusClosed.checked;
+      const sortBy = sortSelect.value;
+
+      currentJobs = mockJobsData.filter((job) => {
+        // 1. Search Query Match (Title or Location)
+        const matchSearch = job.title.toLowerCase().includes(searchQuery) || 
+                            job.location.toLowerCase().includes(searchQuery);
+        
+        // 2. Job Type Match
+        const matchCategory = jobCategory === "all" || job.type === jobCategory;
+        
+        // 3. Salary Range Match
+        const matchSalary = job.salary >= minSalary;
+        
+        // 4. Distance Match
+        const matchDistance = job.distance <= maxDistance;
+        
+        // 5. Status Match
+        let matchStatus = false;
+        if (isShowOpen && job.status === "open") matchStatus = true;
+        if (isShowClosed && job.status === "closed") matchStatus = true;
+
+        return matchSearch && matchCategory && matchSalary && matchDistance && matchStatus;
+      });
+
+      // Sorting
+      if (sortBy === "latest") {
+        currentJobs.sort((a, b) => new Date(b.date) - new Date(a.date));
+      } else if (sortBy === "salary-desc") {
+        currentJobs.sort((a, b) => b.salary - a.salary);
+      } else if (sortBy === "salary-asc") {
+        currentJobs.sort((a, b) => a.salary - b.salary);
+      } else if (sortBy === "distance-asc") {
+        currentJobs.sort((a, b) => a.distance - b.distance);
+      }
+
+      renderJobs();
+    }
+
+    // Reset Filters to default
+    function resetFilters() {
+      searchInput.value = "";
+      filterType.value = "all";
+      
+      salarySlider.value = 0;
+      salaryVal.textContent = "เริ่มต้น 0 บาท/ชม.";
+      
+      distanceSelect.value = "all";
+      distanceSlider.value = 5000;
+      
+      statusOpen.checked = true;
+      statusClosed.checked = true;
+      sortSelect.value = "latest";
+      
+      filterAndSortJobs();
+      showToast("ล้างการกรองข้อมูลแล้ว", "info");
+    }
+
+    // Event Listeners Binding
+    
+    // Live search
+    searchInput.addEventListener("input", filterAndSortJobs);
+    
+    // Sort change
+    sortSelect.addEventListener("change", filterAndSortJobs);
+    
+    // Category dropdown change
+    filterType.addEventListener("change", filterAndSortJobs);
+
+    // Salary slider input
+    salarySlider.addEventListener("input", (e) => {
+      const val = e.target.value;
+      if (parseInt(val) === 0) {
+        salaryVal.textContent = "เริ่มต้น 0 บาท/ชม.";
+      } else if (parseInt(val) >= 200) {
+        salaryVal.textContent = `เริ่มต้น 200+ บาท/ชม.`;
+      } else {
+        salaryVal.textContent = `เริ่มต้น ${val} บาท/ชม.`;
+      }
+      filterAndSortJobs();
+    });
+
+    // Distance Select dropdown updates slider & filters
+    distanceSelect.addEventListener("change", (e) => {
+      const val = e.target.value;
+      if (val === "all") {
+        distanceSlider.value = 5000;
+      } else {
+        distanceSlider.value = parseInt(val);
+      }
+      filterAndSortJobs();
+    });
+
+    // Distance Slider input updates dropdown & filters
+    distanceSlider.addEventListener("input", (e) => {
+      const val = parseInt(e.target.value);
+      
+      // Update dropdown matching value
+      if (val >= 5000) {
+        distanceSelect.value = "all";
+      } else if (val <= 500) {
+        distanceSelect.value = "500";
+      } else if (val <= 1000) {
+        distanceSelect.value = "1000";
+      } else if (val <= 2000) {
+        distanceSelect.value = "2000";
+      } else {
+        distanceSelect.value = "5000";
+      }
+      
+      filterAndSortJobs();
+    });
+
+    // Status Checkboxes
+    statusOpen.addEventListener("change", filterAndSortJobs);
+    statusClosed.addEventListener("change", filterAndSortJobs);
+
+    // Reset Button
+    resetFiltersBtn.addEventListener("click", resetFilters);
+
+    // Modal Control Events
+    modalCloseBtn.addEventListener("click", closeModal);
+    modalBtnCancel.addEventListener("click", closeModal);
+    
+    modalOverlay.addEventListener("click", (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+
+    // Modal Apply Button Click
+    modalBtnAction.addEventListener("click", () => {
+  if (selectedJob && selectedJob.status === "open") {
+    alert("✅ สมัครงานสำเร็จ\n\nระบบจะส่งข้อมูลการสมัครไปยังผู้ประกาศ\n(ต้นแบบการทำงาน)");
+    closeModal();
+  }
+});
+
+// เมื่อกดปุ่มค้นหา
+    document.getElementById("search-btn").addEventListener("click", () => {
+      alert("🔍 กำลังค้นหางาน...\n\n(ต้นแบบการทำงาน)");
+    });
+
+    // Back Button Alert
+    document.getElementById("back-btn").addEventListener("click", () => {
+      alert("ระบบย้อนกลับยังไม่ได้เชื่อมโยง (เดโมเวอร์ชัน)");
+    });
+
+    // Keyboard controls for modal accessibility (Close on Escape key)
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modalOverlay.classList.contains("active")) {
+        closeModal();
+      }
+    });
+
+    // Initial Load execution
+    document.addEventListener("DOMContentLoaded", () => {
+      // First sort and render
+      filterAndSortJobs();
+    });
+  </script>
+</body>
+</html>
