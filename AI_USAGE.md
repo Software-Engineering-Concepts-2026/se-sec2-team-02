@@ -13,6 +13,10 @@
 * **AI-Generated Portion (~35%):** โครงสร้าง Layout HTML พื้นฐาน, ตัวอย่าง CSS Flexbox/Grid, โครงร่าง Mermaid Syntax และ Template เอกสาร ADR
 * **Human Written/Modified Portion (~65%):** ออกแบบ UI/UX ทั้งหมดเอง, กำหนดเนื้อหางานและบริบท ม.พะเยา, ปรับแต่ง Styling และเขียนระบบการทำงาน Interactive เอง
 
+
+
+
+
 ## AI Usage Disclosure - Combined Lab
 1. Tools Used
 AI Tool: ChatGPT / GitHub Copilot / Gemini
@@ -33,3 +37,18 @@ AI-Generated Portion (~35%): โครงสร้าง Layout HTML พื้�
 
 Human Written/Modified Portion (~65%): ออกแบบ UI/UX ทั้งหมดเองตามภาพตัวอย่าง (หน้าพนักงานร้านกาแฟ ม.พะเยา 45 บาท/ชม.), กำหนดเนื้อหางานและบริบท ม.พะเยา, ปรับแต่ง Styling และเขียนระบบ Interactive ด้วยตนเอง
 
+
+
+
+
+## AI Usage Disclosure - Combined Lab
+1. Tools Used
+AI Tool:  Antigravity CLI
+
+## 2. Prompts Used
+Prompt 1: ช่วยสร้าง Prototype หน้าสร้างประกาศงานใหม่ตามรูป mockup ในไฟล์ @components\images\wireflame_prototype.png โดยที่เขียนไฟล์ HTML ไว้ในไฟล์ @prototypes\sprint1\yanathon_prototype.html และเขียนไฟล์ CSS ไว้ในไฟล์ @prototypes\sprint1\yanathron_slyte.css
+
+## 3. Code Portion Generated & Human Modifications
+AI-Generated Portion (~80%): โครงสร้าง layout HTML ทั้งหมด และการ Interactive ทั้งหมด
+
+Human Written/Modified Portion (~20%): ออกแบบและปรับ UX/UI ปรับแต่ง style เช่น สี ตำแหน่ง และการ Responsive
