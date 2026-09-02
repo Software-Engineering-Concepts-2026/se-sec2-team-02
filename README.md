@@ -19,7 +19,7 @@ This section explains how to get a local copy of the project up and running for 
 - NodeJS
 - NextJs
 - Firebase
-- Typesript
+- TypeScript
 - VisualCode Studio
 - Antigravity CLI
 
