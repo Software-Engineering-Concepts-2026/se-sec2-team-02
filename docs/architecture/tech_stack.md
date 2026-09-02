@@ -2,8 +2,8 @@
 
 | Layer | Technology Choice | Rationale (Context-based) | Alternative Considered |
 | :--- | :--- | :--- | :--- |
-| **Frontend** | React (Vite) + Tailwind CSS | พัฒนา UI ไว โครงสร้าง Component นำกลับมาใช้ใหม่ได้ง่าย มี Ecosystem กว้างขวาง เหมาะกับเวลาพัฒนาที่จำกัด | Vue.js / Svelte (rejected: ทีมมีความคุ้นเคยกับ React มากกว่า) |
-| **Backend** | Node.js + Express.js | ทีมมีความคุ้นเคยสูง รองรับ I/O แบบ Asynchronous ได้ดี เหมาะกับระบบที่เน้น API CRUD สำหรับประกาศงาน | Python FastAPI (rejected: ไม่ต้องการเพิ่มความซับซ้อนในการจัดการ Runtime หลายตัว) |
-| **Database** | PostgreSQL | เป็น Relational Database ที่มี ACID Compliance สูง ปลอดภัยสำหรับข้อมูลผู้ใช้และการยื่นสมัครงาน | MongoDB (rejected: ข้อมูลมีความสัมพันธ์ชัดเจน เช่น User vs Job Posting) |
+| **Frontend** | React (Next.js) + TypeScript + Tailwind CSS | พัฒนา UI ไว โครงสร้าง Component นำกลับมาใช้ใหม่ได้ง่าย มี Type Safety และ Ecosystem กว้างขวาง เหมาะกับเวลาพัฒนาที่จำกัด | Vue.js / Svelte (rejected: ทีมมีความคุ้นเคยกับ React/TypeScript มากกว่า) |
+| **Backend / Services** | Node.js + TypeScript (Express / Next.js API Routes) | ใช้ภาษา TypeScript เดียวกันทั้งระบบ มี Type Safety สูง รองรับ Asynchronous I/O ได้ดี เหมาะกับ API ประกาศงานและ Stats Service | Python FastAPI / Flask (rejected: ไม่ต้องการเพิ่มความซับซ้อนในการจัดการหลายภาษาและหลาย Runtime ในทีม) |
+| **Database** | Firebase (Cloud Firestore) | เป็น NoSQL Cloud Database (BaaS) ที่พัฒนาได้รวดเร็ว รองรับการซิงก์ข้อมูลแบบ Real-time ซึ่งตอบโจทย์การอัปเดตสถานะประกาศงานทันที และลดภาระการดูแล Database Server สำหรับทีม | PostgreSQL / MongoDB (rejected: มีความซับซ้อนในการ Setup Database Server และจัดการ Schema มากกว่า ซึ่งไม่คล่องตัวกับระยะเวลาพัฒนาที่จำกัด) |
 | **Hosting & Infra** | Docker + Render / Railway | รองรับ Containerization ทำให้ Deploy บน Cloud ได้สะดวก มี Free Tier เหมาะกับการทดสอบและ Demo | AWS ECS / GCP (rejected: มีความซับซ้อนในการตั้งค่า Infrastructure มากเกินไป) |
-| **Authentication** | JWT (JSON Web Token) | เป็น Stateless Authentication ไม่ต้องเก็บ Session บน Server เหมาะสำหรับการขยายระบบในอนาคต | Session-based / OAuth2 (rejected: เพิ่ม Complexity และต้องใช้ Redis เก็บ Session) |
+| **Authentication** | Firebase Authentication | มีระบบจัดการ Session, ตรวจสอบสิทธิ์ผู้ใช้ (Email/Password & Google) แบบสำเร็จรูป และทำงานผสานกับ Firestore Security Rules ได้ทันที | Custom JWT / Session-based (rejected: ต้องเขียนระบบ Token Management, Refresh Token และจัดเก็บ Session แยกต่างหาก ซึ่งเพิ่มความซับซ้อนเกินความจำเป็น) |
