@@ -15,7 +15,7 @@
 |---|---|---|
 | Lab1 | 100 | ✅ Full |
 | Lab2 | 50 | ⚠️ Partial |
-| Lab3 | 100 | ✅ Full |
+| Lab3 | 50 | ⚠️ Partial | เคร่ง rubric — personas/nfr ไม่ครบตาม L3.1 (ขาด 5 elements / <5 measurable NFR) → Partial 1.75% |
 | Lab4 | 100 | ✅ Full |
 | Lab5 | 100 | ✅ Full |
 | Lab6 | 50 | ⚠️ Partial |
