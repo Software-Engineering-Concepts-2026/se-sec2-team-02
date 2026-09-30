@@ -109,3 +109,20 @@ Human Written/Modifications-ผู้พัฒนาได้ตรวจสอ�
   - สั่งการให้บันทึกสรุป 4 ประเด็นสำคัญลงใน Refactoring Journal
   - ตรวจสอบความสมส่วนของ UI บนหน้าจอจริง และเสนอการปรับขนาด Modal ให้พอดีกับสายตา
   - ตรวจสอบคุณภาพโค้ด ผลการทดสอบ Unit Test และความถูกต้องตามเกณฑ์การประเมิน
+
+---
+
+## AI Usage Disclosure - Lab 6: Dockerfile
+### 1. Tools Used
+* **AI Tool:** GitHub Copilot
+* **Human tools:** Docker CLI, Docker Hub/GHCR web interface, npm scripts
+
+### 2. Prompts Used
+* "ช่วยเพิ่ม multi-stage Dockerfile สำหรับ Next.js พร้อม runner ที่ไม่ใช้ root และอธิบายวิธี build/run"
+* "ช่วยเขียน README สำหรับ Lab 6 ที่เปรียบเทียบ Container กับ VM, ตรวจ image size, ทดสอบ endpoint ที่คืนค่า 2xx และอธิบายการ push image แบบ public"
+
+### 3. Code Portion Generated & Human Modifications
+* **AI-assisted portion (~60%):** โครงร่างคำสั่ง Docker, ตารางเปรียบเทียบ Container/VM, README และตัวอย่างคำสั่ง registry
+* **Human written/verified portion (~40%):** เลือกชื่อ image/tag `v0.1.0`, ตรวจโครงสร้าง multi-stage ของโปรเจกต์, กำหนด endpoint และตรวจผล build/test ก่อนส่ง PR
+
+AI ไม่ได้ใช้ credential ในการ login หรือ push image และค่าขนาด image ต้องบันทึกจากผล `docker image ls` ของ environment ที่ build จริง
