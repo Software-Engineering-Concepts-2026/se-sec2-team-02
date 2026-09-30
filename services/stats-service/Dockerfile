@@ -14,5 +14,7 @@ COPY package*.json ./
 RUN npm install --omit=dev
 COPY --from=builder /app/dist ./dist
 
+USER node
+
 EXPOSE 5000
 CMD ["node", "dist/index.js"]
