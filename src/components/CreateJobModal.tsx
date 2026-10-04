@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { X, Plus, Image as ImageIcon } from 'lucide-react';
 import { Job, JobCategory } from '@/types/job';
-import { CATEGORY_LABELS } from '@/constants/categories';
+import { CATEGORY_LABELS, COMPENSATION_UNIT_LIST } from '@/constants/categories';
 
 interface CreateJobModalProps {
   isOpen: boolean;
@@ -38,7 +38,7 @@ export default function CreateJobModal({
 
   const sampleImages = [
     { label: 'ร้านกาแฟ / บาริสต้า', path: '/images/coffee_barista.jpg' },
-    { label: 'ติวเตอร์ / วิชาการ', path: '/images/tutor_math.jpg' },
+    { label: 'ฟรีแลนซ์ / วิชาการ / กราฟิก', path: '/images/tutor_math.jpg' },
     { label: 'ไรเดอร์ / ส่งของ', path: '/images/delivery_rider.jpg' },
     { label: 'คีย์ข้อมูล / เอกสาร', path: '/images/data_entry.jpg' },
     { label: 'ร้านอาหาร / หมูกระทะ', path: '/images/hotpot_server.jpg' },
@@ -143,7 +143,7 @@ export default function CreateJobModal({
               >
                 <option value="part-time">พาร์ทไทม์</option>
                 <option value="full-time">ประจำ</option>
-                <option value="tutor">ติวเตอร์</option>
+                <option value="freelance">ฟรีแลนซ์</option>
                 <option value="errand">รับหิ้ว/รับส่ง</option>
                 <option value="other">ทั่วไป</option>
               </select>
@@ -172,10 +172,11 @@ export default function CreateJobModal({
                 onChange={(e) => setSalaryUnit(e.target.value as Job['salaryUnit'])}
                 className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
               >
-                <option value="ชั่วโมง">ต่อชั่วโมง</option>
-                <option value="วัน">ต่อวัน</option>
-                <option value="เดือน">ต่อเดือน</option>
-                <option value="งาน">ต่องาน/รอบ</option>
+                {COMPENSATION_UNIT_LIST.map((unit) => (
+                  <option key={unit.key} value={unit.key}>
+                    {unit.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>

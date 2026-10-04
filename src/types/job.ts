@@ -1,4 +1,4 @@
-export type JobCategory = 'all' | 'part-time' | 'full-time' | 'tutor' | 'errand' | 'other';
+export type JobCategory = 'all' | 'part-time' | 'full-time' | 'freelance' | 'errand' | 'other';
 
 export interface Job {
   id: string;
