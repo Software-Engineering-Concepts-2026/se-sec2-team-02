@@ -7,7 +7,7 @@ test('initialJobs has at least 5 job items', () => {
 });
 
 test('every job in initialJobs has required valid fields', () => {
-  const allowedCategories = ['all', 'part-time', 'full-time', 'tutor', 'errand', 'other'];
+  const allowedCategories = ['all', 'part-time', 'full-time', 'freelance', 'errand', 'other'];
   const allowedSalaryUnits = ['ชั่วโมง', 'วัน', 'เดือน', 'งาน'];
   const allowedStatuses = ['open', 'closed'];
 

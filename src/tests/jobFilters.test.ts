@@ -13,9 +13,9 @@ test('filterJobs filters by category correctly', () => {
   assert.ok(partTimeJobs.length > 0);
   assert.ok(partTimeJobs.every((job) => job.category === 'part-time'));
 
-  const tutorJobs = filterJobs(initialJobs, { category: 'tutor' });
-  assert.ok(tutorJobs.length > 0);
-  assert.ok(tutorJobs.every((job) => job.category === 'tutor'));
+  const freelanceJobs = filterJobs(initialJobs, { category: 'freelance' });
+  assert.ok(freelanceJobs.length > 0);
+  assert.ok(freelanceJobs.every((job) => job.category === 'freelance'));
 });
 
 test('filterJobs filters by query string across title, location, description, or employer', () => {

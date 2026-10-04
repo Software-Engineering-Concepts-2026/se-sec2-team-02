@@ -33,7 +33,7 @@ app.get('/api/stats', (_req: Request, res: Response) => {
       { category: 'cafe-restaurant', count: 2 },
       { category: 'general', count: 3 },
       { category: 'delivery', count: 1 },
-      { category: 'tutor', count: 1 },
+      { category: 'freelance', count: 1 },
       { category: 'admin-academic', count: 1 }
     ],
     popularLocations: [

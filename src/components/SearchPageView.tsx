@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, ArrowUpDown, Filter, RotateCcw, ArrowLeft } from 'lucide-react';
 import { Job, JobCategory } from '@/types/job';
+import { CATEGORY_LIST } from '@/constants/categories';
 import { filterJobs, sortJobs } from '@/utils/jobFilters';
 import JobCard from '@/components/JobCard';
 
@@ -140,13 +141,7 @@ export default function SearchPageView({
               ประเภทงาน
             </label>
             <div className="grid grid-cols-2 gap-2">
-              {[
-                { key: 'all', label: 'ทั้งหมด' },
-                { key: 'part-time', label: 'พาร์ทไทม์' },
-                { key: 'full-time', label: 'ประจำ' },
-                { key: 'tutor', label: 'ติวเตอร์' },
-                { key: 'errand', label: 'รับหิ้ว/รับส่ง' }
-              ].map((cat) => (
+              {CATEGORY_LIST.map((cat) => (
                 <button
                   key={cat.key}
                   onClick={() => setSelectedCategory(cat.key as JobCategory)}

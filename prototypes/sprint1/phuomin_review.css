@@ -1,0 +1,540 @@
+/* =========================
+   Reset
+========================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =========================
+   Body
+========================= */
+
+body {
+    min-height: 100vh;
+
+    background: #202020;
+
+    font-family:
+        "Noto Sans Thai",
+        "Tahoma",
+        Arial,
+        sans-serif;
+
+    color: #111;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* =========================
+   Main Page
+========================= */
+
+.page {
+    width: 610px;
+    min-height: 434px;
+
+    background: #fff;
+
+    padding: 18px 48px 21px;
+
+    position: relative;
+
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.03);
+}
+
+
+/* =========================
+   Header
+========================= */
+
+.header {
+    height: 37px;
+
+    border-bottom: 1px solid #777;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+
+/* Back */
+
+.back {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 13px;
+
+    color: #111;
+
+    cursor: pointer;
+}
+
+.back-arrow {
+    font-family: Arial, sans-serif;
+
+    font-size: 26px;
+
+    line-height: 14px;
+
+    font-weight: 300;
+}
+
+
+/* Logo */
+
+.logo {
+    text-align: right;
+
+    line-height: 1;
+}
+
+.logo-main {
+    font-family: Arial, sans-serif;
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+}
+
+.logo-sub {
+    font-size: 6px;
+
+    margin-top: 2px;
+
+    color: #222;
+}
+
+
+/* =========================
+   Title
+========================= */
+
+.title-row {
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+.title-row h1 {
+    font-family:
+        "Noto Serif Thai",
+        "Tahoma",
+        serif;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+
+/* Hamburger */
+
+.menu-button {
+    width: 23px;
+    height: 23px;
+
+    border: none;
+
+    background: transparent;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    gap: 4px;
+
+    cursor: pointer;
+}
+
+.menu-button span {
+    display: block;
+
+    width: 20px;
+    height: 2px;
+
+    background: #111;
+
+    border-radius: 1px;
+}
+
+
+/* =========================
+   Person Information
+========================= */
+
+.person-info {
+    display: flex;
+
+    align-items: center;
+
+    margin-top: 1px;
+
+    margin-left: 4px;
+}
+
+
+.profile-image {
+    width: 84px;
+    height: 84px;
+
+    border-radius: 50%;
+
+    background: #d9d9d9;
+
+    flex-shrink: 0;
+}
+
+
+.person-detail {
+    margin-left: 18px;
+
+    margin-top: 0;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+.person-name {
+    font-size: 13px;
+
+    margin-bottom: 2px;
+}
+
+
+.person-text {
+    color: #555;
+
+    font-size: 11px;
+}
+
+
+/* =========================
+   Rating
+========================= */
+
+.rating-section {
+    margin-top: 5px;
+}
+
+.rating-section label,
+.review-section label,
+.upload-section label {
+    display: block;
+
+    font-size: 13px;
+
+    margin-bottom: 4px;
+}
+
+
+.stars {
+    display: flex;
+
+    gap: 3px;
+
+    height: 22px;
+}
+
+
+.star {
+    width: 19px;
+    height: 21px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #d5d5d5;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 23px;
+
+    line-height: 18px;
+
+    padding: 0;
+
+    cursor: pointer;
+
+    transition: 0.15s ease;
+}
+
+
+.star:hover {
+    color: #999;
+
+    transform: scale(1.08);
+}
+
+
+.star.active {
+    color: #111;
+}
+
+
+/* =========================
+   Review
+========================= */
+
+.review-section {
+    margin-top: 4px;
+}
+
+
+.review-section textarea {
+    width: 100%;
+
+    height: 59px;
+
+    resize: none;
+
+    border: 1px solid #bdbdbd;
+
+    border-radius: 5px;
+
+    outline: none;
+
+    padding: 9px 10px;
+
+    font-family:
+        "Noto Sans Thai",
+        "Tahoma",
+        sans-serif;
+
+    font-size: 11px;
+
+    color: #222;
+
+    background: #fff;
+}
+
+
+.review-section textarea::placeholder {
+    color: #aaa;
+}
+
+
+.review-section textarea:focus {
+    border-color: #777;
+}
+
+
+/* =========================
+   Upload
+========================= */
+
+.upload-section {
+    margin-top: 6px;
+}
+
+
+.upload-row {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.upload-box {
+    width: 83px;
+    height: 70px;
+
+    border: 1px dashed #aaa;
+
+    border-radius: 5px;
+
+    background: #f0f0f0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.upload-box:hover {
+    background: #e8e8e8;
+
+    border-color: #777;
+}
+
+
+.upload-box input {
+    display: none;
+}
+
+
+.plus {
+    font-family: Arial, sans-serif;
+
+    font-size: 37px;
+
+    font-weight: 200;
+
+    color: #555;
+
+    line-height: 1;
+}
+
+
+/* Image Preview */
+
+#preview {
+    display: flex;
+
+    gap: 8px;
+}
+
+
+.preview-image {
+    width: 70px;
+    height: 70px;
+
+    object-fit: cover;
+
+    border-radius: 5px;
+
+    border: 1px solid #ccc;
+}
+
+
+/* =========================
+   Submit
+========================= */
+
+.submit-area {
+    position: absolute;
+
+    right: 48px;
+
+    bottom: 21px;
+}
+
+
+.submit-button {
+    width: 157px;
+    height: 33px;
+
+    border: none;
+
+    border-radius: 4px;
+
+    background: #000;
+
+    color: #fff;
+
+    font-family:
+        "Noto Sans Thai",
+        "Tahoma",
+        sans-serif;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.submit-button:hover {
+    background: #222;
+
+    transform: translateY(-1px);
+}
+
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 700px) {
+
+    body {
+        align-items: flex-start;
+
+        padding: 20px 10px;
+    }
+
+    .page {
+        width: 100%;
+
+        min-height: 434px;
+
+        padding-left: 28px;
+        padding-right: 28px;
+    }
+
+    .submit-area {
+        right: 28px;
+    }
+
+}
+
+
+@media (max-width: 450px) {
+
+    .page {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .title-row h1 {
+        font-size: 19px;
+    }
+
+    .profile-image {
+        width: 76px;
+        height: 76px;
+    }
+
+    .person-detail {
+        margin-left: 14px;
+    }
+
+    .submit-area {
+        position: static;
+
+        display: flex;
+
+        justify-content: flex-end;
+
+        margin-top: 20px;
+    }
+
+}
