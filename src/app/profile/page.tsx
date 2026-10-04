@@ -16,6 +16,7 @@ export default function ProfilePage() {
         <ProfileView
           onBackToHome={() => router.push('/')}
           onOpenCreateJob={() => router.push('/create')}
+          onOpenEditJob={(postId) => router.push(`/edit/${postId}`)}
         />
       </main>
 
