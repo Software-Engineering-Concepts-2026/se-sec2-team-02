@@ -1,0 +1,197 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 78px 24px 36px;
+  background: #fff;
+  color: #111;
+}
+
+.panel {
+  width: min(100%, 642px);
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  margin: 0 0 36px;
+  text-align: center;
+  font-size: 48px;
+  line-height: 1.15;
+  font-weight: 750;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 17px;
+  font-size: 20px;
+  line-height: 1.35;
+}
+
+.field input {
+  width: 100%;
+  height: 51px;
+  border: 1px solid #929292;
+  border-radius: 8px;
+  padding: 0 16px;
+  background: #fff;
+  color: #171717;
+  font: inherit;
+  font-size: 17px;
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.field input::placeholder {
+  color: #777;
+  opacity: 1;
+}
+
+.field input:focus {
+  border-color: #5b83a7;
+  box-shadow: 0 0 0 3px rgb(91 131 167 / 16%);
+}
+
+.forgotRow {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 4px 14px;
+}
+
+.textButton,
+.switchButton {
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.textButton {
+  color: #666;
+  font-size: 16px;
+}
+
+.textButton:hover,
+.switchButton:hover {
+  text-decoration: underline;
+}
+
+.primaryButton {
+  align-self: center;
+  width: 204px;
+  min-height: 42px;
+  margin-top: 1px;
+  border: 0;
+  border-radius: 8px;
+  background: #d9d9d9;
+  color: #111;
+  font: inherit;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.primaryButton:hover {
+  background: #c9c9c9;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 11px;
+  color: #686868;
+  font-size: 16px;
+}
+
+.divider > span:first-child,
+.divider > span:last-child {
+  height: 1px;
+  flex: 1;
+  background: #888;
+}
+
+.dividerText {
+  flex: none;
+}
+
+.googleButton {
+  align-self: center;
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 24px;
+  border: 1px solid #929292;
+  border-radius: 8px;
+  background: #fff;
+  color: #111;
+  font: inherit;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.googleButton:hover {
+  background: #f7f7f7;
+}
+
+.googleMark {
+  font-family: Arial, sans-serif;
+  font-size: 27px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.status {
+  min-height: 22px;
+  margin: 10px 0 0;
+  color: #765b35;
+  text-align: center;
+  font-size: 14px;
+}
+
+.switchPrompt {
+  margin: auto 0 0;
+  padding-top: 58px;
+  color: #666;
+  text-align: center;
+  font-size: 16px;
+}
+
+.switchButton {
+  color: #5b83a7;
+}
+
+@media (max-width: 600px) {
+  .page {
+    min-height: 100svh;
+    padding: 48px 22px 28px;
+  }
+
+  .brand {
+    margin-bottom: 30px;
+    font-size: 42px;
+  }
+
+  .field {
+    font-size: 18px;
+  }
+
+  .field input {
+    height: 50px;
+  }
+
+  .switchPrompt {
+    padding-top: 48px;
+  }
+}

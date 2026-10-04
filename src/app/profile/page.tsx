@@ -1,23 +1,16 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import ProfileView from '@/components/ProfileView';
 
 export default function ProfilePage() {
-  const router = useRouter();
-
   return (
     <div className="min-h-screen bg-zinc-100/60 flex flex-col font-sans text-zinc-900">
-      <Header currentView="profile" onBack={() => router.push('/')} />
+        <Header currentView="profile" />
 
       <main className="flex-1 pb-16">
-        <ProfileView
-          onBackToHome={() => router.push('/')}
-          onOpenCreateJob={() => router.push('/create')}
-          onOpenEditJob={(postId) => router.push(`/edit/${postId}`)}
-        />
+          <ProfileView />
       </main>
 
       {/* Footer */}

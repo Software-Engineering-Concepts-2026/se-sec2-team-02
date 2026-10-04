@@ -120,7 +120,7 @@ export default function SearchPageView({
       {/* 2-Column Layout: Sidebar Filters (Left) + Listings Grid (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Filter Sidebar (4 Cols on LG) */}
-        <aside className="lg:col-span-4 bg-white rounded-3xl border border-zinc-200 p-6 shadow-xs space-y-6 sticky top-24">
+        <aside className="lg:col-span-4 bg-white rounded-3xl border border-zinc-200 p-6 shadow-xs space-y-6 lg:sticky lg:top-24 lg:self-start">
           <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
             <div className="flex items-center gap-2 text-zinc-900 font-bold text-base">
               <Filter className="w-4 h-4 text-zinc-700" />

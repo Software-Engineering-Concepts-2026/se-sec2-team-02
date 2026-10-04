@@ -25,4 +25,5 @@ Thumbs.db
 *.DS_Store
 
 agy.md/
-Design/
+Design/tsconfig.tsbuildinfo 
+tsconfig.tsbuildinfo 
