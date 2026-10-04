@@ -66,3 +66,16 @@ User personas and key scenarios that drive our development are located in the `/
 
 - **[User Personas](./docs/requirements/personas/)**
 - **[Main User Scenario](./docs/requirements/main_scenario.md)**
+
+
+
+
+
+API Key (Firebase)
+
+NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyCaTckaBfuEb1PZTrOvLkqS_1Mlm1uhko0
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=job-wanted-up.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=job-wanted-up
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=job-wanted-up.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=172752336457
+NEXT_PUBLIC_FIREBASE_APP_ID=1:172752336457:web:a96d20f7a163b338427198
