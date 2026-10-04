@@ -126,3 +126,48 @@ Human Written/Modifications-ผู้พัฒนาได้ตรวจสอ�
 * **Human written/verified portion (~40%):** เลือกชื่อ image/tag `v0.1.0`, ตรวจโครงสร้าง multi-stage ของโปรเจกต์, กำหนด endpoint และตรวจผล build/test ก่อนส่ง PR
 
 AI ไม่ได้ใช้ credential ในการ login หรือ push image และค่าขนาด image ต้องบันทึกจากผล `docker image ls` ของ environment ที่ build จริง
+
+---
+
+## AI Usage Disclosure - Category & Compensation Constants Update
+### 1. Tools Used
+* **AI Tool:** Antigravity CLI (Gemini 3.8 Flash)
+
+### 2. Prompts Used
+* **Prompt 1:** "เอาเป็นว่าใช้วิธีที่ 1 แต่เปลี่ยนจาก ติวเตอร์ เป็น ฟรีแลนซ์"
+
+### 3. Code Portion Generated & Human Modifications
+* **AI-Generated Portion (~90%):**
+  - ปรับปรุง Type Definition ใน `src/types/job.ts` แทนที่ `tutor` ด้วย `freelance`
+  - อัปเดต Single Source of Truth ใน `src/constants/categories.ts` กำหนด `CATEGORY_LABELS`, `CATEGORY_LIST` และเพิ่ม `COMPENSATION_UNIT_LIST`
+  - ปรับปรุงคอมโพเนนต์ Dropdown ใน `CreateJobModal.tsx` และ `SearchPageView.tsx`
+  - ปรับปรุงชุดข้อมูลจำลอง `mockJobs.ts` และ Backend Microservice `services/stats-service/src/index.ts`
+  - อัปเดตและรันชุดทดสอบครอบคลุม 24 Test Cases ผ่าน 100%
+* **Human Written/Modified Portion (~10%):**
+  - ตัดสินใจเลือกสถาปัตยกรรมวิธีที่ 1 (Constants in Code)
+  - กำหนดความต้องการเปลี่ยนหมวดหมู่งานจาก "ติวเตอร์" เป็น "ฟรีแลนซ์"
+
+---
+
+## AI Usage Disclosure - Migration from Prototypes to Next.js App Router Multi-Page
+### 1. Tools Used
+* **AI Tool:** Antigravity CLI (Gemini 3.8 Flash)
+
+### 2. Prompts Used
+* **Prompt 1:** "ตอนนี้อยากออกจากการเป็น prototype ละ พร้อมสำหรับการลง code จริงละ ช่วยเอาโค้ดใน prototype มาอยู่ในโฟล์เดอร์ @src โดยที่แบ่งหน้าตามปกติ"
+
+### 3. Code Portion Generated & Human Modifications
+* **AI-Generated Portion (~95%):**
+  - ออกแบบและสร้าง `JobContext` (`src/context/JobContext.tsx`) และ `Providers` (`src/components/Providers.tsx`) เพื่อแชร์ State (งาน, รายการโปรด, ประวัติการสมัคร, การสร้างงานใหม่, Toast) ข้ามหน้าทั้งหมด
+  - ปรับปรุง Header (`src/components/Header.tsx`) ให้ใช้ Link และ Next.js App Router Navigation
+  - ย้ายและแบ่งหน้าระบบตามโฟลเดอร์ของ Next.js App Router:
+    - `/` (`src/app/page.tsx`): หน้าหลักรวมงานและหมวดหมู่ (อ้างอิง Prototype Takdanai)
+    - `/search` (`src/app/search/page.tsx`): หน้าระบบค้นหาและตัวกรองละเอียด (อ้างอิง Prototype Kamonchanok) รองรับ query strings (`?q=`, `?cat=`) พร้อม `<Suspense>`
+    - `/jobs/[id]` (`src/app/jobs/[id]/page.tsx`): หน้ารายละเอียดงานและฟอร์มสมัครงาน (อ้างอิง Prototype Phoomin) รองรับ dynamic route params
+    - `/create` (`src/app/create/page.tsx`): หน้าสร้างประกาศรับสมัครงานแบบ 2 คอลัมน์พร้อมปักหมุดจำลอง (อ้างอิง Prototype Yanathron)
+    - `/profile` (`src/app/profile/page.tsx`): หน้าโปรไฟล์นิสิตและ Portfolio ผลงาน 3 สถานะ
+  - ตรวจสอบและแก้ไข Build Type Errors และรันคำสั่ง `npm run build` และ `npm test` ผ่านสมบูรณ์ 100%
+* **Human Written/Modified Portion (~5%):**
+  - กำหนดข้อกำหนดการเปลี่ยนผ่านจาก Prototype สู่โครงสร้างโปรดักชันจริงภายใต้ `src/app`
+  - ทดสอบและตรวจสอบการทำงานในระบบ
+

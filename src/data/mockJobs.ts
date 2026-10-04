@@ -44,8 +44,8 @@ export const initialJobs: Job[] = [
   {
     id: 'job-02',
     title: 'ติวเตอร์สอนวิชาคณิตศาสตร์ ม.ปลาย',
-    category: 'tutor',
-    categoryLabel: 'ติวเตอร์',
+    category: 'freelance',
+    categoryLabel: 'ฟรีแลนซ์',
     salary: 150,
     salaryUnit: 'ชั่วโมง',
     location: 'โครงการกุลวงศ์ทาวน์ หน้า ม.พะเยา',
