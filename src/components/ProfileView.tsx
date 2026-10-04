@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   User,
   Star,
@@ -13,7 +13,10 @@ import {
   Phone,
   Mail,
   MessageCircle,
-  PlusCircle
+  PlusCircle,
+  Pencil,
+  Save,
+  X
 } from 'lucide-react';
 import {
   mockUserProfile,
@@ -25,11 +28,13 @@ import {
 interface ProfileViewProps {
   onBackToHome: () => void;
   onOpenCreateJob: () => void;
+  onOpenEditJob: (postId: string) => void;
 }
 
 export default function ProfileView({
   onBackToHome,
-  onOpenCreateJob
+  onOpenCreateJob,
+  onOpenEditJob
 }: ProfileViewProps) {
   // Tab state for the 3 works sections:
   // 1 = โพสต์ที่เราเป็นคนโพสต์เอง
@@ -38,15 +43,46 @@ export default function ProfileView({
   const [activeTab, setActiveTab] = useState<'my-posts' | 'completed' | 'ongoing'>('my-posts');
 
   // Profile data from centralized mock data source
-  const userProfile = mockUserProfile;
+  const [userProfile, setUserProfile] = useState(mockUserProfile);
+  const [draftProfile, setDraftProfile] = useState(mockUserProfile);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [myPosts, setMyPosts] = useState(initialMyPosts);
   const completedWorks = mockCompletedWorks;
   const ongoingJobs = mockOngoingJobs;
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      try {
+        const savedOverrides = JSON.parse(localStorage.getItem('profile-post-overrides') || '{}') as Record<string, typeof initialMyPosts[number]>;
+        setMyPosts((posts) => posts.map((post) => savedOverrides[post.id] || post));
+      } catch {
+        // Keep the mock posts when local storage is unavailable.
+      }
+    });
+
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const handleTogglePostStatus = (postId: string) => {
     setMyPosts((prev) =>
       prev.map((p) => (p.id === postId ? { ...p, status: p.status === 'open' ? 'closed' : 'open' } : p))
     );
+  };
+
+  const handleEditProfile = () => {
+    setDraftProfile(userProfile);
+    setIsEditingProfile(true);
+  };
+
+  const handleCancelEdit = () => {
+    setDraftProfile(userProfile);
+    setIsEditingProfile(false);
+  };
+
+  const handleSaveProfile = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setUserProfile(draftProfile);
+    setIsEditingProfile(false);
   };
 
   return (
@@ -61,6 +97,14 @@ export default function ProfileView({
           <span>กลับหน้าหลัก</span>
         </button>
 
+        <button
+          type="button"
+          onClick={handleEditProfile}
+          className="ml-auto inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-700 text-xs sm:text-sm font-semibold shadow-xs cursor-pointer transition-colors mr-2"
+        >
+          <Pencil className="w-4 h-4" />
+          <span>แก้ไขข้อมูล</span>
+        </button>
         <button
           onClick={onOpenCreateJob}
           className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-semibold shadow-xs cursor-pointer"
@@ -146,6 +190,76 @@ export default function ProfileView({
 
         {/* Quick Stats Grid */}
         <div className="mt-8 pt-6 border-t border-zinc-100 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+          {isEditingProfile && (
+            <form onSubmit={handleSaveProfile} className="col-span-2 sm:col-span-4 mb-3 text-left space-y-4">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-base font-bold text-zinc-900">แก้ไขข้อมูลส่วนตัว</h2>
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-500 hover:text-zinc-900 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                  ยกเลิก
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label className="text-xs font-semibold text-zinc-600">
+                  ชื่อ-นามสกุล
+                  <input
+                    value={draftProfile.name}
+                    onChange={(event) => setDraftProfile((profile) => ({ ...profile, name: event.target.value }))}
+                    className="mt-1.5 w-full rounded-xl border border-zinc-300 px-3 py-2.5 text-sm font-normal text-zinc-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </label>
+                <label className="text-xs font-semibold text-zinc-600">
+                  เบอร์โทรศัพท์
+                  <input
+                    value={draftProfile.phone}
+                    onChange={(event) => setDraftProfile((profile) => ({ ...profile, phone: event.target.value }))}
+                    className="mt-1.5 w-full rounded-xl border border-zinc-300 px-3 py-2.5 text-sm font-normal text-zinc-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </label>
+                <label className="text-xs font-semibold text-zinc-600">
+                  LINE ID
+                  <input
+                    value={draftProfile.lineId}
+                    onChange={(event) => setDraftProfile((profile) => ({ ...profile, lineId: event.target.value }))}
+                    className="mt-1.5 w-full rounded-xl border border-zinc-300 px-3 py-2.5 text-sm font-normal text-zinc-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </label>
+                <label className="text-xs font-semibold text-zinc-600">
+                  อีเมล
+                  <input
+                    type="email"
+                    value={draftProfile.email}
+                    onChange={(event) => setDraftProfile((profile) => ({ ...profile, email: event.target.value }))}
+                    className="mt-1.5 w-full rounded-xl border border-zinc-300 px-3 py-2.5 text-sm font-normal text-zinc-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </label>
+                <label className="text-xs font-semibold text-zinc-600 sm:col-span-2">
+                  แนะนำตัว
+                  <textarea
+                    rows={3}
+                    value={draftProfile.bio}
+                    onChange={(event) => setDraftProfile((profile) => ({ ...profile, bio: event.target.value }))}
+                    className="mt-1.5 w-full resize-y rounded-xl border border-zinc-300 px-3 py-2.5 text-sm font-normal text-zinc-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </label>
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white hover:bg-blue-700 cursor-pointer transition-colors"
+                >
+                  <Save className="w-4 h-4" />
+                  บันทึกข้อมูล
+                </button>
+              </div>
+            </form>
+          )}
           <div className="bg-zinc-50 p-3.5 rounded-2xl border border-zinc-100">
             <span className="text-xs text-zinc-500 block">งานที่ทำสำเร็จ</span>
             <span className="text-xl sm:text-2xl font-black text-zinc-900 mt-0.5 block">{completedWorks.length} งาน</span>
@@ -236,22 +350,25 @@ export default function ProfileView({
               {myPosts.map((post) => (
                 <div
                   key={post.id}
-                  className="bg-zinc-50 rounded-2xl border border-zinc-200/80 p-5 flex flex-col justify-between hover:shadow-xs transition-shadow"
+                  className="relative bg-zinc-50 rounded-2xl border border-zinc-200/80 p-5 flex flex-col justify-between hover:shadow-xs transition-shadow"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2">
                       <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-zinc-200/70 text-zinc-700">
                         {post.category}
                       </span>
-                      <span
-                        className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
                           post.status === 'open'
                             ? 'bg-emerald-100 text-emerald-800'
                             : 'bg-zinc-200 text-zinc-600'
-                        }`}
-                      >
+                          }`}
+                        >
                         {post.status === 'open' ? 'เปิดรับสมัคร' : 'ปิดรับสมัครแล้ว'}
-                      </span>
+                        </span>
+                        <span className="text-xs text-zinc-400">ประกาศของฉัน</span>
+                      </div>
                     </div>
 
                     <h3 className="text-base font-bold text-zinc-900 mt-2.5 leading-snug">
@@ -277,18 +394,29 @@ export default function ProfileView({
                     </div>
                   </div>
 
-                  <div className="mt-5 pt-3 border-t border-zinc-200/60 flex items-center justify-between gap-2">
+                  <div className="mt-5 pt-3 border-t border-zinc-200/60 flex flex-wrap items-center justify-between gap-2">
                     <span className="text-[11px] text-zinc-400">{post.date}</span>
-                    <button
-                      onClick={() => handleTogglePostStatus(post.id)}
-                      className={`text-xs px-3 py-1.5 rounded-xl font-semibold transition-colors cursor-pointer ${
-                        post.status === 'open'
-                          ? 'bg-zinc-200 hover:bg-zinc-300 text-zinc-700'
-                          : 'bg-zinc-900 hover:bg-zinc-800 text-white'
-                      }`}
-                    >
-                      {post.status === 'open' ? 'ปิดรับสมัคร' : 'เปิดรับอีกครั้ง'}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => onOpenEditJob(post.id)}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 cursor-pointer transition-colors"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                        แก้ไขประกาศ
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleTogglePostStatus(post.id)}
+                        className={`text-xs px-3 py-1.5 rounded-xl font-semibold transition-colors cursor-pointer ${
+                          post.status === 'open'
+                            ? 'bg-zinc-200 hover:bg-zinc-300 text-zinc-700'
+                            : 'bg-zinc-900 hover:bg-zinc-800 text-white'
+                        }`}
+                      >
+                        {post.status === 'open' ? 'ปิดรับสมัคร' : 'เปิดรับอีกครั้ง'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
