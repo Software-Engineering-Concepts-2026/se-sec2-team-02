@@ -76,11 +76,11 @@ export default function Header({
 
   return (
     <header className="w-full bg-white border-b border-zinc-200 sticky top-0 z-30 shadow-xs">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-18 flex items-center justify-between gap-3 sm:gap-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 min-h-18 py-3 sm:py-0 flex flex-wrap items-center justify-between gap-3 sm:gap-6">
         {/* Brand Logo */}
         <div
           onClick={onNavigateToHome}
-          className="flex flex-col cursor-pointer shrink-0 select-none group"
+          className="order-1 flex flex-col cursor-pointer shrink-0 select-none group sm:order-none"
         >
           <span className="text-2xl font-black tracking-tight text-zinc-900 group-hover:text-blue-600 transition-colors leading-none">
             JOB UP
@@ -91,7 +91,7 @@ export default function Header({
         </div>
 
         {/* Search Bar matching Homepage.png */}
-        <div className="flex-1 max-w-lg mx-1 sm:mx-2">
+        <div className="order-3 basis-full min-w-0 max-w-lg sm:order-none sm:flex-1 sm:basis-auto sm:mx-2">
           <div className="relative flex items-center w-full">
             <input
               type="text"
@@ -126,18 +126,19 @@ export default function Header({
         </div>
 
         {/* Navigation & Action Buttons */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="order-2 ml-auto flex items-center gap-2 sm:order-none sm:ml-0 sm:gap-3 shrink-0">
           {/* Dedicated Search Page Button */}
           <button
             onClick={onNavigateToSearch}
-            className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            aria-label="ค้นหางาน"
+            className={`w-10 h-10 shrink-0 flex items-center justify-center rounded-full text-xs sm:w-auto sm:h-auto sm:gap-1.5 sm:px-4 sm:py-2 sm:text-sm font-bold transition-all cursor-pointer ${
               currentView === 'search'
                 ? 'bg-zinc-900 text-white shadow-xs'
                 : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800'
             }`}
           >
             <Search className="w-4 h-4" />
-            <span>ค้นหางาน</span>
+            <span className="hidden sm:inline">ค้นหางาน</span>
           </button>
 
           {/* + เพิ่มงาน Button */}

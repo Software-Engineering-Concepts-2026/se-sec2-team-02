@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { onAuthStateChanged, signOut, updateProfile, User as FirebaseUser } from 'firebase/auth';
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 import {
   User,
   Star,
@@ -10,17 +13,39 @@ import {
   Briefcase,
   Layers,
   ArrowLeft,
+  LogOut,
+  Pencil,
   Phone,
   Mail,
   MessageCircle,
-  PlusCircle
+  PlusCircle,
+  Save,
+  X
 } from 'lucide-react';
-import {
-  mockUserProfile,
-  initialMyPosts,
-  mockCompletedWorks,
-  mockOngoingJobs
-} from '@/data/mockProfile';
+import type { CompletedWork, MyPostedJob, OngoingJob } from '@/data/mockProfile';
+import { getFirebaseAuth, getFirebaseFirestore } from '@/lib/firebase';
+
+interface ProfileDetails {
+  name: string;
+  studentId: string;
+  faculty: string;
+  major: string;
+  campus: string;
+  phone: string;
+  lineId: string;
+  bio: string;
+}
+
+const emptyProfile: ProfileDetails = {
+  name: '',
+  studentId: '',
+  faculty: '',
+  major: '',
+  campus: '',
+  phone: '',
+  lineId: '',
+  bio: ''
+};
 
 interface ProfileViewProps {
   onBackToHome: () => void;
@@ -31,23 +56,118 @@ export default function ProfileView({
   onBackToHome,
   onOpenCreateJob
 }: ProfileViewProps) {
+  const router = useRouter();
   // Tab state for the 3 works sections:
   // 1 = โพสต์ที่เราเป็นคนโพสต์เอง
   // 2 = ผลงานของงานที่เคยทำเสร็จไป
   // 3 = งานที่กำลังทำอยู่
   const [activeTab, setActiveTab] = useState<'my-posts' | 'completed' | 'ongoing'>('my-posts');
+  const [account, setAccount] = useState<FirebaseUser | null>(null);
+  const [profile, setProfile] = useState<ProfileDetails>(emptyProfile);
+  const [draftProfile, setDraftProfile] = useState<ProfileDetails>(emptyProfile);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [profileMessage, setProfileMessage] = useState('');
+  const [myPosts, setMyPosts] = useState<MyPostedJob[]>([]);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const [signOutError, setSignOutError] = useState('');
+  const completedWorks: CompletedWork[] = [];
+  const ongoingJobs: OngoingJob[] = [];
 
-  // Profile data from centralized mock data source
-  const userProfile = mockUserProfile;
-  const [myPosts, setMyPosts] = useState(initialMyPosts);
-  const completedWorks = mockCompletedWorks;
-  const ongoingJobs = mockOngoingJobs;
+  useEffect(() => {
+    let isMounted = true;
+    let unsubscribe = () => {};
+
+    try {
+      unsubscribe = onAuthStateChanged(getFirebaseAuth(), async (user) => {
+        if (!isMounted) return;
+        setAccount(user);
+
+        if (!user) {
+          setProfile(emptyProfile);
+          return;
+        }
+
+        try {
+          const snapshot = await getDoc(doc(getFirebaseFirestore(), 'users', user.uid));
+          if (!isMounted) return;
+          const data = snapshot.data();
+          setProfile({
+            name: typeof data?.name === 'string' ? data.name : user.displayName ?? '',
+            studentId: typeof data?.studentId === 'string' ? data.studentId : '',
+            faculty: typeof data?.faculty === 'string' ? data.faculty : '',
+            major: typeof data?.major === 'string' ? data.major : '',
+            campus: typeof data?.campus === 'string' ? data.campus : '',
+            phone: typeof data?.phone === 'string' ? data.phone : '',
+            lineId: typeof data?.lineId === 'string' ? data.lineId : '',
+            bio: typeof data?.bio === 'string' ? data.bio : ''
+          });
+        } catch {
+          if (isMounted) {
+            setProfile({ ...emptyProfile, name: user.displayName ?? '' });
+            setProfileMessage('โหลดข้อมูลโปรไฟล์ไม่ได้ กรุณาตรวจสอบการตั้งค่า Firestore');
+          }
+        }
+      });
+    } catch {
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
+  }, []);
 
   const handleTogglePostStatus = (postId: string) => {
     setMyPosts((prev) =>
       prev.map((p) => (p.id === postId ? { ...p, status: p.status === 'open' ? 'closed' : 'open' } : p))
     );
   };
+
+  async function handleSignOut() {
+    setIsSigningOut(true);
+    setSignOutError('');
+    try {
+      await signOut(getFirebaseAuth());
+      router.replace('/auth');
+    } catch {
+      setSignOutError('ออกจากระบบไม่สำเร็จ กรุณาลองอีกครั้ง');
+      setIsSigningOut(false);
+    }
+  }
+
+  async function handleSaveProfile(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!account) return;
+
+    const nextProfile = {
+      ...draftProfile,
+      name: draftProfile.name.trim()
+    };
+
+    setIsSavingProfile(true);
+    setProfileMessage('');
+    try {
+      await setDoc(
+        doc(getFirebaseFirestore(), 'users', account.uid),
+        { ...nextProfile, updatedAt: serverTimestamp() },
+        { merge: true }
+      );
+      if (account.displayName !== nextProfile.name) {
+        await updateProfile(account, { displayName: nextProfile.name });
+      }
+      setProfile(nextProfile);
+      setIsEditingProfile(false);
+      setProfileMessage('บันทึกข้อมูลโปรไฟล์แล้ว');
+    } catch {
+      setProfileMessage('บันทึกไม่ได้ กรุณาตรวจสอบว่าเปิด Firestore และตั้งค่า Security Rules แล้ว');
+    } finally {
+      setIsSavingProfile(false);
+    }
+  }
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 animate-in fade-in duration-300">
@@ -61,19 +181,48 @@ export default function ProfileView({
           <span>กลับหน้าหลัก</span>
         </button>
 
-        <button
-          onClick={onOpenCreateJob}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-semibold shadow-xs cursor-pointer"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>โพสต์งานใหม่</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSignOut}
+            disabled={isSigningOut}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-700 text-xs sm:text-sm font-semibold transition-colors disabled:opacity-60 cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>{isSigningOut ? 'กำลังออกจากระบบ...' : 'ออกจากระบบ / สลับบัญชี'}</span>
+          </button>
+          <button
+            onClick={onOpenCreateJob}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-semibold shadow-xs cursor-pointer"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>โพสต์งานใหม่</span>
+          </button>
+        </div>
       </div>
+
+      {signOutError && (
+        <p className="mb-4 text-right text-sm text-red-700" role="alert">{signOutError}</p>
+      )}
 
       {/* =========================================================================
           SECTION 1: ข้อมูลส่วนตัว (Personal Information Section)
       ========================================================================= */}
       <section className="bg-white rounded-3xl border border-zinc-200 p-6 sm:p-8 shadow-xs mb-8">
+        <div className="mb-5 flex justify-end">
+          <button
+            type="button"
+            disabled={!account || isEditingProfile}
+            onClick={() => {
+              setDraftProfile(profile);
+              setProfileMessage('');
+              setIsEditingProfile(true);
+            }}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-300 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
+          >
+            <Pencil className="h-4 w-4" />
+            <span>แก้ไขข้อมูล</span>
+          </button>
+        </div>
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6 sm:gap-8">
           {/* Avatar with Verified Badge */}
           <div className="relative shrink-0 mx-auto md:mx-0">
@@ -93,18 +242,17 @@ export default function ProfileView({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
-                  {userProfile.name}
+                  {profile.name || account?.displayName || 'สมาชิกใหม่'}
                 </h1>
                 <p className="text-xs sm:text-sm font-semibold text-blue-600 mt-0.5">
-                  รหัสนิสิต: {userProfile.studentId} • {userProfile.major}
+                  รหัสนิสิต: {profile.studentId || 'ยังไม่ได้ระบุ'} • {profile.major || 'ยังไม่ได้ระบุสาขา'}
                 </p>
               </div>
 
               {/* Rating Badge */}
               <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200/80 text-amber-700 text-xs font-bold self-center md:self-auto">
                 <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                <span>{userProfile.rating}</span>
-                <span className="text-zinc-400 font-normal">({userProfile.reviewCount} รีวิวการทำงาน)</span>
+                <span>ยังไม่มีรีวิว</span>
               </div>
             </div>
 
@@ -112,33 +260,33 @@ export default function ProfileView({
             <div className="mt-3 flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1.5 text-xs text-zinc-600">
               <span className="flex items-center gap-1">
                 <Briefcase className="w-3.5 h-3.5 text-zinc-400" />
-                {userProfile.faculty}
+                {profile.faculty || 'ยังไม่ได้ระบุคณะ'}
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
                 <MapPin className="w-3.5 h-3.5 text-zinc-400" />
-                {userProfile.campus}
+                {profile.campus || 'ยังไม่ได้ระบุวิทยาเขต'}
               </span>
             </div>
 
             {/* Bio */}
             <p className="mt-3 text-xs sm:text-sm text-zinc-600 leading-relaxed max-w-2xl">
-              {userProfile.bio}
+              {profile.bio || 'ยังไม่ได้เพิ่มข้อมูลแนะนำตัว'}
             </p>
 
             {/* Contact Chips */}
             <div className="mt-4 pt-4 border-t border-zinc-100 flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs">
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-50 rounded-xl border border-zinc-200 text-zinc-700">
                 <Phone className="w-3.5 h-3.5 text-zinc-500" />
-                <span>{userProfile.phone}</span>
+                <span>{profile.phone || 'ยังไม่ได้ระบุเบอร์โทร'}</span>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-50 rounded-xl border border-zinc-200 text-zinc-700">
                 <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                <span>LINE: {userProfile.lineId}</span>
+                <span>LINE: {profile.lineId || 'ยังไม่ได้ระบุ'}</span>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-50 rounded-xl border border-zinc-200 text-zinc-700">
                 <Mail className="w-3.5 h-3.5 text-zinc-500" />
-                <span>{userProfile.email}</span>
+                <span className="break-all">{account?.email || 'ยังไม่ได้ระบุอีเมล'}</span>
               </div>
             </div>
           </div>
@@ -160,9 +308,68 @@ export default function ProfileView({
           </div>
           <div className="bg-zinc-50 p-3.5 rounded-2xl border border-zinc-100">
             <span className="text-xs text-zinc-500 block">รายได้สะสมรวม</span>
-            <span className="text-xl sm:text-2xl font-black text-emerald-600 mt-0.5 block">7,800 บาท</span>
+            <span className="text-xl sm:text-2xl font-black text-emerald-600 mt-0.5 block">0 บาท</span>
           </div>
         </div>
+
+        {profileMessage && (
+          <p className="mt-4 text-sm text-zinc-600" aria-live="polite">{profileMessage}</p>
+        )}
+
+        {isEditingProfile && (
+          <form onSubmit={handleSaveProfile} className="mt-6 grid min-w-0 grid-cols-1 gap-4 border-t border-zinc-100 pt-6 sm:grid-cols-2">
+            {([
+              ['name', 'ชื่อ-นามสกุล'],
+              ['studentId', 'รหัสนิสิต'],
+              ['faculty', 'คณะ'],
+              ['major', 'สาขา / ชั้นปี'],
+              ['campus', 'วิทยาเขต / ที่พัก'],
+              ['phone', 'เบอร์โทรศัพท์'],
+              ['lineId', 'LINE ID']
+            ] as const).map(([field, label]) => (
+              <label key={field} className="block min-w-0 text-sm font-medium text-zinc-700">
+                <span>{label}</span>
+                <input
+                  value={draftProfile[field]}
+                  onChange={(event) => setDraftProfile((current) => ({ ...current, [field]: event.target.value }))}
+                  className="mt-1 w-full min-w-0 rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-700"
+                  maxLength={120}
+                  required={field === 'name'}
+                />
+              </label>
+            ))}
+            <label className="block min-w-0 text-sm font-medium text-zinc-700 sm:col-span-2">
+              <span>แนะนำตัว</span>
+              <textarea
+                value={draftProfile.bio}
+                onChange={(event) => setDraftProfile((current) => ({ ...current, bio: event.target.value }))}
+                className="mt-1 min-h-24 w-full min-w-0 resize-y rounded-xl border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-zinc-700"
+                maxLength={500}
+              />
+            </label>
+            <p className="text-xs text-zinc-500 sm:col-span-2">
+              อีเมลบัญชี: {account?.email || 'ไม่พบอีเมล'} (เปลี่ยนได้จากการตั้งค่าบัญชี Firebase เท่านั้น)
+            </p>
+            <div className="flex flex-wrap justify-end gap-2 sm:col-span-2">
+              <button
+                type="button"
+                onClick={() => setIsEditingProfile(false)}
+                disabled={isSavingProfile}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 disabled:opacity-50"
+              >
+                <X className="h-4 w-4" /> ยกเลิก
+              </button>
+              <button
+                type="submit"
+                disabled={isSavingProfile}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 disabled:opacity-50"
+              >
+                <Save className="h-4 w-4" />
+                {isSavingProfile ? 'กำลังบันทึก...' : 'บันทึกข้อมูล'}
+              </button>
+            </div>
+          </form>
+        )}
       </section>
 
       {/* =========================================================================
@@ -183,10 +390,10 @@ export default function ProfileView({
           </div>
 
           {/* 3 Navigation Tabs matching user's exact specification */}
-          <div className="flex items-center gap-1.5 p-1 bg-zinc-100 rounded-2xl self-start sm:self-auto overflow-x-auto">
+          <div className="flex w-full min-w-0 max-w-full items-center gap-1.5 overflow-x-auto rounded-2xl bg-zinc-100 p-1 self-stretch sm:w-auto sm:self-auto">
             <button
               onClick={() => setActiveTab('my-posts')}
-              className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition-all cursor-pointer sm:px-4 sm:text-sm ${
                 activeTab === 'my-posts'
                   ? 'bg-white text-zinc-900 shadow-xs'
                   : 'text-zinc-600 hover:text-zinc-900'
@@ -196,7 +403,7 @@ export default function ProfileView({
             </button>
             <button
               onClick={() => setActiveTab('completed')}
-              className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition-all cursor-pointer sm:px-4 sm:text-sm ${
                 activeTab === 'completed'
                   ? 'bg-white text-zinc-900 shadow-xs'
                   : 'text-zinc-600 hover:text-zinc-900'
@@ -206,7 +413,7 @@ export default function ProfileView({
             </button>
             <button
               onClick={() => setActiveTab('ongoing')}
-              className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition-all cursor-pointer sm:px-4 sm:text-sm ${
                 activeTab === 'ongoing'
                   ? 'bg-white text-zinc-900 shadow-xs'
                   : 'text-zinc-600 hover:text-zinc-900'
@@ -232,7 +439,18 @@ export default function ProfileView({
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {myPosts.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-zinc-300 px-5 py-10 text-center">
+                <p className="text-sm font-semibold text-zinc-700">ยังไม่มีประกาศงาน</p>
+                <button
+                  onClick={onOpenCreateJob}
+                  className="mt-3 text-sm font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
+                >
+                  สร้างประกาศแรก
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {myPosts.map((post) => (
                 <div
                   key={post.id}
@@ -292,7 +510,8 @@ export default function ProfileView({
                   </div>
                 </div>
               ))}
-            </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -303,7 +522,11 @@ export default function ProfileView({
               ประวัติผลงานที่นิสิตได้รับจ้างและปฏิบัติหน้าที่จนเสร็จสิ้นเรียบร้อยแล้ว ได้รับการยืนยันจากผู้ว่าจ้าง
             </p>
 
-            <div className="space-y-4">
+            {completedWorks.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-zinc-300 px-5 py-10 text-center text-sm text-zinc-500">
+                ยังไม่มีผลงานที่ทำสำเร็จ
+              </p>
+            ) : <div className="space-y-4">
               {completedWorks.map((work) => (
                 <div
                   key={work.id}
@@ -355,7 +578,7 @@ export default function ProfileView({
                   </div>
                 </div>
               ))}
-            </div>
+            </div>}
           </div>
         )}
 
@@ -366,7 +589,11 @@ export default function ProfileView({
               งานที่คุณได้รับการคัดเลือกและกำลังปฏิบัติหน้าที่อยู่ในช่วงนี้
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {ongoingJobs.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-zinc-300 px-5 py-10 text-center text-sm text-zinc-500">
+                ยังไม่มีงานที่กำลังดำเนินการ
+              </p>
+            ) : <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {ongoingJobs.map((job) => (
                 <div
                   key={job.id}
@@ -415,7 +642,7 @@ export default function ProfileView({
                   </div>
                 </div>
               ))}
-            </div>
+            </div>}
           </div>
         )}
       </section>

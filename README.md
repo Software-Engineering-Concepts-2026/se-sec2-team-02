@@ -30,16 +30,13 @@ This section explains how to get a local copy of the project up and running for 
 1.  ** Clone the repository: **
     git clone [your-repository-url]
 
-2.  ** .env  add**
-   เพิ่มไฟล์ใหม่ที่ @root folder แล้วตั้งชื่อไฟล์ว่า .env
-   และนำ code ข้างล่างนี้ไปว่างไว้ในไฟล์ .env
-   [API KEY for Firebase]
+2.  **Configure Firebase Authentication**
+   คัดลอก `.env.example` เป็น `.env.local` แล้วกรอก Web app config จาก Firebase Console ในตัวแปร `NEXT_PUBLIC_FIREBASE_*`
+   เปิดใช้งาน Email/Password และ Google ในเมนู Authentication > Sign-in method และเพิ่ม `localhost` ใน Authorized domains สำหรับการพัฒนา
+    เปิด Cloud Firestore และเผยแพร่กฎจากไฟล์ `firestore.rules` เพื่อให้บัญชีอ่านและแก้ไขได้เฉพาะเอกสารโปรไฟล์ของ UID ตัวเอง
 
-3.  ** install firebase framework **
-   ใช้คำสั่ง npm install firebase
-
-4.  ** install nodejs.module libary **
-   ใช้คำสั่ง npm install
+3.  **Install dependencies**
+   ใช้คำสั่ง `npm install`
     
 # Running the Application
 
