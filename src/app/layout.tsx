@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JOB UP - แพลตฟอร์มหางานนิสิต มหาวิทยาลัยพะเยา",
-  description: "ศูนย์กลางค้นหาและจับคู่งานพาร์ตไทม์ ฟรีแลนซ์ รับหิ้ว รอบ ม.พะเยา",
+  title: "JOB Phayao - แพลตฟอร์มหางานคน พะเยา",
+  description: "ศูนย์กลางค้นหาและจับคู่งานพาร์ตไทม์ ฟรีแลนซ์ รับหิ้ว รอบพะเยา",
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
       lang="th"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-100/60 font-sans text-zinc-900">
+      <body className="min-h-full flex flex-col bg-slate-50/50 font-sans text-zinc-900 selection:bg-blue-600 selection:text-white">
         <Providers>{children}</Providers>
       </body>
     </html>

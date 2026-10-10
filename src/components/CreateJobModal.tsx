@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Plus, Image as ImageIcon } from 'lucide-react';
-import { Job, JobCategory } from '@/types/job';
+import { X, Plus, Image as ImageIcon, MapPin } from 'lucide-react';
+import { Job, JobCategory, Coordinates } from '@/types/job';
 import { CATEGORY_LABELS, COMPENSATION_UNIT_LIST } from '@/constants/categories';
+import { getFirebaseAuth } from '@/lib/firebase';
+import MapPickerModal from '@/components/MapPickerModal';
 
 interface CreateJobModalProps {
   isOpen: boolean;
@@ -18,18 +20,19 @@ export default function CreateJobModal({
 }: CreateJobModalProps) {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<JobCategory>('part-time');
-  const [salary, setSalary] = useState(45);
+  const [salary, setSalary] = useState<number | ''>('');
   const [salaryUnit, setSalaryUnit] = useState<Job['salaryUnit']>('ชั่วโมง');
-  const [location, setLocation] = useState('หน้ามหาวิทยาลัยพะเยา');
-  const [distance, setDistance] = useState(500);
-  const [date, setDate] = useState('เริ่มงานได้ทันที');
-  const [time, setTime] = useState('17:00 น. - 21:00 น.');
+  const [location, setLocation] = useState('');
+  const [coordinates, setCoordinates] = useState<Coordinates>({ lat: 19.0284, lng: 99.8970 });
+  const [hasPinned, setHasPinned] = useState(false);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
   const [openings, setOpenings] = useState(1);
   const [gender, setGender] = useState('ไม่จำกัดเพศ');
   const [age, setAge] = useState('18 ปีขึ้นไป');
   const [description, setDescription] = useState('');
   const [employerName, setEmployerName] = useState('');
-  const [lineId, setLineId] = useState('');
   const [facebook, setFacebook] = useState('');
   const [phone, setPhone] = useState('');
   const [selectedImage, setSelectedImage] = useState('/images/coffee_barista.jpg');
@@ -46,19 +49,38 @@ export default function CreateJobModal({
     { label: 'สัตว์เลี้ยง / คลินิก', path: '/images/pet_care.jpg' }
   ];
 
+  const handleSaveCoordinates = (coords: Coordinates, locName: string) => {
+    setCoordinates(coords);
+    setHasPinned(true);
+    if (locName) {
+      setLocation(locName);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !description || !employerName || !phone) return;
 
+    let currentUserId = '';
+    try {
+      const auth = getFirebaseAuth();
+      if (auth.currentUser) {
+        currentUserId = auth.currentUser.uid;
+      }
+    } catch {
+      // offline or not logged in
+    }
+
     const newJob: Job = {
       id: `job-${Date.now()}`,
+      userId: currentUserId,
       title,
       category,
       categoryLabel: CATEGORY_LABELS[category] || 'พาร์ทไทม์',
       salary: Number(salary),
       salaryUnit,
       location,
-      distance: Number(distance),
+      coordinates,
       status: 'open',
       date,
       time,
@@ -73,12 +95,11 @@ export default function CreateJobModal({
       employer: {
         name: employerName,
         memberSince: '2569',
-        rating: 5.0,
-        reviewsCount: 1,
+        rating: 0,
+        reviewsCount: 0,
         verified: true
       },
       contact: {
-        lineId: lineId || '-',
         facebook: facebook || '-',
         phone
       },
@@ -90,15 +111,15 @@ export default function CreateJobModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
       {/* Modal Container: Max width XL, max height 90vh, flex column with scrollable body */}
-      <div className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-zinc-200 animate-in zoom-in-95 duration-200 overflow-hidden">
+      <div className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-zinc-200/80 animate-in zoom-in-95 duration-200 overflow-hidden">
         
         {/* Fixed Header */}
         <div className="px-6 py-4 border-b border-zinc-100 flex items-center justify-between shrink-0 bg-white">
           <div>
             <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
-              Job Wanted UP
+              JOB WANTED PHAYAO
             </span>
             <h2 className="text-lg sm:text-xl font-black text-zinc-900 leading-tight mt-0.5">
               สร้างประกาศรับสมัครงานใหม่
@@ -181,35 +202,44 @@ export default function CreateJobModal({
             </div>
           </div>
 
-          {/* Location & Distance */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
-                สถานที่ปฏิบัติงาน
-              </label>
-              <input
-                type="text"
-                required
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="เช่น คาเฟ่หน้า ม.พะเยา"
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
-              />
+          {/* Location */}
+          <div>
+            <label className="block text-xs font-bold text-zinc-700 mb-1">
+              สถานที่ปฏิบัติงาน <span className="text-rose-500">*</span>
+            </label>
+            <div className="flex gap-2">
+              <div className="relative flex-1 flex items-center">
+                <MapPin className="w-3.5 h-3.5 text-zinc-400 absolute left-3" />
+                <input
+                  type="text"
+                  required
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="เช่น คาเฟ่หน้า ม.พะเยา"
+                  className="w-full pl-8 pr-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMapModalOpen(true)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 ${
+                  hasPinned
+                    ? 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-bold'
+                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800'
+                }`}
+              >
+                <MapPin className={`w-3.5 h-3.5 ${hasPinned ? 'text-rose-600' : 'text-zinc-600'}`} />
+                <span>{hasPinned ? 'แก้ไขหมุด' : 'ปักหมุดแผนที่'}</span>
+              </button>
             </div>
-
-            <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
-                ระยะทางจาก ม.พะเยา (เมตร)
-              </label>
-              <input
-                type="number"
-                min={0}
-                step={50}
-                value={distance}
-                onChange={(e) => setDistance(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
-              />
-            </div>
+            {hasPinned && (
+              <p className="text-[11px] text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+                <span>✓ ปักหมุดพิกัดจริง:</span>
+                <span className="font-mono bg-emerald-50 px-1 py-0.5 rounded border border-emerald-100">
+                  {coordinates.lat.toFixed(4)}, {coordinates.lng.toFixed(4)}
+                </span>
+              </p>
+            )}
           </div>
 
           {/* Time & Date */}
@@ -353,32 +383,17 @@ export default function CreateJobModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
-                LINE ID
-              </label>
-              <input
-                type="text"
-                value={lineId}
-                onChange={(e) => setLineId(e.target.value)}
-                placeholder="เช่น @up_cafe"
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
-                Facebook
-              </label>
-              <input
-                type="text"
-                value={facebook}
-                onChange={(e) => setFacebook(e.target.value)}
-                placeholder="เช่น Facebook Page"
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-bold text-zinc-700 mb-1">
+              Facebook
+            </label>
+            <input
+              type="text"
+              value={facebook}
+              onChange={(e) => setFacebook(e.target.value)}
+              placeholder="เช่น Facebook Page"
+              className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
+            />
           </div>
         </form>
 
@@ -402,6 +417,15 @@ export default function CreateJobModal({
         </div>
 
       </div>
+
+      {/* Real Interactive Map Pinning Modal */}
+      <MapPickerModal
+        isOpen={isMapModalOpen}
+        initialCoordinates={coordinates}
+        initialLocationName={location}
+        onClose={() => setIsMapModalOpen(false)}
+        onSave={handleSaveCoordinates}
+      />
     </div>
   );
 }

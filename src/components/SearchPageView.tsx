@@ -9,8 +9,6 @@ import JobCard from '@/components/JobCard';
 
 interface SearchPageViewProps {
   jobs: Job[];
-  favorites: Set<string>;
-  onToggleFavorite: (jobId: string, e: React.MouseEvent) => void;
   onSelectJob: (job: Job) => void;
   onQuickApply: (job: Job, e: React.MouseEvent) => void;
   onBackToHome: () => void;
@@ -20,8 +18,6 @@ interface SearchPageViewProps {
 
 export default function SearchPageView({
   jobs,
-  favorites,
-  onToggleFavorite,
   onSelectJob,
   onQuickApply,
   onBackToHome,
@@ -31,9 +27,8 @@ export default function SearchPageView({
   // Search & Filter State
   const [query, setQuery] = useState(initialQuery);
   const [selectedCategory, setSelectedCategory] = useState<JobCategory>(initialCategory);
-  const [sortBy, setSortBy] = useState<'latest' | 'salary-desc' | 'salary-asc' | 'distance-asc'>('latest');
+  const [sortBy, setSortBy] = useState<'latest' | 'salary-desc' | 'salary-asc'>('latest');
   const [minSalary, setMinSalary] = useState<number>(0);
-  const [maxDistance, setMaxDistance] = useState<number>(5000);
   const [showOpenOnly, setShowOpenOnly] = useState<boolean>(false);
 
   // Filter and sort computation using shared utilities
@@ -42,19 +37,17 @@ export default function SearchPageView({
       query,
       category: selectedCategory,
       minSalary,
-      maxDistance,
       showOpenOnly
     });
 
     return sortJobs(filtered, sortBy);
-  }, [jobs, query, selectedCategory, minSalary, maxDistance, showOpenOnly, sortBy]);
+  }, [jobs, query, selectedCategory, minSalary, showOpenOnly, sortBy]);
 
   const handleResetFilters = () => {
     setQuery('');
     setSelectedCategory('all');
     setSortBy('latest');
     setMinSalary(0);
-    setMaxDistance(5000);
     setShowOpenOnly(false);
   };
 
@@ -74,19 +67,20 @@ export default function SearchPageView({
             ค้นหาและตัวกรองงานพาร์ตไทม์
           </h1>
           <p className="text-xs sm:text-sm text-zinc-500 mt-1">
-            ค้นหางานรอบ ม.พะเยา ตามอัตราค่าตอบแทน ประเภทงาน และระยะทางที่ต้องการ
+            ค้นหางานรอบพะเยา ตามอัตราค่าตอบแทน และประเภทงานที่ต้องการ
           </p>
         </div>
 
         {/* Total Results Count */}
-        <div className="inline-flex items-center gap-2 self-start sm:self-auto bg-white px-4 py-2 rounded-2xl border border-zinc-200 shadow-2xs">
-          <span className="text-xs text-zinc-500">ผลการค้นหา:</span>
-          <span className="text-sm font-bold text-zinc-900">{filteredAndSortedJobs.length} รายการ</span>
+        {/* Total Results Count */}
+        <div className="inline-flex items-center gap-2 self-start sm:self-auto bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-zinc-200/80 shadow-2xs">
+          <span className="text-xs text-zinc-500 font-medium">ผลการค้นหา:</span>
+          <span className="text-sm font-black text-zinc-900">{filteredAndSortedJobs.length} รายการ</span>
         </div>
       </div>
 
       {/* Search Header Bar */}
-      <div className="bg-white rounded-3xl border border-zinc-200 p-4 sm:p-5 shadow-xs mb-8">
+      <div className="bg-white/90 backdrop-blur-md rounded-3xl border border-zinc-200/80 p-4 sm:p-5 shadow-xs mb-8">
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Main Search Input */}
           <div className="relative flex-1">
@@ -96,7 +90,7 @@ export default function SearchPageView({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="ค้นหาชื่อตำแหน่งงาน, ร้านค้า, หน้ามอ, หรือตึกเรียน..."
-              className="w-full pl-12 pr-4 py-3 bg-zinc-50 hover:bg-zinc-100/70 focus:bg-white text-zinc-900 placeholder:text-zinc-400 rounded-2xl border border-zinc-200 focus:border-zinc-900 focus:outline-hidden text-sm transition-all"
+              className="w-full pl-12 pr-4 py-3 bg-zinc-50/80 hover:bg-zinc-100/70 focus:bg-white text-zinc-900 placeholder:text-zinc-400 rounded-2xl border border-zinc-200/80 focus:border-zinc-400 focus:ring-4 focus:ring-zinc-900/5 focus:outline-hidden text-sm transition-all"
             />
           </div>
 
@@ -105,13 +99,12 @@ export default function SearchPageView({
             <ArrowUpDown className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'latest' | 'salary-desc' | 'salary-asc' | 'distance-asc')}
-              className="w-full pl-10 pr-8 py-3 bg-zinc-50 hover:bg-zinc-100/70 focus:bg-white text-zinc-800 text-sm font-semibold rounded-2xl border border-zinc-200 focus:border-zinc-900 focus:outline-hidden transition-all appearance-none cursor-pointer"
+              onChange={(e) => setSortBy(e.target.value as 'latest' | 'salary-desc' | 'salary-asc')}
+              className="w-full pl-10 pr-8 py-3 bg-zinc-50/80 hover:bg-zinc-100/70 focus:bg-white text-zinc-800 text-sm font-semibold rounded-2xl border border-zinc-200/80 focus:border-zinc-400 focus:ring-4 focus:ring-zinc-900/5 focus:outline-hidden transition-all appearance-none cursor-pointer"
             >
               <option value="latest">เรียงลำดับ: ล่าสุด</option>
               <option value="salary-desc">ค่าตอบแทน: สูง &rarr; ต่ำ</option>
               <option value="salary-asc">ค่าตอบแทน: ต่ำ &rarr; สูง</option>
-              <option value="distance-asc">ระยะทาง: ใกล้ที่สุด</option>
             </select>
           </div>
         </div>
@@ -120,7 +113,7 @@ export default function SearchPageView({
       {/* 2-Column Layout: Sidebar Filters (Left) + Listings Grid (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Filter Sidebar (4 Cols on LG) */}
-        <aside className="lg:col-span-4 bg-white rounded-3xl border border-zinc-200 p-6 shadow-xs space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <aside className="lg:col-span-4 bg-white/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 p-6 shadow-xs space-y-6 lg:sticky lg:top-24 lg:self-start">
           <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
             <div className="flex items-center gap-2 text-zinc-900 font-bold text-base">
               <Filter className="w-4 h-4 text-zinc-700" />
@@ -147,8 +140,8 @@ export default function SearchPageView({
                   onClick={() => setSelectedCategory(cat.key as JobCategory)}
                   className={`py-2 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer text-center ${
                     selectedCategory === cat.key
-                      ? 'bg-zinc-900 text-white shadow-xs'
-                      : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
+                      ? 'bg-zinc-900 text-white shadow-xs ring-2 ring-zinc-900/10'
+                      : 'bg-zinc-100/80 hover:bg-zinc-200/70 text-zinc-700'
                   }`}
                 >
                   {cat.label}
@@ -183,32 +176,6 @@ export default function SearchPageView({
             </div>
           </div>
 
-          {/* Distance Filter Slider */}
-          <div className="pt-4 border-t border-zinc-100">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-bold text-zinc-700 uppercase tracking-wide">
-                ระยะทางสูงสุด
-              </label>
-              <span className="text-xs font-bold text-zinc-900 bg-zinc-100 px-2.5 py-1 rounded-lg">
-                {maxDistance >= 5000 ? 'ทุกระยะทาง' : `ไม่เกิน ${(maxDistance / 1000).toFixed(1)} กม.`}
-              </span>
-            </div>
-            <input
-              type="range"
-              min={500}
-              max={5000}
-              step={250}
-              value={maxDistance}
-              onChange={(e) => setMaxDistance(Number(e.target.value))}
-              className="w-full accent-zinc-900 cursor-pointer"
-            />
-            <div className="flex justify-between text-[11px] text-zinc-400 mt-1">
-              <span>500 ม.</span>
-              <span>2.5 กม.</span>
-              <span>5.0+ กม.</span>
-            </div>
-          </div>
-
           {/* Status Checkbox */}
           <div className="pt-4 border-t border-zinc-100">
             <label className="flex items-center gap-2 text-xs font-medium text-zinc-700 cursor-pointer">
@@ -231,15 +198,13 @@ export default function SearchPageView({
                 <JobCard
                   key={job.id}
                   job={job}
-                  isFavorite={favorites.has(job.id)}
-                  onToggleFavorite={onToggleFavorite}
                   onSelect={onSelectJob}
                   onQuickApply={onQuickApply}
                 />
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-3xl border border-zinc-200 p-12 text-center">
+            <div className="bg-white/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 p-12 text-center shadow-2xs">
               <div className="w-16 h-16 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 mx-auto mb-3">
                 <Search className="w-8 h-8" />
               </div>
@@ -249,7 +214,7 @@ export default function SearchPageView({
               </p>
               <button
                 onClick={handleResetFilters}
-                className="mt-5 px-6 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold transition-all cursor-pointer"
+                className="mt-5 px-6 py-2.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold transition-all cursor-pointer shadow-xs hover:shadow-sm"
               >
                 ล้างตัวกรองทั้งหมด
               </button>

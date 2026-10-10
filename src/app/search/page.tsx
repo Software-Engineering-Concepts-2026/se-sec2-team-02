@@ -8,13 +8,15 @@ import ApplyModal from '@/components/ApplyModal';
 import { useJobs } from '@/context/JobContext';
 import { Job, JobCategory } from '@/types/job';
 
+import Footer from '@/components/Footer';
+
 function SearchPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
   const initialCat = (searchParams.get('cat') as JobCategory) || 'all';
 
-  const { jobs, favorites, toggleFavorite, applyForJob } = useJobs();
+  const { jobs, applyForJob } = useJobs();
 
   const [jobToApply, setJobToApply] = useState<Job | null>(null);
 
@@ -32,14 +34,12 @@ function SearchPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-100/60 flex flex-col font-sans text-zinc-900">
+    <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-zinc-900">
       <Header currentView="search" />
 
       <main className="flex-1 pb-16">
         <SearchPageView
           jobs={jobs}
-          favorites={favorites}
-          onToggleFavorite={(id) => toggleFavorite(id)}
           onSelectJob={handleSelectJob}
           onQuickApply={handleQuickApply}
           onBackToHome={handleBackToHome}
@@ -48,17 +48,8 @@ function SearchPageContent() {
         />
       </main>
 
-      {/* Footer */}
-      <footer className="w-full bg-white border-t border-zinc-200 py-8 text-center text-xs text-zinc-500">
-        <div className="max-w-6xl mx-auto px-4">
-          <p className="font-semibold text-zinc-700">
-            JOB UP — แพลตฟอร์มศูนย์กลางจับคู่งานนิสิต มหาวิทยาลัยพะเยา
-          </p>
-          <p className="mt-1">
-            Software Engineering Concepts 2026 • Team 2 หาร (sec2-team-02)
-          </p>
-        </div>
-      </footer>
+      {/* Unified Footer */}
+      <Footer />
 
       {jobToApply && (
         <ApplyModal

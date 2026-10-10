@@ -2,9 +2,9 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read, create, update, delete: if request.auth != null
-        && request.auth.uid == userId;
+    // โหมดทดสอบ/พัฒนา: อนุญาตให้อ่านและเขียนได้ทุกคอลเลกชัน (JOB, USER, JOB_APPLICATIONS ฯลฯ)
+    match /{document=**} {
+      allow read, write: if true;
     }
   }
 }

@@ -18,8 +18,6 @@ export default function ApplyModal({
   onSubmitApplication
 }: ApplyModalProps) {
   const [applicantName, setApplicantName] = useState('');
-  const [studentId, setStudentId] = useState('');
-  const [faculty, setFaculty] = useState('คณะเทคโนโลยีสารสนเทศและการสื่อสาร (ICT)');
   const [phone, setPhone] = useState('');
   const [freeScheduleNote, setFreeScheduleNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,8 +33,6 @@ export default function ApplyModal({
       const application: JobApplication = {
         jobId: job.id,
         applicantName,
-        studentId,
-        faculty,
         phone,
         freeScheduleNote,
         appliedAt: new Date().toISOString()
@@ -48,9 +44,9 @@ export default function ApplyModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
       {/* Container: Sized appropriately with max height 90vh and clean header/body/footer */}
-      <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl border border-zinc-200 animate-in zoom-in-95 duration-200 overflow-hidden">
+      <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl border border-zinc-200/80 animate-in zoom-in-95 duration-200 overflow-hidden">
         
         {/* Fixed Header */}
         <div className="px-6 py-4 border-b border-zinc-100 flex items-center justify-between shrink-0 bg-white">
@@ -93,44 +89,16 @@ export default function ApplyModal({
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
-                รหัสนิสิต ม.พะเยา
-              </label>
-              <input
-                type="text"
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
-                placeholder="เช่น 67020870"
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs sm:text-sm text-zinc-900"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
-                เบอร์โทรศัพท์ติดต่อ <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="tel"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="เช่น 089-123-4567"
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs sm:text-sm text-zinc-900"
-              />
-            </div>
-          </div>
-
           <div>
             <label className="block text-xs font-bold text-zinc-700 mb-1">
-              คณะ / วิทยาลัย
+              เบอร์โทรศัพท์ติดต่อ <span className="text-rose-500">*</span>
             </label>
             <input
-              type="text"
-              value={faculty}
-              onChange={(e) => setFaculty(e.target.value)}
-              placeholder="เช่น คณะเทคโนโลยีสารสนเทศและการสื่อสาร"
+              type="tel"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="เช่น 089-123-4567"
               className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs sm:text-sm text-zinc-900"
             />
           </div>

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { initialJobs } from '@/data/mockJobs';
+import { sampleTestJobs } from './fixtures/sampleJobs';
 import {
   submitApplication,
   type ApplicationDetails,
@@ -39,7 +39,7 @@ const application: ApplicationDetails = {
 };
 
 test('submitApplication accepts an open job using a repository stub', () => {
-  const openJob = initialJobs.find((job) => job.status === 'open');
+  const openJob = sampleTestJobs.find((job) => job.status === 'open');
   assert.ok(openJob);
 
   const repositoryStub: JobRepository = {
@@ -65,7 +65,7 @@ test('submitApplication accepts an open job using a repository stub', () => {
 });
 
 test('submitApplication notifies the employer exactly once using a mock', () => {
-  const openJob = initialJobs.find((job) => job.status === 'open');
+  const openJob = sampleTestJobs.find((job) => job.status === 'open');
   assert.ok(openJob);
   const notifier = new NotificationMock();
 
@@ -84,7 +84,7 @@ test('submitApplication notifies the employer exactly once using a mock', () => 
 });
 
 test('submitApplication rejects a missing or closed job without side effects', () => {
-  const closedJob = initialJobs.find((job) => job.status === 'closed');
+  const closedJob = sampleTestJobs.find((job) => job.status === 'closed');
   assert.ok(closedJob);
   const store = new InMemoryApplicationStore();
   const notifier = new NotificationMock();

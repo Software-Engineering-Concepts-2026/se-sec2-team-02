@@ -1,82 +1,23 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
-import { initialMyPosts } from '@/data/mockProfile';
+import { useJobs } from '@/context/JobContext';
 import { CATEGORY_LABELS, CATEGORY_LIST, COMPENSATION_UNIT_LIST } from '@/constants/categories';
-import { Job, JobCategory } from '@/types/job';
+import { Job, JobCategory, Coordinates } from '@/types/job';
 import { Check, Clock, MapPin } from 'lucide-react';
-
-type SavedPostOverrides = Record<string, (typeof initialMyPosts)[number]>;
+import Footer from '@/components/Footer';
+import MapPickerModal from '@/components/MapPickerModal';
 
 export default function EditJobPage() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
-  const originalPost = useMemo(() => initialMyPosts.find((post) => post.id === id), [id]);
+  const { getJobById } = useJobs();
 
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState<JobCategory>('part-time');
-  const [salary, setSalary] = useState(45);
-  const [salaryUnit, setSalaryUnit] = useState<Job['salaryUnit']>(COMPENSATION_UNIT_LIST[0].key);
-  const [description, setDescription] = useState('');
-  const [workTime, setWorkTime] = useState('17:00 - 22:00 น.');
-  const [openings, setOpenings] = useState(2);
-  const [location, setLocation] = useState('หน้ามหาวิทยาลัยพะเยา');
-  const [distance, setDistance] = useState(800);
+  const originalJob = useMemo(() => getJobById(id), [getJobById, id]);
 
-  useEffect(() => {
-    if (!originalPost) return;
-
-    const timer = window.setTimeout(() => {
-      let savedPost = originalPost;
-      try {
-        const savedOverrides = JSON.parse(localStorage.getItem('profile-post-overrides') || '{}') as SavedPostOverrides;
-        savedPost = savedOverrides[id] || originalPost;
-      } catch {
-        savedPost = originalPost;
-      }
-
-      const categoryOption = CATEGORY_LIST.find((option) => savedPost.category.includes(option.label));
-      const salaryMatch = savedPost.wage.match(/\d+/);
-
-      setTitle(savedPost.title);
-      setCategory(categoryOption?.key || 'part-time');
-      setSalary(salaryMatch ? Number(salaryMatch[0]) : 45);
-      setDescription(savedPost.description);
-      setLocation(savedPost.location);
-    });
-
-    return () => window.clearTimeout(timer);
-  }, [id, originalPost]);
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!originalPost) return;
-
-    const updatedPost = {
-      ...originalPost,
-      title,
-      category: CATEGORY_LABELS[category],
-      wage: `${salary} ${COMPENSATION_UNIT_LIST.find((unit) => unit.key === salaryUnit)?.label || ''}`,
-      location,
-      description
-    };
-
-    try {
-      const savedOverrides = JSON.parse(localStorage.getItem('profile-post-overrides') || '{}') as SavedPostOverrides;
-      localStorage.setItem(
-        'profile-post-overrides',
-        JSON.stringify({ ...savedOverrides, [originalPost.id]: updatedPost })
-      );
-    } catch {
-      // Continue to the profile page even when local storage is unavailable.
-    }
-
-    router.push('/profile');
-  };
-
-  if (!originalPost) {
+  if (!originalJob) {
     return (
       <div className="min-h-screen bg-zinc-100/60 flex items-center justify-center p-6 text-center">
         <div>
@@ -93,9 +34,68 @@ export default function EditJobPage() {
     );
   }
 
+  return <EditJobForm key={originalJob.id} originalJob={originalJob} />;
+}
+
+function EditJobForm({ originalJob }: { originalJob: Job }) {
+  const router = useRouter();
+  const { updateJob } = useJobs();
+
+  const [title, setTitle] = useState(originalJob.title);
+  const [category, setCategory] = useState<JobCategory>(originalJob.category);
+  const [salary, setSalary] = useState<number>(originalJob.salary);
+  const [salaryUnit, setSalaryUnit] = useState<Job['salaryUnit']>(originalJob.salaryUnit);
+  const [description, setDescription] = useState(originalJob.description);
+  const [workTime, setWorkTime] = useState(originalJob.time || '');
+  const [openings, setOpenings] = useState<number>(originalJob.qualifications?.openings || 1);
+  const [location, setLocation] = useState(originalJob.location);
+
+  // Real Map Pinning State
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const [coordinates, setCoordinates] = useState<Coordinates>(
+    originalJob.coordinates && originalJob.coordinates.lat
+      ? originalJob.coordinates
+      : { lat: 19.0284, lng: 99.8970 }
+  );
+  const [hasPinned, setHasPinned] = useState(
+    Boolean(originalJob.coordinates && originalJob.coordinates.lat)
+  );
+
+  const handleSaveCoordinates = (coords: Coordinates, locName: string) => {
+    setCoordinates(coords);
+    setHasPinned(true);
+    if (locName) {
+      setLocation(locName);
+    }
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const updatedJob: Job = {
+      ...originalJob,
+      title,
+      category,
+      categoryLabel: CATEGORY_LABELS[category] || 'พาร์ทไทม์',
+      salary: Number(salary),
+      salaryUnit,
+      location,
+      coordinates,
+      time: workTime || 'ตามตกลง',
+      description,
+      qualifications: {
+        ...originalJob.qualifications,
+        openings: Number(openings) || 1,
+      },
+    };
+
+    updateJob(updatedJob);
+    router.push(`/jobs/${originalJob.id}`);
+  };
+
   return (
-    <div className="min-h-screen bg-zinc-100/60 flex flex-col font-sans text-zinc-900">
-      <Header currentView="create" onBack={() => router.push('/profile')} />
+    <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-zinc-900">
+      <Header currentView="create" onBack={() => router.back()} />
 
       <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 py-8">
         <div className="mb-5">
@@ -103,7 +103,7 @@ export default function EditJobPage() {
           <p className="mt-1 text-xs sm:text-sm text-zinc-500">แก้ไขรายละเอียดประกาศงานของคุณแล้วกดบันทึกการแก้ไข</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 shadow-xs">
+        <form onSubmit={handleSubmit} className="rounded-3xl border border-zinc-200/80 bg-white/95 backdrop-blur-md p-6 sm:p-8 shadow-xs">
           <h2 className="border-b border-zinc-100 pb-3 text-base font-bold">รายละเอียดงาน</h2>
 
           <div className="mt-4 space-y-4">
@@ -113,7 +113,7 @@ export default function EditJobPage() {
                 required
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
-                placeholder="เช่น พนักงานร้านกาแฟ (Barista), ติวเตอร์คณิตศาสตร์ ม.ปลาย"
+                placeholder="เช่น พนักงานร้านกาแฟ (Barista), ฟรีแลนซ์กราฟิก"
                 className="mt-1.5 w-full rounded-xl border border-zinc-300 px-3.5 py-3 text-sm font-normal text-zinc-900 outline-none focus:border-zinc-900"
               />
             </label>
@@ -176,6 +176,7 @@ export default function EditJobPage() {
                   <input
                     value={workTime}
                     onChange={(event) => setWorkTime(event.target.value)}
+                    placeholder="เช่น 17:00 - 22:00 น."
                     className="w-full rounded-xl border border-zinc-300 py-3 pl-9 pr-3 text-xs font-normal text-zinc-900 outline-none focus:border-zinc-900"
                   />
                 </span>
@@ -192,52 +193,50 @@ export default function EditJobPage() {
               </label>
             </div>
 
-            <label className="block text-xs font-bold text-zinc-700">
-              สถานที่ทำงาน <span className="text-rose-500">*</span>
-              <span className="mt-1.5 flex gap-2">
-                <span className="relative flex-1 flex items-center">
+            <div>
+              <label className="block text-xs font-bold text-zinc-700 mb-1">
+                สถานที่ทำงาน <span className="text-rose-500">*</span>
+              </label>
+              <div className="flex gap-2">
+                <div className="relative flex-1 flex items-center">
                   <MapPin className="absolute left-3 h-4 w-4 text-zinc-400" />
                   <input
                     required
                     value={location}
                     onChange={(event) => setLocation(event.target.value)}
-                    className="w-full rounded-xl border border-zinc-300 py-3 pl-9 pr-3 text-xs font-normal text-zinc-900 outline-none focus:border-zinc-900"
+                    placeholder="ระบุสถานที่ทำงานรอบพะเยา"
+                    className="w-full rounded-xl border border-zinc-300 py-3 pl-9 pr-3 text-xs font-normal text-zinc-900 outline-none focus:border-zinc-900 bg-white"
                   />
-                </span>
+                </div>
                 <button
                   type="button"
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-zinc-100 px-4 py-2.5 text-xs font-semibold text-zinc-800 hover:bg-zinc-200 cursor-pointer"
+                  onClick={() => setIsMapModalOpen(true)}
+                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-semibold cursor-pointer transition-all shadow-2xs active:scale-95 ${
+                    hasPinned
+                      ? 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-bold'
+                      : 'bg-zinc-100 text-zinc-800 hover:bg-zinc-200'
+                  }`}
                 >
-                  <MapPin className="h-3.5 w-3.5" />
-                  ปักหมุดแผนที่
+                  <MapPin className={`h-3.5 w-3.5 ${hasPinned ? 'text-rose-600' : 'text-zinc-600'}`} />
+                  <span>{hasPinned ? 'แก้ไขหมุดแผนที่' : 'ปักหมุดแผนที่'}</span>
                 </button>
-              </span>
-            </label>
+              </div>
+              {hasPinned && (
+                <p className="text-[11px] text-emerald-600 font-semibold mt-1.5 flex items-center gap-1">
+                  <span>✓ พิกัดจริงบนแผนที่:</span>
+                  <span className="font-mono bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
+                    {coordinates.lat.toFixed(4)}, {coordinates.lng.toFixed(4)}
+                  </span>
+                </p>
+              )}
+            </div>
 
-            <label className="block text-xs font-bold text-zinc-700">
-              ระยะทางโดยประมาณจากหน้า ม.พะเยา (เมตร)
-              <input
-                min={0}
-                step={50}
-                type="number"
-                value={distance}
-                onChange={(event) => setDistance(Number(event.target.value))}
-                className="mt-1.5 w-full rounded-xl border border-zinc-300 px-3 py-3 text-xs font-normal text-zinc-900 outline-none focus:border-zinc-900"
-              />
-            </label>
           </div>
 
-          <div className="mt-5 flex items-center justify-end gap-3 border-t border-zinc-100 pt-4">
-            <button
-              type="button"
-              onClick={() => router.push('/profile')}
-              className="rounded-xl border border-zinc-300 px-5 py-2.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 cursor-pointer"
-            >
-              ยกเลิก
-            </button>
+          <div className="mt-5 flex items-center justify-end border-t border-zinc-100 pt-4">
             <button
               type="submit"
-              className="inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-5 py-2.5 text-xs font-bold text-white hover:bg-zinc-800 cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-5 py-2.5 text-xs font-bold text-white hover:bg-zinc-800 cursor-pointer shadow-xs hover:shadow-sm transition-all"
             >
               <Check className="h-4 w-4" />
               บันทึกการแก้ไข
@@ -245,6 +244,17 @@ export default function EditJobPage() {
           </div>
         </form>
       </main>
+
+      {/* Real Interactive Map Pinning Modal */}
+      <MapPickerModal
+        isOpen={isMapModalOpen}
+        initialCoordinates={coordinates}
+        initialLocationName={location}
+        onClose={() => setIsMapModalOpen(false)}
+        onSave={handleSaveCoordinates}
+      />
+
+      <Footer />
     </div>
   );
 }

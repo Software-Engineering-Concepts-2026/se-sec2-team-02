@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { initialJobs } from '@/data/mockJobs';
+import { sampleTestJobs } from './fixtures/sampleJobs';
 import { submitApplication, type ApplicationStore, type NotificationService } from '@/services/jobApplication';
 import type { JobApplication } from '@/types/job';
 
 test('the application flow connects the job catalogue, store, and notification boundary', () => {
-  const job = initialJobs.find((candidate) => candidate.status === 'open');
+  const job = sampleTestJobs.find((candidate) => candidate.status === 'open');
   assert.ok(job);
 
   const savedApplications: JobApplication[] = [];
@@ -28,7 +28,7 @@ test('the application flow connects the job catalogue, store, and notification b
       appliedAt: '2026-09-09T00:00:00.000Z'
     },
     {
-      jobRepository: { findById: (jobId) => initialJobs.find((candidate) => candidate.id === jobId) },
+      jobRepository: { findById: (jobId) => sampleTestJobs.find((candidate) => candidate.id === jobId) },
       applicationStore,
       notificationService
     }
