@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import Image from 'next/image';
 import { Search, Plus, ArrowLeft, X, User, LogIn } from 'lucide-react';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { getFirebaseAuth } from '@/lib/firebase';
@@ -144,9 +145,12 @@ export default function Header({
                 className="w-9 h-9 rounded-full bg-zinc-100 hover:bg-zinc-200 border border-zinc-250 flex items-center justify-center text-zinc-700 transition-all cursor-pointer overflow-hidden shadow-2xs"
               >
                 {currentUser.photoURL ? (
-                  <img
+                  <Image
                     src={currentUser.photoURL}
                     alt={currentUser.displayName || 'Profile'}
+                    width={36}
+                    height={36}
+                    unoptimized
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -278,9 +282,12 @@ export default function Header({
                 }`}
               >
                 {currentUser.photoURL ? (
-                  <img
+                  <Image
                     src={currentUser.photoURL}
                     alt={currentUser.displayName || 'Profile'}
+                    width={36}
+                    height={36}
+                    unoptimized
                     className="w-full h-full object-cover"
                   />
                 ) : (

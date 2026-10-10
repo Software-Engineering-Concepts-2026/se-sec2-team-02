@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import Header from '@/components/Header';
 import { useJobs } from '@/context/JobContext';
 import { Job, JobCategory, Coordinates } from '@/types/job';
-import { CATEGORY_LABELS, CATEGORY_LIST, COMPENSATION_UNIT_LIST } from '@/constants/categories';
-import { Upload, MapPin, Phone, Globe, Clock, Calendar, Check, X } from 'lucide-react';
+import { CATEGORY_LABELS, COMPENSATION_UNIT_LIST } from '@/constants/categories';
+import { MapPin, Phone, Globe, Clock, Check } from 'lucide-react';
 import Footer from '@/components/Footer';
 import MapPickerModal from '@/components/MapPickerModal';
 import { getFirebaseAuth } from '@/lib/firebase';
@@ -23,8 +24,6 @@ export default function CreateJobPage() {
   const [description, setDescription] = useState('');
   const [workTime, setWorkTime] = useState('');
   const [location, setLocation] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [openings, setOpenings] = useState<number>(1);
 
   // Employer & Contacts
@@ -87,7 +86,7 @@ export default function CreateJobPage() {
       location,
       coordinates,
       status: 'open',
-      date: startDate ? `เริ่ม ${startDate}` : 'เริ่มงานได้ทันที',
+      date: 'เริ่มงานได้ทันที',
       time: workTime || 'ตามตกลง',
       mainImage: selectedImage,
       images: [selectedImage, '/images/hotpot_server.jpg', '/images/bookstore.jpg'],
@@ -153,9 +152,12 @@ export default function CreateJobPage() {
 
               {/* Main Preview Image */}
               <div className="relative w-full h-48 rounded-xl overflow-hidden border border-zinc-200 bg-zinc-100 mb-3">
-                <img
+                <Image
                   src={selectedImage}
                   alt="Selected Preview"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 400px"
+                  unoptimized
                   className="w-full h-full object-cover"
                 />
                 <span className="absolute bottom-2 left-2 bg-black/70 text-white text-[10px] font-semibold px-2 py-0.5 rounded-md backdrop-blur-xs">
@@ -176,9 +178,12 @@ export default function CreateJobPage() {
                         : 'border-zinc-200 hover:bg-zinc-50'
                     }`}
                   >
-                    <img
+                    <Image
                       src={img.path}
                       alt={img.label}
+                      width={32}
+                      height={32}
+                      unoptimized
                       className="w-8 h-8 rounded-md object-cover shrink-0"
                     />
                     <span className="text-[11px] font-medium text-zinc-800 line-clamp-1">

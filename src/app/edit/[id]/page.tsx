@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import { useJobs } from '@/context/JobContext';
@@ -13,74 +13,9 @@ import MapPickerModal from '@/components/MapPickerModal';
 export default function EditJobPage() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
-  const { getJobById, updateJob } = useJobs();
+  const { getJobById } = useJobs();
 
   const originalJob = useMemo(() => getJobById(id), [getJobById, id]);
-
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState<JobCategory>('part-time');
-  const [salary, setSalary] = useState<number>(45);
-  const [salaryUnit, setSalaryUnit] = useState<Job['salaryUnit']>(COMPENSATION_UNIT_LIST[0].key);
-  const [description, setDescription] = useState('');
-  const [workTime, setWorkTime] = useState('');
-  const [openings, setOpenings] = useState<number>(1);
-  const [location, setLocation] = useState('');
-
-  // Real Map Pinning State
-  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
-  const [coordinates, setCoordinates] = useState<Coordinates>({ lat: 19.0284, lng: 99.8970 });
-  const [hasPinned, setHasPinned] = useState(false);
-
-  useEffect(() => {
-    if (!originalJob) return;
-
-    setTitle(originalJob.title);
-    setCategory(originalJob.category);
-    setSalary(originalJob.salary);
-    setSalaryUnit(originalJob.salaryUnit);
-    setDescription(originalJob.description);
-    setWorkTime(originalJob.time || '');
-    setOpenings(originalJob.qualifications?.openings || 1);
-    setLocation(originalJob.location);
-
-    if (originalJob.coordinates && originalJob.coordinates.lat) {
-      setCoordinates(originalJob.coordinates);
-      setHasPinned(true);
-    }
-  }, [originalJob]);
-
-  const handleSaveCoordinates = (coords: Coordinates, locName: string) => {
-    setCoordinates(coords);
-    setHasPinned(true);
-    if (locName) {
-      setLocation(locName);
-    }
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!originalJob) return;
-
-    const updatedJob: Job = {
-      ...originalJob,
-      title,
-      category,
-      categoryLabel: CATEGORY_LABELS[category] || 'พาร์ทไทม์',
-      salary: Number(salary),
-      salaryUnit,
-      location,
-      coordinates,
-      time: workTime || 'ตามตกลง',
-      description,
-      qualifications: {
-        ...originalJob.qualifications,
-        openings: Number(openings) || 1
-      }
-    };
-
-    updateJob(updatedJob);
-    router.push(`/jobs/${originalJob.id}`);
-  };
 
   if (!originalJob) {
     return (
@@ -98,6 +33,65 @@ export default function EditJobPage() {
       </div>
     );
   }
+
+  return <EditJobForm key={originalJob.id} originalJob={originalJob} />;
+}
+
+function EditJobForm({ originalJob }: { originalJob: Job }) {
+  const router = useRouter();
+  const { updateJob } = useJobs();
+
+  const [title, setTitle] = useState(originalJob.title);
+  const [category, setCategory] = useState<JobCategory>(originalJob.category);
+  const [salary, setSalary] = useState<number>(originalJob.salary);
+  const [salaryUnit, setSalaryUnit] = useState<Job['salaryUnit']>(originalJob.salaryUnit);
+  const [description, setDescription] = useState(originalJob.description);
+  const [workTime, setWorkTime] = useState(originalJob.time || '');
+  const [openings, setOpenings] = useState<number>(originalJob.qualifications?.openings || 1);
+  const [location, setLocation] = useState(originalJob.location);
+
+  // Real Map Pinning State
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const [coordinates, setCoordinates] = useState<Coordinates>(
+    originalJob.coordinates && originalJob.coordinates.lat
+      ? originalJob.coordinates
+      : { lat: 19.0284, lng: 99.8970 }
+  );
+  const [hasPinned, setHasPinned] = useState(
+    Boolean(originalJob.coordinates && originalJob.coordinates.lat)
+  );
+
+  const handleSaveCoordinates = (coords: Coordinates, locName: string) => {
+    setCoordinates(coords);
+    setHasPinned(true);
+    if (locName) {
+      setLocation(locName);
+    }
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const updatedJob: Job = {
+      ...originalJob,
+      title,
+      category,
+      categoryLabel: CATEGORY_LABELS[category] || 'พาร์ทไทม์',
+      salary: Number(salary),
+      salaryUnit,
+      location,
+      coordinates,
+      time: workTime || 'ตามตกลง',
+      description,
+      qualifications: {
+        ...originalJob.qualifications,
+        openings: Number(openings) || 1,
+      },
+    };
+
+    updateJob(updatedJob);
+    router.push(`/jobs/${originalJob.id}`);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-zinc-900">

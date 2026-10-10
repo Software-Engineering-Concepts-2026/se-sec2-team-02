@@ -23,7 +23,6 @@ import {
   User,
   Mail,
   Phone,
-  MapPin,
   Edit3,
   Save,
   X,
@@ -37,8 +36,6 @@ import {
   Star,
   StarHalf,
   ShieldCheck,
-  MessageSquarePlus,
-  MessageSquare,
 } from 'lucide-react';
 
 import { getFirebaseAuth, getFirebaseFirestore, getFirebaseStorage } from '@/lib/firebase';
@@ -1283,7 +1280,7 @@ export default function ProfileView() {
                             <span className="font-semibold text-amber-900">ข้อมูลที่คุณกรอก: </span>
                             <span>{app.applicantName} (โทร {app.phone})</span>
                             {app.freeScheduleNote && (
-                              <span className="text-zinc-500 block sm:inline sm:ml-2">• เวลาที่สะดวก: "{app.freeScheduleNote}"</span>
+                              <span className="text-zinc-500 block sm:inline sm:ml-2">• เวลาที่สะดวก: &quot;{app.freeScheduleNote}&quot;</span>
                             )}
                           </div>
                           <span className="text-[11px] text-amber-700 font-medium shrink-0">
@@ -1522,7 +1519,7 @@ export default function ProfileView() {
                   </div>
 
                   <p className="mt-3 text-xs sm:text-sm text-zinc-700 leading-relaxed whitespace-pre-line pl-2.5 border-l-2 border-amber-300">
-                    "{r.comment}"
+                    &quot;{r.comment}&quot;
                   </p>
                 </div>
               ))}
@@ -1607,14 +1604,5 @@ function ContentCard({
         </div>
       )}
     </div>
-  );
-}
-
-// ไอคอน LINE แบบง่าย
-function MessageIcon() {
-  return (
-    <span className="flex h-[18px] w-[18px] items-center justify-center rounded-full border border-current text-[9px] font-bold">
-      L
-    </span>
   );
 }

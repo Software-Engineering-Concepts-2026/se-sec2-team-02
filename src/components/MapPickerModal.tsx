@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { MapPin, Navigation, Search, Check, X, Compass, Layers } from 'lucide-react';
+import { MapPin, Navigation, Check, X, Compass, Layers } from 'lucide-react';
+import type { Map as LeafletMap, Marker as LeafletMarker, LeafletMouseEvent } from 'leaflet';
 import { Coordinates } from '@/types/job';
 
 export interface MapPickerModalProps {
@@ -32,9 +33,28 @@ export default function MapPickerModal({
   onClose,
   onSave,
 }: MapPickerModalProps) {
+  if (!isOpen) return null;
+
+  return (
+    <MapPickerModalContent
+      key={`${initialCoordinates?.lat}_${initialCoordinates?.lng}_${initialLocationName}`}
+      initialCoordinates={initialCoordinates}
+      initialLocationName={initialLocationName}
+      onClose={onClose}
+      onSave={onSave}
+    />
+  );
+}
+
+function MapPickerModalContent({
+  initialCoordinates,
+  initialLocationName = '',
+  onClose,
+  onSave,
+}: Omit<MapPickerModalProps, 'isOpen'>) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markerInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
+  const markerInstanceRef = useRef<LeafletMarker | null>(null);
 
   const defaultCoords: Coordinates = initialCoordinates && initialCoordinates.lat && initialCoordinates.lng
     ? initialCoordinates
@@ -45,18 +65,9 @@ export default function MapPickerModal({
   const [isLocating, setIsLocating] = useState<boolean>(false);
   const [activeLandmark, setActiveLandmark] = useState<string>('');
 
-  useEffect(() => {
-    if (initialCoordinates && initialCoordinates.lat && initialCoordinates.lng) {
-      setCurrentCoords(initialCoordinates);
-    }
-    if (initialLocationName) {
-      setLocationName(initialLocationName);
-    }
-  }, [initialCoordinates, initialLocationName, isOpen]);
-
   // Initialize Leaflet Map safely in client side
   useEffect(() => {
-    if (!isOpen || !mapContainerRef.current) return;
+    if (!mapContainerRef.current) return;
 
     let isCancelled = false;
 
@@ -72,7 +83,7 @@ export default function MapPickerModal({
         }
 
         const map = L.map(mapContainerRef.current, {
-          center: [currentCoords.lat, currentCoords.lng],
+          center: [defaultCoords.lat, defaultCoords.lng],
           zoom: 15,
           zoomControl: true,
         });
@@ -99,7 +110,7 @@ export default function MapPickerModal({
           iconAnchor: [0, 0],
         });
 
-        const marker = L.marker([currentCoords.lat, currentCoords.lng], {
+        const marker = L.marker([defaultCoords.lat, defaultCoords.lng], {
           draggable: true,
           icon: pinIcon,
         }).addTo(map);
@@ -107,8 +118,8 @@ export default function MapPickerModal({
         markerInstanceRef.current = marker;
 
         // Marker Drag End event
-        marker.on('dragend', (event: any) => {
-          const pos = event.target.getLatLng();
+        marker.on('dragend', () => {
+          const pos = marker.getLatLng();
           const newCoords: Coordinates = {
             lat: Number(pos.lat.toFixed(6)),
             lng: Number(pos.lng.toFixed(6)),
@@ -118,7 +129,7 @@ export default function MapPickerModal({
         });
 
         // Map Click event: Move marker to click position
-        map.on('click', (event: any) => {
+        map.on('click', (event: LeafletMouseEvent) => {
           const { lat, lng } = event.latlng;
           const newCoords: Coordinates = {
             lat: Number(lat.toFixed(6)),
@@ -149,7 +160,7 @@ export default function MapPickerModal({
         mapInstanceRef.current = null;
       }
     };
-  }, [isOpen]);
+  }, [defaultCoords.lat, defaultCoords.lng]);
 
   // Handle clicking a popular landmark
   const handleSelectLandmark = (landmark: typeof PHAYAO_LANDMARKS[0]) => {
@@ -210,8 +221,6 @@ export default function MapPickerModal({
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-200">
       <div className="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-zinc-200 flex flex-col max-h-[92vh] overflow-hidden">
@@ -260,81 +269,84 @@ export default function MapPickerModal({
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-800 text-xs font-bold border border-zinc-200 transition-all cursor-pointer shadow-2xs active:scale-95 disabled:opacity-50"
             >
               <Navigation className={`w-3.5 h-3.5 text-blue-600 ${isLocating ? 'animate-spin' : ''}`} />
-              <span>{isLocating ? 'กำลังค้นหา...' : 'ใช้ตำแหน่ง GPS ของฉัน'}</span>
+              <span>{isLocating ? 'กำลังดึงพิกัด GPS...' : 'ใช้ตำแหน่งปัจจุบันของฉัน'}</span>
             </button>
           </div>
 
-          {/* Interactive Map Canvas */}
-          <div className="relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden border border-zinc-300 shadow-inner">
+          {/* Interactive Leaflet Map Container */}
+          <div className="relative w-full h-64 sm:h-72 rounded-2xl overflow-hidden border border-zinc-200 shadow-inner group">
             <div ref={mapContainerRef} className="w-full h-full z-10" />
 
-            {/* Instruction Floating Hint */}
-            <div className="absolute top-2.5 right-2.5 z-20 pointer-events-none bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-zinc-200 shadow-sm text-[11px] font-semibold text-zinc-700 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-              <span>คลิกบนแผนที่เพื่อย้ายหมุด</span>
-            </div>
-          </div>
-
-          {/* Popular Phayao Landmarks */}
-          <div>
-            <label className="block text-xs font-bold text-zinc-700 mb-1.5 flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-zinc-400" />
-              <span>เลือกจุดสำคัญยอดนิยมในพะเยา (คลิกเพื่อเลื่อนหมุดทันที):</span>
-            </label>
-            <div className="flex flex-wrap gap-1.5">
-              {PHAYAO_LANDMARKS.map((lm) => (
-                <button
-                  key={lm.name}
-                  type="button"
-                  onClick={() => handleSelectLandmark(lm)}
-                  className={`text-[11px] font-medium px-2.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                    activeLandmark === lm.name
-                      ? 'bg-rose-50 border-rose-300 text-rose-700 font-bold shadow-2xs ring-1 ring-rose-400/30'
-                      : 'bg-white hover:bg-zinc-50 border-zinc-200 text-zinc-700'
-                  }`}
-                  title={lm.desc}
-                >
-                  {lm.name}
-                </button>
-              ))}
+            {/* Instruction Overlay Pill */}
+            <div className="absolute bottom-2 left-2 right-2 z-20 pointer-events-none flex justify-center">
+              <div className="bg-black/75 backdrop-blur-md text-white text-[10px] sm:text-xs px-3 py-1 rounded-full shadow-lg border border-white/20 flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-amber-400" />
+                <span>แตะที่แผนที่เพื่อย้ายหมุด หรือกดค้างลากหมุดแดง</span>
+              </div>
             </div>
           </div>
 
           {/* Location Name Input */}
           <div>
             <label className="block text-xs font-bold text-zinc-700 mb-1">
-              ชื่อสถานที่ / รายละเอียดที่ตั้ง <span className="text-rose-500">*</span>
+              ชื่อสถานที่ หรือ คำอธิบายจุดนัดพบ <span className="text-rose-500">*</span>
             </label>
-            <div className="relative flex items-center">
-              <MapPin className="w-4 h-4 text-zinc-400 absolute left-3" />
+            <div className="relative">
+              <MapPin className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                required
                 value={locationName}
                 onChange={(e) => setLocationName(e.target.value)}
-                placeholder="เช่น Slow Life Cafe หน้า ม.พะเยา, หลังมอ, ตลาดธานินทร์..."
-                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
+                placeholder="เช่น ร้านคาเฟ่หลัง ม.พะเยา, หอพักศรีตรัง ประตูกลาง, ตลาดแม่กา"
+                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-zinc-300 text-xs text-zinc-900 focus:border-zinc-900 focus:outline-hidden"
               />
+            </div>
+          </div>
+
+          {/* Popular Phayao Landmarks */}
+          <div>
+            <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider block mb-1.5">
+              แลนด์มาร์กยอดนิยมรอบพะเยา (คลิกเพื่อเลื่อนหมุดทันที)
+            </span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+              {PHAYAO_LANDMARKS.map((lm) => {
+                const isSelected = activeLandmark === lm.name;
+                return (
+                  <button
+                    key={lm.name}
+                    type="button"
+                    onClick={() => handleSelectLandmark(lm)}
+                    className={`text-left p-2 rounded-xl border transition-all text-xs cursor-pointer ${
+                      isSelected
+                        ? 'border-rose-500 bg-rose-50/80 text-rose-900 font-bold shadow-2xs'
+                        : 'border-zinc-200 hover:border-zinc-300 bg-zinc-50/50 hover:bg-zinc-100/70 text-zinc-700'
+                    }`}
+                  >
+                    <p className="font-semibold truncate leading-tight text-[11px]">{lm.name}</p>
+                    <p className="text-[9px] text-zinc-400 truncate mt-0.5">{lm.desc}</p>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
 
-        {/* Footer Actions */}
-        <div className="pt-3 border-t border-zinc-100 flex items-center justify-end gap-2.5 shrink-0">
+        {/* Footer Buttons */}
+        <div className="pt-3 border-t border-zinc-100 flex items-center justify-end gap-2 shrink-0">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl border border-zinc-200 text-xs font-semibold text-zinc-600 hover:bg-zinc-50 transition-colors cursor-pointer"
+            className="px-4 py-2.5 rounded-xl border border-zinc-200 text-zinc-600 text-xs font-semibold hover:bg-zinc-50 cursor-pointer transition-colors"
           >
             ยกเลิก
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
+            className="px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-xs"
           >
             <Check className="w-4 h-4" />
-            <span>บันทึกตำแหน่งนี้</span>
+            <span>ยืนยันพิกัดนี้</span>
           </button>
         </div>
       </div>

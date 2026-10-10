@@ -2,7 +2,7 @@
 
 import React, { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import Image from 'next/image';
 import { Star, StarHalf, MessageSquare, User, ArrowLeft, CheckCircle2, ShieldCheck, Briefcase } from 'lucide-react';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -43,7 +43,7 @@ function ReviewForm() {
   const [targetUserAvatar, setTargetUserAvatar] = useState<string>('');
   const [selectedJobId, setSelectedJobId] = useState<string>(jobIdFromUrl);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [isLoadingTarget, setIsLoadingTarget] = useState<boolean>(false);
+  const [isLoadingTarget, setIsLoadingTarget] = useState<boolean>(() => Boolean(targetUserIdFromUrl));
 
   // Monitor Auth
   useEffect(() => {
@@ -63,7 +63,6 @@ function ReviewForm() {
     if (!targetUserId) return;
 
     let isMounted = true;
-    setIsLoadingTarget(true);
 
     async function fetchTargetUser() {
       try {
@@ -241,7 +240,7 @@ function ReviewForm() {
             <div className="bg-zinc-50/80 rounded-2xl p-4 border border-zinc-100 flex items-center gap-3.5">
               <div className="w-12 h-12 rounded-full bg-zinc-200 border-2 border-white flex items-center justify-center overflow-hidden shrink-0 shadow-2xs">
                 {targetUserAvatar ? (
-                  <img src={targetUserAvatar} alt={targetUserName} className="w-full h-full object-cover" />
+                  <Image src={targetUserAvatar} alt={targetUserName} width={48} height={48} unoptimized className="w-full h-full object-cover" />
                 ) : (
                   <User className="w-6 h-6 text-zinc-500" />
                 )}
@@ -263,7 +262,12 @@ function ReviewForm() {
                 <div className="shrink-0">
                   <select
                     value={targetUserId}
-                    onChange={(e) => setTargetUserId(e.target.value)}
+                    onChange={(e) => {
+                      setTargetUserId(e.target.value);
+                      if (e.target.value) {
+                        setIsLoadingTarget(true);
+                      }
+                    }}
                     className="text-xs bg-white border border-zinc-300 rounded-xl px-2.5 py-1.5 font-medium text-zinc-800"
                   >
                     <option value="">-- เลือกผู้ใช้ --</option>

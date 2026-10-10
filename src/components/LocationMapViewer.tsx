@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { MapPin, ExternalLink, Navigation } from 'lucide-react';
+import { MapPin, ExternalLink } from 'lucide-react';
+import type { Map as LeafletMap } from 'leaflet';
 import { Coordinates } from '@/types/job';
 
 interface LocationMapViewerProps {
@@ -16,7 +17,7 @@ export default function LocationMapViewer({
   mapQuery,
 }: LocationMapViewerProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
 
   const effectiveCoords: Coordinates = coordinates && !isNaN(coordinates.lat) && !isNaN(coordinates.lng) && coordinates.lat !== 0
     ? coordinates
@@ -92,7 +93,9 @@ export default function LocationMapViewer({
     };
   }, [effectiveCoords.lat, effectiveCoords.lng, locationName]);
 
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${effectiveCoords.lat},${effectiveCoords.lng}`;
+  const googleMapsUrl = mapQuery
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
+    : `https://www.google.com/maps/search/?api=1&query=${effectiveCoords.lat},${effectiveCoords.lng}`;
 
   return (
     <div className="flex flex-col gap-3">

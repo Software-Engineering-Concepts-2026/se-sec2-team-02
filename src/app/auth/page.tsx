@@ -32,7 +32,6 @@ import {
   AlertCircle,
   CheckCircle2,
   Loader2,
-  Briefcase,
 } from 'lucide-react';
 import { getFirebaseAuth, getFirebaseFirestore } from '@/lib/firebase';
 

@@ -188,16 +188,18 @@ export function JobProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    // Populate local cached jobs and applications immediately
-    const initialLocalJobs = getLocalCachedJobs();
-    if (initialLocalJobs.length > 0) {
-      setJobs(initialLocalJobs);
-    }
-    const initialLocalApps = getLocalCachedApps();
-    if (initialLocalApps.length > 0) {
-      setApplications(initialLocalApps);
-      setAppliedJobs(new Set(initialLocalApps.map((a) => a.jobId)));
-    }
+    // Populate local cached jobs and applications asynchronously to avoid cascading renders
+    const timer = setTimeout(() => {
+      const initialLocalJobs = getLocalCachedJobs();
+      if (initialLocalJobs.length > 0) {
+        setJobs(initialLocalJobs);
+      }
+      const initialLocalApps = getLocalCachedApps();
+      if (initialLocalApps.length > 0) {
+        setApplications(initialLocalApps);
+        setAppliedJobs(new Set(initialLocalApps.map((a) => a.jobId)));
+      }
+    }, 0);
 
     try {
       const db = getFirebaseFirestore();
@@ -284,14 +286,17 @@ export function JobProvider({ children }: { children: React.ReactNode }) {
       );
     } catch (err) {
       console.warn('Firestore initialization skipped or offline:', err);
-      const localFallback = getLocalCachedJobs();
-      if (localFallback.length > 0) {
-        setJobs(localFallback);
-      }
-      setLoading(false);
+      setTimeout(() => {
+        const localFallback = getLocalCachedJobs();
+        if (localFallback.length > 0) {
+          setJobs(localFallback);
+        }
+        setLoading(false);
+      }, 0);
     }
 
     return () => {
+      clearTimeout(timer);
       if (unsubscribeJobs) {
         unsubscribeJobs();
       }

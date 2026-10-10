@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Share2, Star, User, ExternalLink, MapPin, Clock, Calendar, CheckCircle2, ShieldCheck, Edit3 } from 'lucide-react';
+import { Share2, Star, User, MapPin, Clock, Calendar, CheckCircle2, Edit3 } from 'lucide-react';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { collection, getDocs } from 'firebase/firestore';
 import { getFirebaseAuth, getFirebaseFirestore } from '@/lib/firebase';
