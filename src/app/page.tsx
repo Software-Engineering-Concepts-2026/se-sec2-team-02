@@ -11,9 +11,11 @@ import { useJobs } from '@/context/JobContext';
 import { Job, JobCategory } from '@/types/job';
 import { filterJobs } from '@/utils/jobFilters';
 
+import Footer from '@/components/Footer';
+
 export default function Home() {
   const router = useRouter();
-  const { jobs, favorites, toggleFavorite, applyForJob } = useJobs();
+  const { jobs, applyForJob } = useJobs();
 
   const [selectedCategory, setSelectedCategory] = useState<JobCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,7 +49,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-100/60 flex flex-col font-sans text-zinc-900">
+    <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-zinc-900">
       {/* Universal Header */}
       <Header
         currentView="home"
@@ -68,7 +70,6 @@ export default function Home() {
         <CategoryBar
           selectedCategory={selectedCategory}
           onSelectCategory={(cat) => setSelectedCategory(cat)}
-          onOpenCreateModal={() => router.push('/create')}
           onShowAll={() => router.push('/search')}
         />
 
@@ -76,18 +77,19 @@ export default function Home() {
         <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 pt-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-black text-zinc-900 tracking-tight">
                 ประกาศล่าสุด
               </h2>
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-zinc-200 text-zinc-700">
+              <span className="text-xs font-bold px-3 py-1 rounded-full bg-zinc-200/80 text-zinc-700">
                 {filteredJobs.length} รายการ
               </span>
             </div>
             <button
               onClick={() => router.push('/search')}
-              className="text-xs sm:text-sm text-zinc-500 hover:text-zinc-900 font-medium transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 text-xs sm:text-sm text-zinc-500 hover:text-zinc-950 font-semibold transition-colors cursor-pointer group"
             >
-              ดูทั้งหมด &gt;
+              <span>ดูทั้งหมด</span>
+              <span className="group-hover:translate-x-0.5 transition-transform">&gt;</span>
             </button>
           </div>
 
@@ -97,24 +99,22 @@ export default function Home() {
                 <JobCard
                   key={job.id}
                   job={job}
-                  isFavorite={favorites.has(job.id)}
-                  onToggleFavorite={(id) => toggleFavorite(id, job.title)}
                   onSelect={handleSelectJob}
                   onQuickApply={handleQuickApply}
                 />
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-zinc-200 p-12 text-center my-6">
+            <div className="bg-white rounded-3xl border border-zinc-200/80 p-12 text-center my-6 shadow-2xs">
               <p className="text-base font-bold text-zinc-800">
                 ไม่พบประกาศงานที่ตรงกับคำค้นหาหรือเงื่อนไข
               </p>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
                 ลองเปลี่ยนคำค้นหา หรือกดปุ่มค้นหาเพื่อปรับตัวกรองอย่างละเอียด
               </p>
               <button
                 onClick={() => router.push('/search')}
-                className="mt-4 px-5 py-2 rounded-xl bg-zinc-900 text-white text-xs font-semibold hover:bg-zinc-800 cursor-pointer"
+                className="mt-5 px-6 py-2.5 rounded-2xl bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-800 cursor-pointer shadow-xs hover:shadow-sm transition-all"
               >
                 ไปที่หน้าค้นหาละเอียด
               </button>
@@ -123,17 +123,8 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="w-full bg-white border-t border-zinc-200 py-8 text-center text-xs text-zinc-500">
-        <div className="max-w-6xl mx-auto px-4">
-          <p className="font-semibold text-zinc-700">
-            JOB UP — แพลตฟอร์มศูนย์กลางจับคู่งานนิสิต มหาวิทยาลัยพะเยา
-          </p>
-          <p className="mt-1">
-            Software Engineering Concepts 2026 • Team 2 หาร (sec2-team-02)
-          </p>
-        </div>
-      </footer>
+      {/* Unified Footer */}
+      <Footer />
 
       {/* Quick Apply Modal */}
       {jobToApply && (

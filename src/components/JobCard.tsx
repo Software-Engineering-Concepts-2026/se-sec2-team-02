@@ -2,32 +2,26 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Heart, MapPin, Navigation2 } from 'lucide-react';
+import { MapPin, ArrowUpRight } from 'lucide-react';
 import { Job } from '@/types/job';
-import { formatDistance } from '@/utils/format';
 
 interface JobCardProps {
   job: Job;
-  isFavorite: boolean;
-  onToggleFavorite: (jobId: string, e: React.MouseEvent) => void;
   onSelect: (job: Job) => void;
   onQuickApply?: (job: Job, e: React.MouseEvent) => void;
 }
 
 export default function JobCard({
   job,
-  isFavorite,
-  onToggleFavorite,
   onSelect,
   onQuickApply
 }: JobCardProps) {
-
   return (
     <div
       onClick={() => onSelect(job)}
-      className="group bg-white rounded-2xl border border-zinc-200 overflow-hidden hover:shadow-lg hover:border-zinc-300 transition-all duration-300 flex flex-col cursor-pointer"
+      className="group bg-white rounded-3xl border border-zinc-200/80 overflow-hidden hover:shadow-xl hover:border-zinc-300 hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer shadow-2xs"
     >
-      {/* Top Image Container matching Homepage.png */}
+      {/* Top Image Container */}
       <div className="relative w-full h-44 sm:h-48 bg-zinc-100 overflow-hidden">
         {job.mainImage ? (
           <Image
@@ -35,7 +29,7 @@ export default function JobCard({
             alt={job.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-zinc-200 text-zinc-400 text-sm">
@@ -44,55 +38,52 @@ export default function JobCard({
         )}
 
         {/* Category Tag pill overlay */}
-        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-xs text-xs font-semibold text-zinc-800 shadow-xs">
+        <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-xs font-bold text-zinc-800 shadow-2xs border border-white/60">
           {job.categoryLabel}
+        </span>
+
+        {/* Status indicator on top right */}
+        <span
+          className={`absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[11px] font-bold backdrop-blur-md shadow-2xs ${
+            job.status === 'open'
+              ? 'bg-emerald-500/90 text-white'
+              : 'bg-zinc-800/80 text-zinc-300'
+          }`}
+        >
+          {job.status === 'open' ? 'เปิดรับ' : 'ปิดแล้ว'}
         </span>
       </div>
 
       {/* Bottom Card Content */}
-      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+      <div className="p-5 flex-1 flex flex-col justify-between">
         <div>
-          {/* Title & Heart Button */}
+          {/* Title */}
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-base sm:text-lg font-bold text-zinc-900 group-hover:text-blue-600 transition-colors line-clamp-1">
+            <h3 className="text-base sm:text-lg font-black text-zinc-900 group-hover:text-blue-600 transition-colors line-clamp-1">
               {job.title}
             </h3>
-            <button
-              onClick={(e) => onToggleFavorite(job.id, e)}
-              className="p-1 text-zinc-400 hover:text-rose-500 transition-colors shrink-0 cursor-pointer"
-              title={isFavorite ? 'นำออกจากรายการโปรด' : 'เพิ่มในรายการโปรด'}
-              aria-label="ถูกใจ"
-            >
-              <Heart
-                className={`w-5 h-5 transition-transform active:scale-125 ${
-                  isFavorite
-                    ? 'fill-rose-500 text-rose-500'
-                    : 'stroke-zinc-400 hover:stroke-rose-500'
-                }`}
-              />
-            </button>
+            <ArrowUpRight className="w-4 h-4 text-zinc-300 group-hover:text-blue-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0 mt-0.5" />
           </div>
 
           {/* Wage / Rate */}
-          <div className="mt-2 text-sm font-semibold text-zinc-900">
-            {job.salary} บาท/{job.salaryUnit}
+          <div className="mt-2.5 flex items-baseline gap-1.5">
+            <span className="text-xl font-black text-blue-600 tracking-tight">
+              {job.salary}
+            </span>
+            <span className="text-xs font-semibold text-zinc-500">
+              บาท/{job.salaryUnit}
+            </span>
           </div>
 
-          {/* Location & Distance matching Homepage.png */}
-          <div className="mt-3 space-y-1.5 text-xs text-zinc-500">
-            <div className="flex items-center gap-1.5 line-clamp-1">
-              <MapPin className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <span className="truncate">{job.location}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Navigation2 className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-              <span>{formatDistance(job.distance)}</span>
-            </div>
+          {/* Location */}
+          <div className="mt-3.5 pt-3 border-t border-zinc-100 flex items-center gap-1.5 text-xs text-zinc-500">
+            <MapPin className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+            <span className="truncate font-medium">{job.location}</span>
           </div>
         </div>
 
-        {/* Status Button at Bottom */}
-        <div className="mt-5 pt-3 border-t border-zinc-100 flex items-center justify-between">
+        {/* Action Button at Bottom */}
+        <div className="mt-4 pt-3 border-t border-zinc-100">
           <button
             onClick={(e) => {
               if (onQuickApply && job.status === 'open') {
@@ -101,13 +92,13 @@ export default function JobCard({
               }
             }}
             disabled={job.status !== 'open'}
-            className={`w-full py-2 rounded-xl text-xs sm:text-sm font-medium transition-colors ${
+            className={`w-full py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
               job.status === 'open'
-                ? 'bg-zinc-200/90 hover:bg-zinc-300 text-zinc-800 font-semibold cursor-pointer'
+                ? 'bg-zinc-900 hover:bg-zinc-800 text-white shadow-2xs hover:shadow-xs cursor-pointer active:scale-98'
                 : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
             }`}
           >
-            {job.status === 'open' ? 'เปิดรับ' : 'ปิดรับสมัคร'}
+            {job.status === 'open' ? 'สมัครด่วน' : 'ปิดรับสมัคร'}
           </button>
         </div>
       </div>

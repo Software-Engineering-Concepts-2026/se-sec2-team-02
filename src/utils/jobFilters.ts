@@ -41,7 +41,7 @@ export function filterJobs(jobs: Job[], options: FilterJobsOptions = {}): Job[] 
     const matchSalary = job.salary >= minSalary;
 
     // 4. Maximum Distance
-    const matchDistance = job.distance <= maxDistance;
+    const matchDistance = job.distance === undefined || job.distance <= maxDistance;
 
     // 5. Open status
     const matchStatus = !showOpenOnly || job.status === 'open';
@@ -57,7 +57,7 @@ export function sortJobs(jobs: Job[], sortBy: SortJobsOption = 'latest'): Job[] 
   return [...jobs].sort((a, b) => {
     if (sortBy === 'salary-desc') return b.salary - a.salary;
     if (sortBy === 'salary-asc') return a.salary - b.salary;
-    if (sortBy === 'distance-asc') return a.distance - b.distance;
+    if (sortBy === 'distance-asc') return (a.distance ?? 0) - (b.distance ?? 0);
     return 0; // 'latest' keeps natural order
   });
 }

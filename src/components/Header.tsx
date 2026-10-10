@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Search, Plus, ArrowLeft, X, User } from 'lucide-react';
+import { Search, Plus, ArrowLeft, X, User, LogIn } from 'lucide-react';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { getFirebaseAuth } from '@/lib/firebase';
 
 interface HeaderProps {
   currentView?: 'home' | 'search' | 'detail' | 'profile' | 'create';
   onBack?: () => void;
+  backLabel?: string;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
   onOpenCreateModal?: () => void;
@@ -18,6 +21,7 @@ interface HeaderProps {
 export default function Header({
   currentView: propCurrentView,
   onBack,
+  backLabel,
   searchQuery: propSearchQuery,
   onSearchChange,
   onOpenCreateModal,
@@ -27,6 +31,20 @@ export default function Header({
 }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+
+  useEffect(() => {
+    try {
+      const auth = getFirebaseAuth();
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setCurrentUser(user);
+      });
+      return () => unsubscribe();
+    } catch (err) {
+      console.warn('Firebase Auth warning in Header:', err);
+    }
+  }, []);
 
   // Local state if controlled query isn't passed
   const [localQuery, setLocalQuery] = useState('');
@@ -38,7 +56,7 @@ export default function Header({
     if (pathname === '/search') activeView = 'search';
     else if (pathname.startsWith('/jobs/')) activeView = 'detail';
     else if (pathname === '/profile') activeView = 'profile';
-    else if (pathname === '/create') activeView = 'create';
+    else if (pathname === '/create' || pathname === '/create_job') activeView = 'create';
     else activeView = 'home';
   }
 
@@ -69,12 +87,24 @@ export default function Header({
     else router.push('/search');
   };
 
+  const handleGoAuth = () => {
+    router.push('/auth');
+  };
+
   const handleGoProfile = () => {
+    if (!currentUser) {
+      router.push('/auth');
+      return;
+    }
     if (onNavigateToProfile) onNavigateToProfile();
     else router.push('/profile');
   };
 
   const handleCreate = () => {
+    if (!currentUser) {
+      router.push('/auth');
+      return;
+    }
     if (onOpenCreateModal) onOpenCreateModal();
     else router.push('/create');
   };
@@ -88,43 +118,67 @@ export default function Header({
   // If in detail or create view, show back button
   if (activeView === 'detail' || activeView === 'create') {
     return (
-      <header className="w-full bg-white border-b border-zinc-200 sticky top-0 z-30 shadow-xs">
+      <header className="w-full bg-white/85 backdrop-blur-md border-b border-zinc-200/80 sticky top-0 z-40 shadow-2xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-18 flex items-center justify-between">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 text-zinc-800 hover:text-zinc-600 font-medium px-3 py-1.5 rounded-lg hover:bg-zinc-100 transition-colors cursor-pointer"
+            className="flex items-center gap-2 text-zinc-700 hover:text-zinc-950 font-semibold px-3.5 py-2 rounded-xl hover:bg-zinc-100/80 transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-base font-semibold">กลับ</span>
+            <ArrowLeft className="w-5 h-5 text-zinc-600" />
+            <span className="text-sm sm:text-base font-bold">{backLabel || (activeView === 'create' ? 'ยกเลิก' : 'กลับ')}</span>
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <button
               onClick={handleGoSearch}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-zinc-700 hover:text-zinc-950 hover:bg-zinc-100 transition-colors cursor-pointer"
             >
               <Search className="w-4 h-4 text-zinc-500" />
               <span>ค้นหางาน</span>
             </button>
 
-            <button
-              onClick={handleGoProfile}
-              title="โปรไฟล์นิสิต"
-              className="w-10 h-10 rounded-full bg-zinc-100 hover:bg-zinc-200 border border-zinc-300 flex items-center justify-center text-zinc-700 transition-all cursor-pointer"
-            >
-              <User className="w-5 h-5" />
-            </button>
+            {currentUser ? (
+              <button
+                onClick={handleGoProfile}
+                title="โปรไฟล์ของฉัน"
+                className="w-9 h-9 rounded-full bg-zinc-100 hover:bg-zinc-200 border border-zinc-250 flex items-center justify-center text-zinc-700 transition-all cursor-pointer overflow-hidden shadow-2xs"
+              >
+                {currentUser.photoURL ? (
+                  <img
+                    src={currentUser.photoURL}
+                    alt={currentUser.displayName || 'Profile'}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-4 h-4" />
+                )}
+              </button>
+            ) : (
+              <button
+                onClick={handleGoAuth}
+                title="เข้าสู่ระบบ หรือ สมัครสมาชิก"
+                className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-full shadow-xs hover:shadow-sm transition-all duration-200 cursor-pointer active:scale-95"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Login/Register</span>
+              </button>
+            )}
 
             <div
               onClick={handleGoHome}
-              className="flex flex-col items-end cursor-pointer group pl-2"
+              className="flex items-center gap-2.5 cursor-pointer group pl-2 border-l border-zinc-200"
             >
-              <span className="text-2xl font-black tracking-tight text-zinc-900 group-hover:text-blue-600 transition-colors">
-                JOB UP
-              </span>
-              <span className="text-xs text-zinc-500 font-normal">
-                หางานหน้า ม.พะเยา
-              </span>
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-zinc-900 to-zinc-700 text-white flex items-center justify-center font-black text-xs shadow-2xs group-hover:scale-105 transition-transform">
+                JP
+              </div>
+              <div className="flex flex-col">
+                <span className="text-lg font-black tracking-tight text-zinc-900 group-hover:text-blue-600 transition-colors leading-none">
+                  JOB Phayao
+                </span>
+                <span className="text-[10px] text-zinc-500 font-normal mt-0.5">
+                  หางานหน้าพะเยา
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -133,19 +187,24 @@ export default function Header({
   }
 
   return (
-    <header className="w-full bg-white border-b border-zinc-200 sticky top-0 z-30 shadow-xs">
+    <header className="w-full bg-white/85 backdrop-blur-md border-b border-zinc-200/80 sticky top-0 z-40 shadow-2xs">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 min-h-18 py-3 sm:py-0 flex flex-wrap items-center justify-between gap-3 sm:gap-6">
         {/* Brand Logo */}
         <div
           onClick={handleGoHome}
-          className="order-1 flex flex-col cursor-pointer shrink-0 select-none group sm:order-0"
+          className="order-1 flex items-center gap-2.5 cursor-pointer shrink-0 select-none group sm:order-0"
         >
-          <span className="text-2xl font-black tracking-tight text-zinc-900 group-hover:text-blue-600 transition-colors leading-none">
-            JOB UP
-          </span>
-          <span className="text-xs text-zinc-500 mt-1 font-normal">
-            หางานหน้า ม.พะเยา
-          </span>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-zinc-900 to-zinc-700 text-white flex items-center justify-center font-black text-sm shadow-2xs group-hover:scale-105 transition-transform">
+            JP
+          </div>
+          <div className="flex flex-col">
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-zinc-900 group-hover:text-blue-600 transition-colors leading-none">
+              JOB Phayao
+            </span>
+            <span className="text-[11px] text-zinc-500 mt-1 font-normal">
+              หางานหน้าพะเยา
+            </span>
+          </div>
         </div>
 
         {/* Search Bar matching Homepage.png */}
@@ -161,7 +220,7 @@ export default function Header({
                 }
               }}
               placeholder="ค้นหาชื่อตำแหน่งงาน, ร้านค้า, หรือสถานที่..."
-              className="w-full bg-zinc-100 hover:bg-zinc-50 focus:bg-white text-zinc-900 placeholder:text-zinc-400 text-xs sm:text-sm pl-4 pr-10 py-2.5 rounded-full border border-transparent focus:border-zinc-300 focus:outline-hidden transition-all duration-200"
+              className="w-full bg-zinc-100/80 hover:bg-zinc-100 focus:bg-white text-zinc-900 placeholder:text-zinc-400 text-xs sm:text-sm pl-4 pr-10 py-2.5 rounded-full border border-zinc-200/60 focus:border-zinc-400 focus:ring-4 focus:ring-zinc-900/5 transition-all duration-200 shadow-2xs"
             />
             {searchQuery ? (
               <button
@@ -189,35 +248,56 @@ export default function Header({
           <button
             onClick={handleGoSearch}
             aria-label="ค้นหางาน"
-            className={`w-10 h-10 shrink-0 flex items-center justify-center rounded-full text-xs sm:w-auto sm:h-auto sm:gap-1.5 sm:px-4 sm:py-2 sm:text-sm font-bold transition-all cursor-pointer ${
+            className={`w-9 h-9 sm:w-auto sm:h-auto shrink-0 flex items-center justify-center rounded-full text-xs sm:gap-1.5 sm:px-4 sm:py-2 sm:text-sm font-bold transition-all cursor-pointer ${
               activeView === 'search'
                 ? 'bg-zinc-900 text-white shadow-xs'
-                : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800'
+                : 'bg-zinc-100/90 hover:bg-zinc-200 text-zinc-800'
             }`}
           >
             <Search className="w-4 h-4" />
             <span className="hidden sm:inline">ค้นหางาน</span>
           </button>
 
-          <button
-            onClick={handleCreate}
-            className="hidden sm:flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-full shadow-xs hover:shadow-sm transition-all duration-200 cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>เพิ่มงาน</span>
-          </button>
+          {currentUser ? (
+            <>
+              <button
+                onClick={handleCreate}
+                className="hidden sm:flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-full shadow-xs hover:shadow-sm transition-all duration-200 cursor-pointer active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                <span>เพิ่มงาน</span>
+              </button>
 
-          <button
-            onClick={handleGoProfile}
-            title="โปรไฟล์ของฉัน (ข้อมูลส่วนตัว & ผลงาน)"
-            className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer ${
-              activeView === 'profile'
-                ? 'bg-zinc-900 text-white border-zinc-900 ring-2 ring-zinc-900/20'
-                : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border-zinc-200'
-            }`}
-          >
-            <User className="w-5 h-5" />
-          </button>
+              <button
+                onClick={handleGoProfile}
+                title="โปรไฟล์ของฉัน (ข้อมูลส่วนตัว & ผลงาน)"
+                className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer overflow-hidden shadow-2xs ${
+                  activeView === 'profile'
+                    ? 'bg-zinc-900 text-white border-zinc-900 ring-2 ring-zinc-900/20'
+                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border-zinc-250'
+                }`}
+              >
+                {currentUser.photoURL ? (
+                  <img
+                    src={currentUser.photoURL}
+                    alt={currentUser.displayName || 'Profile'}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-4 h-4" />
+                )}
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={handleGoAuth}
+              title="เข้าสู่ระบบ หรือ สมัครสมาชิก"
+              className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-full shadow-xs hover:shadow-sm transition-all duration-200 cursor-pointer active:scale-95"
+            >
+              <LogIn className="w-4 h-4" />
+              <span>Login/Register</span>
+            </button>
+          )}
         </div>
       </div>
     </header>
