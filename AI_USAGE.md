@@ -176,6 +176,7 @@ AI ไม่ได้ใช้ credential ในการ login หรือ pus
 * **Prompt 20:** "ระบบปักหมุดสถานที่ทำงานเหมือนยังใช้ไม่ได้จริงนะ" (พัฒนาระบบปักหมุดและแสดงแผนที่พิกัดสถานที่ทำงานจริงด้วย OpenStreetMap และ Leaflet: สร้าง `MapPickerModal.tsx` ปักหมุด/ลากหมุดบนแผนที่จริง มีปุ่มค้นหาพิกัด GPS Geolocation และพิกัดแลนด์มาร์กสำคัญรอบพะเยา 10 จุด, สร้าง `LocationMapViewer.tsx` แสดงแผนที่พิกัดจริงในหน้าดูรายละเอียดงานพร้อมปุ่มเปิด Google Maps นำทางตรงจุด, บันทึกและดึงพิกัดจริงเป็น Firestore `GeoPoint(lat, lng)` ในฟิลด์ `job_location` ตามสเปก `ForNeed/JOB collection.png` 100%, และเชื่อมต่อเข้ากับ `/create`, `/edit/[id]`, และ `CreateJobModal`)
 * **Prompt 21:** "ในหน้าโปรไฟล์อยากให้มี tab กำลังรอ approve ใบสมัคร" (พัฒนาระบบแท็บ "กำลังรอ approve ใบสมัคร" ในหน้าโปรไฟล์ (`ProfileView.tsx`) พร้อมเวิร์กโฟลว์การอนุมัติและปฏิเสธใบสมัครครบวงจร: เพิ่มแท็บใหม่ `pending-approval` ที่ดึงข้อมูลจาก Cloud Firestore คอลเลกชัน `JOB_APPLICATIONS` (`status: 0`), รองรับ 2 มุมมอง ทั้งมุมมองผู้สมัครงาน (ดูงานที่รอผล/ยกเลิกใบสมัคร) และมุมมองผู้ว่าจ้างเจ้าของงาน (ดูรายชื่อผู้สมัครที่ส่งเข้ามา พร้อมปุ่ม "อนุมัติรับเข้าทำงาน" และ "ปฏิเสธ"), นำตรรกะสถานะตาม `ForNeed/status config.png` มาประยุกต์ใช้ 100% โดยเมื่ออนุมัติผู้สมัครคนใด ใบสมัครนั้นจะเป็น `status: 1` (accepted), ผู้สมัครคนอื่นในงานเดียวกันจะถูกปฏิเสธอัตโนมัติเป็น `status: 2` (rejected), และประกาศงานในคอลเลกชัน `JOB` จะเปลี่ยนสถานะเป็น `status: 1` (doing), พร้อมแสดง Badge จำนวนคนรออนุมัติในการ์ดงานแท็บโพสต์ของฉัน และปรับปรุงแท็บงานที่กำลังทำให้นับเฉพาะงานที่ได้รับการอนุมัติแล้วเท่านั้น)
 * **Prompt 22:** "ตอนนี้ติดปัญหาการ merge บน github คือ CI ไม่ผ่านดูใน @[CI error.md]" (แก้ไขปัญหา GitHub Actions CI ไม่ผ่านจากการตรวจ ESLint: วิเคราะห์และแก้ไขข้อผิดพลาดทั้ง 13 รายการและคำเตือนทั้งหมด 24 รายการอย่างสมบูรณ์แบบ 1) แก้ไข `react-hooks/set-state-in-effect` โดยแยกคอมโพเนนต์ย่อย `EditJobForm` กำกับด้วย `key={originalJob.id}` เพื่อยกเลิก `useEffect` ซิงค์ State, แยก `MapPickerModalContent` เพื่อกำหนดค่าพิกัดเริ่มต้นตรงใน State, ปรับ `JobContext.tsx` ให้อัปเดตแคชโลคอลแบบ Asynchronous ผ่าน `setTimeout`, และปรับ `isLoadingTarget` ใน `/review` ให้กำหนดค่าเริ่มต้นแบบ Lazy Function 2) แก้ไข `@typescript-eslint/no-explicit-any` ใน `LocationMapViewer.tsx` และ `MapPickerModal.tsx` ด้วย Leaflet Types ที่ถูกต้อง 3) แก้ไข `react/no-unescaped-entities` ด้วย `&quot;` ใน `ProfileView.tsx` 4) ลบ Unused Variables และ Imports ทั้งหมด 5) ปรับแท็ก `<img>` เป็น `<Image />` พร้อม `unoptimized` ผลลัพธ์: `npm run lint` ผ่าน 0 errors 0 warnings (Exit Code 0), `npm test` ผ่าน 19/19 tests (100%), และ `npm run build` สำเร็จ 100%)
+* **Prompt 23:** "ตอนนี้อยากจะให้ project นี้ไปรันบน vercel" (เตรียมความพร้อมและปรับแต่งโปรเจกต์สำหรับการ Deploy ขึ้น Vercel: ปรับแต่ง `next.config.ts` ให้ใช้ `output: 'standalone'` เฉพาะเมื่อไม่ได้อยู่บน Vercel เพื่อรองรับทั้ง Docker ในแล็บเดิมและ Vercel Native Edge Deployment โดยไม่มี Warning, ตรวจสอบการห่อหุ้ม `<Suspense>` บนหน้า dynamic routes, ตรวจสอบตัวแปรสภาพแวดล้อม 5 ตัวของ Firebase และจัดเตรียมคู่มือขั้นตอนการตั้งค่าบน Vercel Dashboard อย่างละเอียด รัน `npm run lint` ผ่าน 0 errors 0 warnings, `npm test` ผ่าน 19/19 tests, และ `npm run build` ผ่าน 100%)
 
 ### 3. Code Portion Generated & Human Modifications
 * **AI-Generated Portion (~95%):**
@@ -271,6 +272,7 @@ AI ไม่ได้ใช้ credential ในการ login หรือ pus
     - ล้างตัวแปรและ Imports ที่ไม่ได้ใช้งานทั้งหมด
     - แปลงแท็ก `<img>` เป็น Next.js `<Image />` พร้อม `unoptimized`
   - ตรวจสอบและแก้ไข Build Type Errors และรันคำสั่ง `npm run lint`, `npm run build` และ `npm test` ผ่านสมบูรณ์ 100% (19/19 passing tests)
+  - ปรับแต่งการตั้งค่าโปรเจกต์ Next.js และจัดทำคู่มือการ Deploy สู่ Vercel Platform ให้รองรับทั้ง Serverless และ Edge CDN อย่างสมบูรณ์
 * **Human Written/Modified Portion (~5%):**
   - กำหนดข้อกำหนดการเปลี่ยนผ่านจาก Prototype สู่โครงสร้างโปรดักชันจริงภายใต้ `src/app`
   - ตัดสินใจตัดฟิลด์ระยะทาง, Line ID, ฟังก์ชันถูกใจงาน และปรับแต่งตำแหน่งปุ่มตามการใช้งานจริง
@@ -287,6 +289,7 @@ AI ไม่ได้ใช้ credential ในการ login หรือ pus
   - สั่งการปรับปรุงระบบปักหมุดสถานที่ทำงานให้ใช้งานได้จริง
   - สั่งการให้เพิ่มแท็บ "กำลังรอ approve ใบสมัคร" ในหน้าโปรไฟล์เพื่อติดตามและจัดการใบสมัครงาน
   - แจ้งข้อผิดพลาด GitHub CI Actions จากไฟล์ `CI error.md` เพื่อให้แก้ไขให้พร้อมสำหรับการ Merge
+  - สั่งการเตรียมความพร้อมสำหรับการนำโปรเจกต์ขึ้นรันบน Vercel
   - ตรวจสอบความถูกต้องของการทำงานและการแสดงผลในระบบ
 
 
