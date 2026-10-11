@@ -1,7 +1,9 @@
 'use client';
 
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { getFirebaseAuth } from '@/lib/firebase';
 import Header from '@/components/Header';
 import SearchPageView from '@/components/SearchPageView';
 import ApplyModal from '@/components/ApplyModal';
@@ -18,7 +20,20 @@ function SearchPageContent() {
 
   const { jobs, applyForJob } = useJobs();
 
+  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
   const [jobToApply, setJobToApply] = useState<Job | null>(null);
+
+  useEffect(() => {
+    try {
+      const auth = getFirebaseAuth();
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setCurrentUser(user);
+      });
+      return () => unsubscribe();
+    } catch (err) {
+      console.warn('Firebase Auth warning in Search:', err);
+    }
+  }, []);
 
   const handleSelectJob = (job: Job) => {
     router.push(`/jobs/${job.id}`);
@@ -26,6 +41,18 @@ function SearchPageContent() {
 
   const handleQuickApply = (job: Job, e: React.MouseEvent) => {
     e.stopPropagation();
+    let user = currentUser;
+    if (!user) {
+      try {
+        user = getFirebaseAuth().currentUser;
+      } catch {
+        // ignore
+      }
+    }
+    if (!user) {
+      router.push('/auth');
+      return;
+    }
     setJobToApply(job);
   };
 
@@ -51,7 +78,7 @@ function SearchPageContent() {
       {/* Unified Footer */}
       <Footer />
 
-      {jobToApply && (
+      {jobToApply && currentUser && (
         <ApplyModal
           job={jobToApply}
           isOpen={!!jobToApply}

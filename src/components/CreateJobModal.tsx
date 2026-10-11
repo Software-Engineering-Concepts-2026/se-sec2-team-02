@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { X, Plus, Image as ImageIcon, MapPin } from 'lucide-react';
 import { Job, JobCategory, Coordinates } from '@/types/job';
 import { CATEGORY_LABELS, COMPENSATION_UNIT_LIST } from '@/constants/categories';
@@ -18,6 +19,7 @@ export default function CreateJobModal({
   onClose,
   onCreateJob
 }: CreateJobModalProps) {
+  const router = useRouter();
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<JobCategory>('part-time');
   const [salary, setSalary] = useState<number | ''>('');
@@ -69,6 +71,12 @@ export default function CreateJobModal({
       }
     } catch {
       // offline or not logged in
+    }
+
+    if (!currentUserId) {
+      onClose();
+      router.push('/auth');
+      return;
     }
 
     const newJob: Job = {

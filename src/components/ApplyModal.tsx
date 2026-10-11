@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { X, Send } from 'lucide-react';
 import { Job, JobApplication } from '@/types/job';
+import { getFirebaseAuth } from '@/lib/firebase';
 
 interface ApplyModalProps {
   job: Job;
@@ -17,6 +19,7 @@ export default function ApplyModal({
   onClose,
   onSubmitApplication
 }: ApplyModalProps) {
+  const router = useRouter();
   const [applicantName, setApplicantName] = useState('');
   const [phone, setPhone] = useState('');
   const [freeScheduleNote, setFreeScheduleNote] = useState('');
@@ -26,6 +29,17 @@ export default function ApplyModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    let user = null;
+    try {
+      user = getFirebaseAuth().currentUser;
+    } catch {
+      // ignore
+    }
+    if (!user) {
+      onClose();
+      router.push('/auth');
+      return;
+    }
     if (!applicantName || !phone) return;
 
     setIsSubmitting(true);

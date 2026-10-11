@@ -102,7 +102,15 @@ export default function Header({
   };
 
   const handleCreate = () => {
-    if (!currentUser) {
+    let user = currentUser;
+    if (!user) {
+      try {
+        user = getFirebaseAuth().currentUser;
+      } catch {
+        // ignore
+      }
+    }
+    if (!user) {
       router.push('/auth');
       return;
     }
@@ -262,44 +270,43 @@ export default function Header({
             <span className="hidden sm:inline">ค้นหางาน</span>
           </button>
 
-          {currentUser ? (
-            <>
-              <button
-                onClick={handleCreate}
-                className="hidden sm:flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-full shadow-xs hover:shadow-sm transition-all duration-200 cursor-pointer active:scale-95"
-              >
-                <Plus className="w-4 h-4" />
-                <span>เพิ่มงาน</span>
-              </button>
+          {/* Create Job button: available on desktop for all users, warps to /auth if unauthenticated */}
+          <button
+            onClick={handleCreate}
+            className="hidden sm:flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-full shadow-xs hover:shadow-sm transition-all duration-200 cursor-pointer active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            <span>เพิ่มงาน</span>
+          </button>
 
-              <button
-                onClick={handleGoProfile}
-                title="โปรไฟล์ของฉัน (ข้อมูลส่วนตัว & ผลงาน)"
-                className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer overflow-hidden shadow-2xs ${
-                  activeView === 'profile'
-                    ? 'bg-zinc-900 text-white border-zinc-900 ring-2 ring-zinc-900/20'
-                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border-zinc-250'
-                }`}
-              >
-                {currentUser.photoURL ? (
-                  <Image
-                    src={currentUser.photoURL}
-                    alt={currentUser.displayName || 'Profile'}
-                    width={36}
-                    height={36}
-                    unoptimized
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User className="w-4 h-4" />
-                )}
-              </button>
-            </>
+          {currentUser ? (
+            <button
+              onClick={handleGoProfile}
+              title="โปรไฟล์ของฉัน (ข้อมูลส่วนตัว & ผลงาน)"
+              className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer overflow-hidden shadow-2xs ${
+                activeView === 'profile'
+                  ? 'bg-zinc-900 text-white border-zinc-900 ring-2 ring-zinc-900/20'
+                  : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border-zinc-250'
+              }`}
+            >
+              {currentUser.photoURL ? (
+                <Image
+                  src={currentUser.photoURL}
+                  alt={currentUser.displayName || 'Profile'}
+                  width={36}
+                  height={36}
+                  unoptimized
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User className="w-4 h-4" />
+              )}
+            </button>
           ) : (
             <button
               onClick={handleGoAuth}
               title="เข้าสู่ระบบ หรือ สมัครสมาชิก"
-              className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-full shadow-xs hover:shadow-sm transition-all duration-200 cursor-pointer active:scale-95"
+              className="flex items-center gap-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs sm:text-sm font-semibold px-4 py-2 rounded-full shadow-2xs hover:shadow-xs transition-all duration-200 cursor-pointer active:scale-95"
             >
               <LogIn className="w-4 h-4" />
               <span>Login/Register</span>

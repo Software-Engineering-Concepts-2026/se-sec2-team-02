@@ -86,6 +86,18 @@ export default function JobDetailPage({ params }: JobDetailPageProps) {
           isApplied={isApplied}
           isOwner={isOwner}
           onOpenApplyModal={() => {
+            let user = currentUser;
+            if (!user) {
+              try {
+                user = getFirebaseAuth().currentUser;
+              } catch {
+                // ignore
+              }
+            }
+            if (!user) {
+              router.push('/auth');
+              return;
+            }
             if (isOwner) {
               showToast('คุณไม่สามารถสมัครงานที่คุณเป็นผู้ประกาศได้', 'info');
               return;
@@ -99,7 +111,7 @@ export default function JobDetailPage({ params }: JobDetailPageProps) {
       {/* Unified Footer */}
       <Footer />
 
-      {!isOwner && (
+      {!isOwner && currentUser && (
         <ApplyModal
           job={job}
           isOpen={isApplyModalOpen}

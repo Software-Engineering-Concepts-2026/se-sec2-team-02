@@ -315,6 +315,23 @@ export function JobProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addJob = async (newJob: Job) => {
+    let effectiveUserId = newJob.userId;
+    if (!effectiveUserId) {
+      try {
+        const auth = getFirebaseAuth();
+        if (auth.currentUser) {
+          effectiveUserId = auth.currentUser.uid;
+        }
+      } catch {
+        // offline
+      }
+    }
+
+    if (!effectiveUserId || effectiveUserId === 'anonymous') {
+      showToast('กรุณาเข้าสู่ระบบก่อนเพิ่มประกาศงาน', 'error');
+      return;
+    }
+
     // 1. Optimistic UI update
     setJobs((prev) => [newJob, ...prev]);
 
@@ -333,7 +350,6 @@ export function JobProvider({ children }: { children: React.ReactNode }) {
     try {
       const db = getFirebaseFirestore();
       
-      const effectiveUserId = newJob.userId || 'anonymous';
       const userRef = doc(db, 'USER', effectiveUserId);
       const lat = Number(newJob.coordinates?.lat ?? 19.0284);
       const lng = Number(newJob.coordinates?.lng ?? 99.8970);
@@ -482,7 +498,7 @@ export function JobProvider({ children }: { children: React.ReactNode }) {
   };
 
   const applyForJob = async (application: JobApplication) => {
-    let applicantUserId = 'anonymous';
+    let applicantUserId = '';
     try {
       const auth = getFirebaseAuth();
       if (auth.currentUser) {
@@ -492,8 +508,13 @@ export function JobProvider({ children }: { children: React.ReactNode }) {
       // offline
     }
 
+    if (!applicantUserId || applicantUserId === 'anonymous') {
+      showToast('กรุณาเข้าสู่ระบบก่อนยื่นใบสมัครงาน', 'error');
+      return;
+    }
+
     const targetJob = jobs.find((j) => j.id === application.jobId);
-    if (targetJob && targetJob.userId && applicantUserId !== 'anonymous' && targetJob.userId === applicantUserId) {
+    if (targetJob && targetJob.userId && targetJob.userId === applicantUserId) {
       showToast('คุณไม่สามารถสมัครงานที่คุณเป็นผู้ประกาศได้', 'error');
       return;
     }

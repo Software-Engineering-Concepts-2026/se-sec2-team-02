@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { onAuthStateChanged } from 'firebase/auth';
 import Header from '@/components/Header';
 import { useJobs } from '@/context/JobContext';
 import { Job, JobCategory, Coordinates } from '@/types/job';
@@ -15,6 +16,21 @@ import { getFirebaseAuth } from '@/lib/firebase';
 export default function CreateJobPage() {
   const router = useRouter();
   const { addJob } = useJobs();
+
+  // Auth Protection: If user is not logged in or registered, redirect to /auth
+  useEffect(() => {
+    try {
+      const auth = getFirebaseAuth();
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          router.replace('/auth');
+        }
+      });
+      return () => unsubscribe();
+    } catch {
+      router.replace('/auth');
+    }
+  }, [router]);
 
   // Form states matching Yanathron's Prototype
   const [title, setTitle] = useState('');
@@ -62,8 +78,6 @@ export default function CreateJobPage() {
     if (!title || !description || !employerName || !phone) return;
     if (isSubmitting) return;
 
-    setIsSubmitting(true);
-
     let currentUserId = '';
     try {
       const auth = getFirebaseAuth();
@@ -73,6 +87,13 @@ export default function CreateJobPage() {
     } catch {
       // offline or not logged in
     }
+
+    if (!currentUserId) {
+      router.push('/auth');
+      return;
+    }
+
+    setIsSubmitting(true);
 
     const newJobId = `job-${Date.now()}`;
     const newJob: Job = {

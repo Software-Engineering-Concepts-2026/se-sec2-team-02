@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { onAuthStateChanged } from 'firebase/auth';
+import { getFirebaseAuth } from '@/lib/firebase';
 import Header from '@/components/Header';
 import { useJobs } from '@/context/JobContext';
 import { CATEGORY_LABELS, CATEGORY_LIST, COMPENSATION_UNIT_LIST } from '@/constants/categories';
@@ -14,6 +16,21 @@ export default function EditJobPage() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const { getJobById } = useJobs();
+
+  // Redirect to /auth if unauthenticated
+  useEffect(() => {
+    try {
+      const auth = getFirebaseAuth();
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          router.replace('/auth');
+        }
+      });
+      return () => unsubscribe();
+    } catch {
+      router.replace('/auth');
+    }
+  }, [router]);
 
   const originalJob = useMemo(() => getJobById(id), [getJobById, id]);
 

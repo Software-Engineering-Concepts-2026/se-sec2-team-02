@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { getFirebaseAuth } from '@/lib/firebase';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import CategoryBar from '@/components/CategoryBar';
@@ -17,9 +19,22 @@ export default function Home() {
   const router = useRouter();
   const { jobs, applyForJob } = useJobs();
 
+  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<JobCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [jobToApply, setJobToApply] = useState<Job | null>(null);
+
+  useEffect(() => {
+    try {
+      const auth = getFirebaseAuth();
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setCurrentUser(user);
+      });
+      return () => unsubscribe();
+    } catch (err) {
+      console.warn('Firebase Auth warning in Home:', err);
+    }
+  }, []);
 
   // Filtered jobs for Homepage
   const filteredJobs = useMemo(() => {
@@ -35,6 +50,18 @@ export default function Home() {
 
   const handleQuickApply = (job: Job, e: React.MouseEvent) => {
     e.stopPropagation();
+    let user = currentUser;
+    if (!user) {
+      try {
+        user = getFirebaseAuth().currentUser;
+      } catch {
+        // ignore
+      }
+    }
+    if (!user) {
+      router.push('/auth');
+      return;
+    }
     setJobToApply(job);
   };
 
@@ -127,7 +154,7 @@ export default function Home() {
       <Footer />
 
       {/* Quick Apply Modal */}
-      {jobToApply && (
+      {jobToApply && currentUser && (
         <ApplyModal
           job={jobToApply}
           isOpen={!!jobToApply}
