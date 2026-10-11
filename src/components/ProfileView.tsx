@@ -689,13 +689,13 @@ export default function ProfileView() {
                 </div>
                 <div>
                   <h4 className="text-sm font-black text-zinc-900 flex items-center gap-2">
-                    <span>คะแนนรีวิวและความน่าเชื่อถือ</span>
+                    <span>คะแนนรีวิวผู้โพสต์ประกาศงาน</span>
                     <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200/60">
-                      Rating Score
+                      Poster Rating
                     </span>
                   </h4>
                   <p className="text-[11px] text-zinc-500">
-                    ประเมินจากผู้ว่าจ้างและผู้ร่วมงานในจังหวัดพะเยา
+                    คะแนนประเมินที่คุณได้รับในฐานะผู้โพสต์ประกาศงานจากผู้ร่วมงานในระบบ (ไม่ใช่รีวิวร้านค้า)
                   </p>
                 </div>
               </div>
@@ -739,7 +739,7 @@ export default function ProfileView() {
                   })}
                 </div>
                 <span className="text-xs font-semibold text-zinc-500">
-                  {ratingStats.total > 0 ? `จากทั้งหมด ${ratingStats.total} รีวิว` : 'ยังไม่มีรีวิว'}
+                  {ratingStats.total > 0 ? `จากทั้งหมด ${ratingStats.total} รีวิวผู้โพสต์` : 'ยังไม่มีรีวิวผู้โพสต์'}
                 </span>
               </div>
 
@@ -814,7 +814,7 @@ export default function ProfileView() {
                 active={activeTab === 'reviews'}
                 onClick={() => setActiveTab('reviews')}
                 icon={<Star size={17} className={activeTab === 'reviews' ? 'fill-amber-400 text-amber-400' : ''} />}
-                label={`คะแนนและรีวิว (${reviews.length})`}
+                label={`รีวิวผู้โพสต์ (${reviews.length})`}
               />
             </div>
           </div>
@@ -1740,14 +1740,14 @@ export default function ProfileView() {
         {activeTab === 'reviews' && (
           <ContentCard
             icon={<Star size={30} className="fill-amber-400 text-amber-400" />}
-            title="คะแนนและความคิดเห็นรีวิว"
-            description="ความคิดเห็นและคะแนนความพึงพอใจจากผู้ว่าจ้างและผู้ร่วมงานจริงในระบบ"
+            title="คะแนนและความคิดเห็นรีวิวผู้โพสต์ประกาศงาน"
+            description="ความคิดเห็นและคะแนนความพึงพอใจที่คุณได้รับในฐานะผู้โพสต์ประกาศงานจากผู้ร่วมงานจริงในระบบ (ไม่ใช่การรีวิวร้านค้า)"
             empty={reviews.length === 0}
-            emptyText="ยังไม่มีผู้ให้คะแนนรีวิวสำหรับโปรไฟล์นี้ เป็นคนแรกที่ให้คะแนนเลย!"
+            emptyText="ยังไม่มีผู้ให้คะแนนรีวิวผู้โพสต์ประกาศงานสำหรับโปรไฟล์นี้"
           >
             <div className="flex justify-end mb-3">
               <span className="text-[11px] text-zinc-400 font-medium">
-                * คะแนนและรีวิวทั้งหมดได้รับจากผู้ว่าจ้างหรือผู้ร่วมงานในระบบ
+                * คะแนนและรีวิวทั้งหมดเป็นการประเมินผู้โพสต์ประกาศงานโดยตรง (ไม่ใช่การรีวิวร้านค้าหรือสถานที่)
               </span>
             </div>
 

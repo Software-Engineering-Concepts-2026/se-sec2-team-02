@@ -15,16 +15,16 @@ import { useJobs } from '@/context/JobContext';
 const RATING_STEPS = [0, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5.0];
 
 const RATING_DESCRIPTIONS: Record<number, { title: string; color: string; badge: string }> = {
-  5.0: { title: 'ยอดเยี่ยมมาก ผลงานสมบูรณ์แบบ', color: 'text-amber-500', badge: 'bg-amber-50 text-amber-700 border-amber-200' },
-  4.5: { title: 'ดีเยี่ยม มีความเป็นมืออาชีพสูง', color: 'text-amber-500', badge: 'bg-amber-50 text-amber-700 border-amber-200' },
-  4.0: { title: 'ดีมาก ตรงต่อเวลาและมีความรับผิดชอบ', color: 'text-emerald-600', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  3.5: { title: 'ดี ปฏิบัติงานได้มาตรฐานที่น่าพอใจ', color: 'text-emerald-600', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  3.0: { title: 'ปานกลาง ครบถ้วนตามข้อตกลง', color: 'text-blue-600', badge: 'bg-blue-50 text-blue-700 border-blue-200' },
-  2.5: { title: 'พอใช้ มีจุดที่ควรปรับปรุงเล็กน้อย', color: 'text-orange-500', badge: 'bg-orange-50 text-orange-700 border-orange-200' },
-  2.0: { title: 'ต้องปรับปรุง การทำงานมีข้อผิดพลาด', color: 'text-orange-600', badge: 'bg-orange-50 text-orange-700 border-orange-200' },
-  1.5: { title: 'ไม่น่าพอใจ ต่ำกว่ามาตรฐานที่ตกลง', color: 'text-rose-500', badge: 'bg-rose-50 text-rose-700 border-rose-200' },
-  1.0: { title: 'แย่มาก มีปัญหาในการทำงาน', color: 'text-rose-600', badge: 'bg-rose-50 text-rose-700 border-rose-200' },
-  0: { title: 'ไม่ผ่านเกณฑ์โดยสิ้นเชิง', color: 'text-zinc-500', badge: 'bg-zinc-100 text-zinc-600 border-zinc-200' },
+  5.0: { title: 'ยอดเยี่ยมมาก จ่ายเงินตรงเวลา ดูแลผู้ทำงานดีมาก', color: 'text-amber-500', badge: 'bg-amber-50 text-amber-700 border-amber-200' },
+  4.5: { title: 'ดีเยี่ยม สื่อสารชัดเจน มีความเป็นธรรมสูง', color: 'text-amber-500', badge: 'bg-amber-50 text-amber-700 border-amber-200' },
+  4.0: { title: 'ดีมาก ปฏิบัติตรงตามรายละเอียดงานที่โพสต์', color: 'text-emerald-600', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  3.5: { title: 'ดี ปฏิบัติตรงตามข้อตกลงที่ระบุไว้', color: 'text-emerald-600', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  3.0: { title: 'ปานกลาง มีการจ้างงานและจ่ายค่าตอบแทนตามปกติ', color: 'text-blue-600', badge: 'bg-blue-50 text-blue-700 border-blue-200' },
+  2.5: { title: 'พอใช้ รายละเอียดงานหรือเวลามีคลาดเคลื่อนบ้าง', color: 'text-orange-500', badge: 'bg-orange-50 text-orange-700 border-orange-200' },
+  2.0: { title: 'ต้องปรับปรุง เงื่อนไขงานไม่ตรงกับที่โพสต์ประกาศ', color: 'text-orange-600', badge: 'bg-orange-50 text-orange-700 border-orange-200' },
+  1.5: { title: 'ไม่น่าพอใจ มีปัญหาเรื่องการจ่ายค่าจ้างหรือการติดต่อ', color: 'text-rose-500', badge: 'bg-rose-50 text-rose-700 border-rose-200' },
+  1.0: { title: 'แย่มาก ปฏิบัติต่อผู้ทำงานไม่เป็นธรรม', color: 'text-rose-600', badge: 'bg-rose-50 text-rose-700 border-rose-200' },
+  0: { title: 'ไม่ผ่านเกณฑ์ ไม่ปฏิบัติตามข้อตกลงการจ้างงาน', color: 'text-zinc-500', badge: 'bg-zinc-100 text-zinc-600 border-zinc-200' },
 };
 
 function ReviewForm() {
@@ -70,7 +70,7 @@ function ReviewForm() {
         const docSnap = await getDoc(doc(db, 'USER', targetUserId));
         if (docSnap.exists() && isMounted) {
           const data = docSnap.data();
-          setTargetUserName((data.User_name as string) || (data.name as string) || 'ผู้ใช้ JOB Phayao');
+          setTargetUserName((data.User_name as string) || (data.name as string) || 'ผู้โพสต์ประกาศงาน');
           setTargetUserAvatar((data.user_picture_url as string) || (data.photoURL as string) || '');
         } else if (isMounted) {
           // If not in USER, check if it matches an employer from jobs
@@ -78,12 +78,12 @@ function ReviewForm() {
           if (matchingJob) {
             setTargetUserName(matchingJob.employer.name);
           } else {
-            setTargetUserName(`ผู้ใช้ (${targetUserId.substring(0, 8)}...)`);
+            setTargetUserName(`ผู้โพสต์ประกาศงาน (${targetUserId.substring(0, 8)}...)`);
           }
         }
       } catch {
         if (isMounted) {
-          setTargetUserName(`ผู้ใช้งานพะเยา`);
+          setTargetUserName(`ผู้โพสต์ประกาศงาน`);
         }
       } finally {
         if (isMounted) setIsLoadingTarget(false);
@@ -101,7 +101,7 @@ function ReviewForm() {
     const map = new Map<string, { id: string; name: string }>();
     jobs.forEach((j) => {
       if (j.userId && (!currentUser || j.userId !== currentUser.uid)) {
-        map.set(j.userId, { id: j.userId, name: j.employer.name || 'ผู้ว่าจ้าง' });
+        map.set(j.userId, { id: j.userId, name: `${j.employer.name || 'ผู้โพสต์งาน'} (งาน: ${j.title})` });
       }
     });
     return Array.from(map.values());
@@ -115,12 +115,12 @@ function ReviewForm() {
     e.preventDefault();
 
     if (!comment.trim()) {
-      showToast('กรุณาระบุความคิดเห็นหรือข้อเสนอแนะในการรีวิว', 'error');
+      showToast('กรุณาระบุความคิดเห็นหรือข้อเสนอแนะในการรีวิวผู้โพสต์ประกาศงาน', 'error');
       return;
     }
 
     if (!effectiveTargetId) {
-      showToast('กรุณาระบุหรือเลือกผู้ใช้งานที่ต้องการรีวิว', 'error');
+      showToast('กรุณาระบุหรือเลือกผู้โพสต์ประกาศงานที่ต้องการรีวิว', 'error');
       return;
     }
 
@@ -156,11 +156,11 @@ function ReviewForm() {
 
       await addDoc(collection(db, 'USER', effectiveTargetId, 'Rating_score'), reviewPayload);
 
-      showToast(`ส่งคะแนนรีวิว ${selectedScore} ดาว เรียบร้อยแล้ว!`, 'success');
+      showToast(`ส่งคะแนนรีวิวผู้โพสต์ประกาศงาน ${selectedScore} ดาว เรียบร้อยแล้ว!`, 'success');
       router.push('/profile');
     } catch (err: unknown) {
       console.error('Failed to save review:', err);
-      showToast('บันทึกคะแนนรีวิวเรียบร้อย (แคชในเครื่อง)', 'success');
+      showToast('บันทึกคะแนนรีวิวผู้โพสต์ประกาศงานเรียบร้อย (แคชในเครื่อง)', 'success');
       router.push('/profile');
     } finally {
       setIsSubmitting(false);
@@ -203,6 +203,8 @@ function ReviewForm() {
     badge: 'bg-amber-50 text-amber-700 border-amber-200'
   };
 
+  const selectedJob = jobs.find((j) => j.id === (selectedJobId || jobIdFromUrl));
+
   return (
     <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-zinc-900">
       <Header currentView="detail" onBack={() => router.back()} />
@@ -218,7 +220,7 @@ function ReviewForm() {
             <ArrowLeft className="w-4 h-4" />
             <span>ย้อนกลับ</span>
           </button>
-          <span className="text-xs font-semibold text-zinc-400">ระบบประเมินและให้คะแนน</span>
+          <span className="text-xs font-semibold text-zinc-400">ระบบประเมินผู้โพสต์ประกาศงาน</span>
         </div>
 
         {/* Form Card */}
@@ -228,32 +230,50 @@ function ReviewForm() {
               <Star className="w-7 h-7 fill-white" />
             </div>
             <h1 className="text-2xl font-black text-zinc-900 tracking-tight">
-              ให้คะแนนและรีวิว (Rating & Review)
+              ให้คะแนนและรีวิวผู้โพสต์ประกาศงาน
             </h1>
             <p className="text-xs sm:text-sm text-zinc-500 mt-1 max-w-md mx-auto">
-              ประเมินคุณภาพงาน ความรับผิดชอบ และความประทับใจ เพื่อสร้างความน่าเชื่อถือให้กับชุมชนรอบพะเยา
+              ประเมินความน่าเชื่อถือ ความเป็นธรรมในการจ้างงาน และการประสานงานของผู้โพสต์งาน (ไม่ใช่การรีวิวร้านค้าหรือสถานที่)
             </p>
+
+            {/* Clarity Notice Banner */}
+            <div className="mt-4 p-3.5 bg-amber-50/80 border border-amber-200 rounded-2xl text-xs text-amber-900 flex items-start gap-2.5 text-left">
+              <span className="text-base shrink-0 mt-0.5">📢</span>
+              <div>
+                <strong className="font-bold">การรีวิวนี้เป็นการประเมิน &quot;ผู้โพสต์ประกาศงาน&quot; โดยตรง (ไม่ได้รีวิวร้านค้า)</strong>
+                <p className="text-[11px] text-amber-800 mt-0.5 leading-relaxed">
+                  โปรดให้คะแนนตามประสบการณ์การร่วมงานกับผู้โพสต์ เช่น ความชัดเจนของรายละเอียดงาน ความเป็นธรรม การดูแลผู้ทำงาน และการจ่ายค่าตอบแทนตรงเวลา
+                </p>
+              </div>
+            </div>
           </div>
 
           <form onSubmit={handleSubmitReview} className="mt-6 space-y-6">
-            {/* Target User Info */}
+            {/* Target Job Poster Info */}
             <div className="bg-zinc-50/80 rounded-2xl p-4 border border-zinc-100 flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-full bg-zinc-200 border-2 border-white flex items-center justify-center overflow-hidden shrink-0 shadow-2xs">
+              <div className="w-14 h-14 rounded-full bg-zinc-200 border-2 border-white flex items-center justify-center overflow-hidden shrink-0 shadow-2xs">
                 {targetUserAvatar ? (
-                  <Image src={targetUserAvatar} alt={targetUserName} width={48} height={48} unoptimized className="w-full h-full object-cover" />
+                  <Image src={targetUserAvatar} alt={targetUserName} width={56} height={56} unoptimized className="w-full h-full object-cover" />
                 ) : (
-                  <User className="w-6 h-6 text-zinc-500" />
+                  <User className="w-7 h-7 text-zinc-500" />
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-                  ผู้รับการประเมิน
-                </span>
-                <h3 className="text-sm font-bold text-zinc-900 truncate">
-                  {isLoadingTarget ? 'กำลังโหลดข้อมูล...' : targetUserName || 'ผู้ประกอบการ / ผู้ร่วมงานพะเยา'}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    ผู้โพสต์ประกาศงาน (Job Poster)
+                  </span>
+                  {selectedJob && (
+                    <span className="text-[10px] font-semibold text-zinc-500 truncate max-w-[200px]">
+                      งาน: {selectedJob.title}
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-base font-bold text-zinc-900 truncate mt-1">
+                  {isLoadingTarget ? 'กำลังโหลดข้อมูล...' : targetUserName || 'ผู้โพสต์ประกาศงาน'}
                 </h3>
-                <p className="text-[11px] text-zinc-500 flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-emerald-500" /> ผู้ใช้งานที่ยืนยันแล้ว
+                <p className="text-[11px] text-zinc-500 flex items-center gap-1 mt-0.5">
+                  <ShieldCheck className="w-3 h-3 text-emerald-500" /> ผู้โพสต์งานในระบบ JOB Phayao
                 </p>
               </div>
 
@@ -270,7 +290,7 @@ function ReviewForm() {
                     }}
                     className="text-xs bg-white border border-zinc-300 rounded-xl px-2.5 py-1.5 font-medium text-zinc-800"
                   >
-                    <option value="">-- เลือกผู้ใช้ --</option>
+                    <option value="">-- เลือกผู้โพสต์ประกาศงาน --</option>
                     {availableTargetOptions.map((opt) => (
                       <option key={opt.id} value={opt.id}>
                         {opt.name}
@@ -294,17 +314,17 @@ function ReviewForm() {
               <div>
                 <label className="block text-xs font-bold text-zinc-700 mb-1.5 flex items-center gap-1.5">
                   <Briefcase className="w-3.5 h-3.5 text-zinc-500" />
-                  <span>งานที่เกี่ยวข้อง (ถ้ามี)</span>
+                  <span>ประกาศงานที่เกี่ยวข้อง (ถ้ามี)</span>
                 </label>
                 <select
                   value={selectedJobId}
                   onChange={(e) => setSelectedJobId(e.target.value)}
                   className="w-full px-3.5 py-2.5 text-xs bg-white rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-zinc-800"
                 >
-                  <option value="">-- งานทั่วไป / ไม่ระบุตำแหน่ง --</option>
+                  <option value="">-- ประกาศงานทั่วไป / ไม่ระบุตำแหน่ง --</option>
                   {jobs.map((j) => (
                     <option key={j.id} value={j.id}>
-                      {j.title} ({j.employer.name})
+                      {j.title} (ผู้โพสต์: {j.employer.name})
                     </option>
                   ))}
                 </select>
@@ -314,7 +334,7 @@ function ReviewForm() {
             {/* Star Rating Section (0, 1, 1.5, ... 5.0) */}
             <div className="p-5 bg-gradient-to-b from-amber-50/40 to-orange-50/20 rounded-3xl border border-amber-100/80 text-center">
               <span className="text-xs font-bold text-zinc-600 block">
-                เลือกระดับคะแนนความพึงพอใจ
+                เลือกระดับคะแนนความพึงพอใจต่อผู้โพสต์ประกาศงาน
               </span>
 
               {/* Interactive Big Stars */}
@@ -364,7 +384,7 @@ function ReviewForm() {
               <label className="block text-xs font-bold text-zinc-700 mb-1.5 flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
                   <MessageSquare className="w-3.5 h-3.5 text-zinc-500" />
-                  <span>ความคิดเห็น / รีวิวการทำงาน <span className="text-rose-500">*</span></span>
+                  <span>ความคิดเห็น / รีวิวผู้โพสต์ประกาศงาน <span className="text-rose-500">*</span></span>
                 </span>
                 <span className="text-[11px] font-normal text-zinc-400">
                   {comment.length}/500 ตัวอักษร
@@ -376,7 +396,7 @@ function ReviewForm() {
                 maxLength={500}
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                placeholder="เขียนรีวิว เช่น ความตรงต่อเวลา ความเอาใจใส่ คุณภาพงาน หรือคำแนะนำในการทำงานร่วมกัน..."
+                placeholder="เขียนรีวิวถึงผู้โพสต์ประกาศงาน เช่น ความเป็นธรรมในการจ้างงาน ความชัดเจนของรายละเอียดงาน การประสานงาน หรือการจ่ายค่าตอบแทนตรงเวลา..."
                 className="w-full px-4 py-3 rounded-2xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs sm:text-sm text-zinc-900 bg-white placeholder:text-zinc-400 resize-none leading-relaxed"
               />
             </div>
@@ -396,7 +416,7 @@ function ReviewForm() {
                 className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <CheckCircle2 className="w-4 h-4" />
-                <span>{isSubmitting ? 'กำลังส่งรีวิว...' : isSelfReview ? 'ไม่สามารถรีวิวตนเองได้' : 'ส่งคะแนนรีวิว'}</span>
+                <span>{isSubmitting ? 'กำลังส่งรีวิว...' : isSelfReview ? 'ไม่สามารถรีวิวตนเองได้' : 'ส่งรีวิวผู้โพสต์งาน'}</span>
               </button>
             </div>
           </form>

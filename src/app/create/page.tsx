@@ -227,14 +227,14 @@ export default function CreateJobPage() {
               <div className="flex flex-col gap-3">
                 <div>
                   <label className="block text-xs font-bold text-zinc-700 mb-1">
-                    ชื่อผู้ประกาศ / ร้านค้า <span className="text-rose-500">*</span>
+                    ชื่อผู้โพสต์ประกาศงาน (ผู้ว่าจ้าง) <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={employerName}
                     onChange={(e) => setEmployerName(e.target.value)}
-                    placeholder="เช่น พี่เอก (Slow Life Cafe)"
+                    placeholder="เช่น พี่เอก หรือ เอกชัย (ผู้ว่าจ้าง)"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
                   />
                 </div>

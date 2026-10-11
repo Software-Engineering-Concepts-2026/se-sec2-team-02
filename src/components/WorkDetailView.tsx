@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Share2, Star, User, MapPin, Clock, Calendar, CheckCircle2, Edit3 } from 'lucide-react';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { getFirebaseAuth, getFirebaseFirestore } from '@/lib/firebase';
 import { Job } from '@/types/job';
 import LocationMapViewer from '@/components/LocationMapViewer';
@@ -27,6 +27,7 @@ export default function WorkDetailView({
 }: WorkDetailViewProps) {
   const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
   const [realRating, setRealRating] = useState<{ average: number; count: number } | null>(null);
+  const [posterProfile, setPosterProfile] = useState<{ name: string; avatar: string } | null>(null);
 
   useEffect(() => {
     try {
@@ -40,7 +41,7 @@ export default function WorkDetailView({
     }
   }, []);
 
-  // Fetch real Rating_score from Firestore for the employer/poster (No Mockup Data)
+  // Fetch real Job Poster Profile & Rating_score from Firestore (No Mockup Data)
   useEffect(() => {
     let isMounted = true;
     const fetchEmployerRating = async () => {
@@ -50,6 +51,21 @@ export default function WorkDetailView({
       }
       try {
         const db = getFirebaseFirestore();
+
+        // Fetch actual user profile of the job poster
+        try {
+          const userSnap = await getDoc(doc(db, 'USER', job.userId));
+          if (userSnap.exists() && isMounted) {
+            const uData = userSnap.data();
+            setPosterProfile({
+              name: (uData.User_name as string) || (uData.name as string) || job.employer.name || 'ผู้โพสต์ประกาศงาน',
+              avatar: (uData.user_picture_url as string) || (uData.photoURL as string) || '',
+            });
+          }
+        } catch {
+          // ignore profile fetch fallback
+        }
+
         const ratingsCol = collection(db, 'USER', job.userId, 'Rating_score');
         const snap = await getDocs(ratingsCol);
         if (!isMounted) return;
@@ -71,7 +87,7 @@ export default function WorkDetailView({
     return () => {
       isMounted = false;
     };
-  }, [job.userId]);
+  }, [job.userId, job.employer.name]);
 
   const isOwner = Boolean(
     propIsOwner || (currentUser && job.userId && currentUser.uid === job.userId)
@@ -189,34 +205,50 @@ export default function WorkDetailView({
           </div>
         </div>
 
-        {/* Right: Employer Profile Card (3 Cols on LG) */}
+        {/* Right: Job Poster Profile Card (3 Cols on LG) */}
         <div className="lg:col-span-3 bg-white/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 p-6 shadow-xs flex flex-col items-center text-center">
-          <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4 self-start">
-            ข้อมูลผู้ว่าจ้าง
-          </span>
-
-          <div className="w-20 h-20 rounded-full bg-zinc-100 border-2 border-zinc-200 flex items-center justify-center text-zinc-600 my-1 overflow-hidden relative shadow-2xs">
-            <User className="w-10 h-10" />
+          <div className="flex items-center justify-between w-full mb-3">
+            <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+              ผู้โพสต์ประกาศงาน
+            </span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+              ผู้ว่าจ้าง
+            </span>
           </div>
 
-          <h3 className="text-base sm:text-lg font-black text-zinc-900 mt-2">
-            {job.employer.name}
+          <div className="w-20 h-20 rounded-full bg-zinc-100 border-2 border-zinc-200 flex items-center justify-center text-zinc-600 my-1 overflow-hidden relative shadow-2xs">
+            {posterProfile?.avatar ? (
+              <Image
+                src={posterProfile.avatar}
+                alt={posterProfile.name || job.employer.name}
+                width={80}
+                height={80}
+                unoptimized
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User className="w-10 h-10" />
+            )}
+          </div>
+
+          <h3 className="text-base sm:text-lg font-black text-zinc-900 mt-2 truncate max-w-full">
+            {posterProfile?.name || job.employer.name}
           </h3>
           <p className="text-xs text-zinc-500 mt-0.5">
             สมาชิกตั้งแต่ {job.employer.memberSince}
           </p>
 
-          {/* Rating Score Badge: Real Firestore data only, NO mock data */}
+          {/* Rating Score Badge: Real Firestore data of the job poster */}
           {realRating && realRating.count > 0 ? (
             <div className="flex items-center justify-center gap-1.5 mt-2.5 bg-amber-50 px-3 py-1 rounded-full border border-amber-100 text-amber-600 text-xs font-bold">
               <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
               <span>{realRating.average.toFixed(1)}</span>
-              <span className="text-zinc-400 font-normal">({realRating.count} รีวิว)</span>
+              <span className="text-zinc-400 font-normal">({realRating.count} รีวิวผู้โพสต์)</span>
             </div>
           ) : (
             <div className="flex items-center justify-center gap-1.5 mt-2.5 bg-zinc-50 px-3 py-1 rounded-full border border-zinc-200 text-zinc-500 text-xs font-medium">
               <Star className="w-3.5 h-3.5 text-zinc-300" />
-              <span>ยังไม่มีรีวิว</span>
+              <span>ยังไม่มีรีวิวผู้โพสต์</span>
             </div>
           )}
 
@@ -237,10 +269,11 @@ export default function WorkDetailView({
           ) : (
             <Link
               href={`/review?userId=${job.userId || ''}&jobId=${job.id}`}
-              className="w-full mt-4 py-2.5 px-4 rounded-2xl border border-zinc-300 hover:border-zinc-900 bg-white hover:bg-zinc-50 text-zinc-900 text-xs font-bold transition-all cursor-pointer shadow-2xs flex items-center justify-center gap-1.5 active:scale-95"
+              className="w-full mt-4 py-2.5 px-4 rounded-2xl border border-amber-300 hover:border-amber-500 bg-amber-50/60 hover:bg-amber-100/70 text-amber-900 text-xs font-bold transition-all cursor-pointer shadow-2xs flex items-center justify-center gap-1.5 active:scale-95"
+              title="ให้คะแนนและรีวิวผู้โพสต์ประกาศงาน (ไม่ใช่รีวิวร้าน)"
             >
               <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
-              <span>รีวิว</span>
+              <span>★ รีวิวผู้โพสต์งาน</span>
             </Link>
           )}
         </div>
