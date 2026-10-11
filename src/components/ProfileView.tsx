@@ -55,6 +55,64 @@ const PRESET_AVATARS = [
   { label: 'ไรเดอร์', url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&q=80' },
 ];
 
+/**
+ * แปลงไฟล์รูปภาพ JPEG, PNG, WebP ให้เป็น Data URL พร้อมบีบอัดและปรับขนาดล่วงหน้า
+ * เพื่อให้สามารถเก็บเป็นข้อความลิงก์ URL ใน Firebase ได้ทันทีและมีขนาดเบามาก (~20-40 KB)
+ */
+const convertFileToCompressedDataUrl = (
+  file: File,
+  maxWidth = 400,
+  quality = 0.85
+): Promise<string> => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const src = e.target?.result;
+      if (typeof src !== 'string') {
+        resolve('');
+        return;
+      }
+      if (typeof window === 'undefined') {
+        resolve(src);
+        return;
+      }
+      const img = new window.Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          const size = Math.min(img.width, img.height);
+          const startX = (img.width - size) / 2;
+          const startY = (img.height - size) / 2;
+
+          const targetSize = Math.min(size, maxWidth);
+          canvas.width = targetSize;
+          canvas.height = targetSize;
+
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(src);
+            return;
+          }
+
+          ctx.drawImage(img, startX, startY, size, size, 0, 0, targetSize, targetSize);
+          const compressedDataUrl = canvas.toDataURL('image/webp', quality);
+          resolve(compressedDataUrl);
+        } catch {
+          resolve(src);
+        }
+      };
+      img.onerror = () => {
+        resolve(src);
+      };
+      img.src = src;
+    };
+    reader.onerror = () => {
+      resolve('');
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
 interface ProfileDetails {
   name: string;
   email: string;
@@ -290,7 +348,7 @@ export default function ProfileView() {
     setEditing(false);
   };
 
-  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -306,15 +364,28 @@ export default function ProfileView() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        setAvatarPreview(reader.result);
+    try {
+      setMessage('กำลังประมวลผลและแปลงไฟล์รูปภาพเป็น URL...');
+      const dataUrl = await convertFileToCompressedDataUrl(file);
+      if (dataUrl) {
+        setAvatarPreview(dataUrl);
+        setDraftProfile((prev) => ({ ...prev, photoURL: dataUrl }));
+        setAvatarFile(file);
+        setMessage('แปลงไฟล์รูปภาพเป็น URL สำเร็จแล้ว พร้อมสำหรับบันทึก!');
       }
-    };
-    reader.readAsDataURL(file);
-    setAvatarFile(file);
-    setMessage('');
+    } catch (err) {
+      console.warn('Error converting file to Data URL:', err);
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          setAvatarPreview(reader.result);
+          setDraftProfile((prev) => ({ ...prev, photoURL: reader.result as string }));
+        }
+      };
+      reader.readAsDataURL(file);
+      setAvatarFile(file);
+      setMessage('แปลงไฟล์รูปภาพเป็น URL เรียบร้อย');
+    }
   };
 
   // -----------------------------
@@ -1002,8 +1073,50 @@ export default function ProfileView() {
                         className="block w-full text-xs text-zinc-600 file:mr-3 file:rounded-xl file:border-0 file:bg-zinc-900 file:px-3 py-1 file:py-2 file:text-xs file:font-bold file:text-white hover:file:bg-zinc-800 cursor-pointer"
                       />
                       <span className="mt-1.5 block text-[11px] text-zinc-500">
-                        JPEG, PNG หรือ WebP ขนาดไม่เกิน 5 MB (ระบบจะอัปโหลดขึ้น Firebase Storage หรือแปลงข้อมูลให้อัตโนมัติ)
+                        JPEG, PNG หรือ WebP ขนาดไม่เกิน 5 MB (ระบบจะแปลงไฟล์เป็น URL และบีบอัดให้อัตโนมัติทันทีที่เลือกไฟล์)
                       </span>
+
+                      {/* Display converted URL preview box */}
+                      {avatarPreview && (
+                        <div className="mt-3 p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs">
+                          <div className="flex items-center justify-between text-emerald-800 font-bold mb-1">
+                            <span className="flex items-center gap-1.5">
+                              <CheckCircle2 size={15} className="text-emerald-600" />
+                              แปลงไฟล์เป็น URL สำเร็จแล้ว!
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setAvatarInputMode('url')}
+                              className="text-blue-600 hover:text-blue-800 text-[11px] font-semibold underline cursor-pointer"
+                            >
+                              สลับไปดูในช่อง URL &rarr;
+                            </button>
+                          </div>
+                          <p className="text-[11px] text-emerald-700 leading-relaxed">
+                            ไฟล์รูปภาพของคุณถูกแปลงเป็น Data URL (Base64) ที่ปรับขนาดและบีบอัดเพื่อความคมชัดเรียบร้อย พร้อมสำหรับบันทึกลง Firebase ได้ทันที
+                          </p>
+                          <div className="mt-2 flex items-center gap-2">
+                            <input
+                              type="text"
+                              readOnly
+                              value={draftProfile.photoURL || avatarPreview}
+                              className="flex-1 p-2 bg-white rounded-xl border border-emerald-200/80 font-mono text-[10px] text-zinc-600 truncate select-all cursor-text"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (typeof window !== 'undefined' && navigator.clipboard) {
+                                  navigator.clipboard.writeText(draftProfile.photoURL || avatarPreview);
+                                  setMessage('คัดลอก Data URL เรียบร้อยแล้ว');
+                                }
+                              }}
+                              className="px-3 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[10px] shrink-0 cursor-pointer transition-colors"
+                            >
+                              คัดลอก URL
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
