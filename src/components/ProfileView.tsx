@@ -19,6 +19,7 @@ import {
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   User,
   Mail,
@@ -36,11 +37,23 @@ import {
   Star,
   StarHalf,
   ShieldCheck,
+  Link as LinkIcon,
+  Upload,
+  Sparkles,
 } from 'lucide-react';
 
 import { getFirebaseAuth, getFirebaseFirestore, getFirebaseStorage } from '@/lib/firebase';
 import { useJobs } from '@/context/JobContext';
 import { ReviewItem } from '@/types/job';
+
+const PRESET_AVATARS = [
+  { label: 'นักศึกษาหญิง', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80' },
+  { label: 'นักศึกษาชาย', url: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=256&q=80' },
+  { label: 'พนักงานบริการ', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80' },
+  { label: 'บาริสต้า', url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=256&q=80' },
+  { label: 'ฟรีแลนซ์', url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=256&q=80' },
+  { label: 'ไรเดอร์', url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&q=80' },
+];
 
 interface ProfileDetails {
   name: string;
@@ -85,6 +98,7 @@ export default function ProfileView() {
     useState<ProfileDetails>(emptyProfile);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState('');
+  const [avatarInputMode, setAvatarInputMode] = useState<'url' | 'preset' | 'upload'>('url');
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -257,6 +271,7 @@ export default function ProfileView() {
     setMessage('');
     setAvatarFile(null);
     setAvatarPreview('');
+    setAvatarInputMode('url');
     setEditing(true);
   };
 
@@ -271,6 +286,7 @@ export default function ProfileView() {
     setMessage('');
     setAvatarFile(null);
     setAvatarPreview('');
+    setAvatarInputMode('url');
     setEditing(false);
   };
 
@@ -323,7 +339,7 @@ export default function ProfileView() {
           draftProfile.phone?.trim() ?? '',
         bio:
           draftProfile.bio?.trim() ?? '',
-        photoURL: profile.photoURL || account.photoURL || '',
+        photoURL: draftProfile.photoURL?.trim() || profile.photoURL || account.photoURL || '',
       };
 
       // -----------------------------
@@ -339,14 +355,23 @@ export default function ProfileView() {
 
       let photoURL = nextProfile.photoURL;
       if (avatarFile) {
-        const avatarRef = ref(
-          getFirebaseStorage(),
-          `USER/${account.uid}/avatar/profile-image`
-        );
-        const uploadedImage = await uploadBytes(avatarRef, avatarFile, {
-          contentType: avatarFile.type,
-        });
-        photoURL = await getDownloadURL(uploadedImage.ref);
+        try {
+          const avatarRef = ref(
+            getFirebaseStorage(),
+            `USER/${account.uid}/avatar/profile-image`
+          );
+          const uploadedImage = await uploadBytes(avatarRef, avatarFile, {
+            contentType: avatarFile.type,
+          });
+          photoURL = await getDownloadURL(uploadedImage.ref);
+        } catch (storageErr) {
+          console.warn('Firebase Storage upload failed, fallback to Data URL / draft:', storageErr);
+          if (avatarPreview) {
+            photoURL = avatarPreview;
+          }
+        }
+      } else if (avatarPreview) {
+        photoURL = avatarPreview;
       }
 
       const savedProfile: ProfileDetails = {
@@ -360,6 +385,7 @@ export default function ProfileView() {
         tel: savedProfile.phone,
         User_info: savedProfile.bio,
         user_picture_url: photoURL,
+        photoURL: photoURL,
         updatedAt: serverTimestamp(),
         updated_up: serverTimestamp(),
       };
@@ -373,12 +399,14 @@ export default function ProfileView() {
         }, { merge: true }),
       ]);
 
-      // อัปเดตชื่อใน Firebase Authentication
-      if (account.displayName !== savedProfile.name || avatarFile) {
+      // อัปเดตใน Firebase Authentication (ทั้ง displayName และ photoURL)
+      try {
         await updateProfile(account, {
           displayName: savedProfile.name,
-          ...(avatarFile ? { photoURL } : {}),
+          photoURL: photoURL || undefined,
         });
+      } catch (authErr) {
+        console.warn('Auth updateProfile error:', authErr);
       }
 
       setProfile(savedProfile);
@@ -388,7 +416,7 @@ export default function ProfileView() {
 
       setEditing(false);
 
-      setMessage('บันทึกข้อมูลโปรไฟล์เรียบร้อยแล้ว');
+      setMessage('บันทึกข้อมูลโปรไฟล์และรูปภาพเรียบร้อยแล้ว');
     } catch (error: unknown) {
       console.error(
         'Error saving profile:',
@@ -491,7 +519,7 @@ export default function ProfileView() {
     },
   ];
   const displayPhotoURL =
-    avatarPreview || profile.photoURL || account.photoURL || '';
+    avatarPreview || (editing ? draftProfile.photoURL : profile.photoURL) || account?.photoURL || '';
 
   // User's posted jobs
   const userPostedJobs = jobs.filter(
@@ -798,30 +826,186 @@ export default function ProfileView() {
             ===================================== */}
             {editing ? (
               <div className="space-y-5">
-                <div className="flex flex-col gap-4 rounded-xl bg-gray-50 p-4 sm:flex-row sm:items-center">
-                  <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-blue-600">
-                    {displayPhotoURL ? (
-                      <div
-                        aria-label="ตัวอย่างรูปโปรไฟล์"
-                        className="h-full w-full rounded-full bg-cover bg-center"
-                        style={{ backgroundImage: `url("${displayPhotoURL}")` }}
-                      />
-                    ) : (
-                      <User size={34} />
-                    )}
+                {/* Avatar Change Section: URL Link, Presets, or File Upload */}
+                <div className="rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 sm:p-5 space-y-4 shadow-2xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    {/* Avatar Preview */}
+                    <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-white shadow-sm bg-blue-100 text-blue-600">
+                      {displayPhotoURL ? (
+                        <div
+                          aria-label="ตัวอย่างรูปโปรไฟล์"
+                          className="h-full w-full rounded-full bg-cover bg-center"
+                          style={{ backgroundImage: `url("${displayPhotoURL}")` }}
+                        />
+                      ) : (
+                        <User size={36} />
+                      )}
+                      {displayPhotoURL && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAvatarPreview('');
+                            setAvatarFile(null);
+                            setDraftProfile((prev) => ({ ...prev, photoURL: '' }));
+                          }}
+                          title="ล้างรูปโปรไฟล์"
+                          className="absolute bottom-0 right-0 bg-rose-600 hover:bg-rose-700 text-white p-1 rounded-full shadow-xs cursor-pointer transition-transform hover:scale-110"
+                        >
+                          <X size={12} />
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-bold text-zinc-900">รูปโปรไฟล์ (Profile Picture)</span>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                          รองรับข้อความลิงก์ URL
+                        </span>
+                      </div>
+                      <p className="text-xs text-zinc-500 mt-0.5">
+                        เลือกวิธีเปลี่ยนรูป: ใส่ลิงก์ URL รูปภาพโดยตรง, เลือกรูปสำเร็จรูป, หรืออัปโหลดจากเครื่อง
+                      </p>
+
+                      {/* Mode Switcher Buttons */}
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        <button
+                          type="button"
+                          onClick={() => setAvatarInputMode('url')}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            avatarInputMode === 'url'
+                              ? 'bg-zinc-900 text-white shadow-xs'
+                              : 'bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-100'
+                          }`}
+                        >
+                          <LinkIcon size={13} />
+                          <span>ใส่ลิงก์ URL รูปภาพ</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setAvatarInputMode('preset')}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            avatarInputMode === 'preset'
+                              ? 'bg-zinc-900 text-white shadow-xs'
+                              : 'bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-100'
+                          }`}
+                        >
+                          <Sparkles size={13} />
+                          <span>เลือกรูปสำเร็จรูป</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setAvatarInputMode('upload')}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            avatarInputMode === 'upload'
+                              ? 'bg-zinc-900 text-white shadow-xs'
+                              : 'bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-100'
+                          }`}
+                        >
+                          <Upload size={13} />
+                          <span>อัปโหลดจากเครื่อง</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <label className="block min-w-0 text-sm font-medium text-gray-700">
-                    <span className="mb-1 block">รูปโปรไฟล์</span>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={handleAvatarChange}
-                      className="block w-full max-w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-2 file:font-medium file:text-gray-700 hover:file:bg-gray-100"
-                    />
-                    <span className="mt-1 block text-xs text-gray-500">
-                      JPEG, PNG หรือ WebP ขนาดไม่เกิน 5 MB
-                    </span>
-                  </label>
+
+                  {/* Mode 1: URL Input */}
+                  {avatarInputMode === 'url' && (
+                    <div className="pt-3 border-t border-zinc-200/70 animate-in fade-in duration-200">
+                      <label className="block text-xs font-bold text-zinc-700 mb-1.5">
+                        วางลิงก์ URL ของรูปภาพ (Direct Image Link URL)
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="url"
+                          value={draftProfile.photoURL || ''}
+                          onChange={(e) => {
+                            setAvatarPreview('');
+                            setAvatarFile(null);
+                            setDraftProfile((prev) => ({ ...prev, photoURL: e.target.value.trim() }));
+                          }}
+                          placeholder="เช่น https://images.unsplash.com/... หรือ https://i.imgur.com/..."
+                          className="flex-1 px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white shadow-2xs"
+                        />
+                        {draftProfile.photoURL && (
+                          <button
+                            type="button"
+                            onClick={() => setDraftProfile((prev) => ({ ...prev, photoURL: '' }))}
+                            className="px-3 py-2 rounded-xl border border-zinc-200 hover:bg-zinc-100 text-xs font-semibold text-zinc-600 transition-colors cursor-pointer"
+                          >
+                            ล้าง URL
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-zinc-500 mt-1.5">
+                        💡 สามารถคลิกขวาที่รูปภาพใดๆ บนอินเทอร์เน็ตแล้วเลือก &quot;คัดลอกที่อยู่รูปภาพ&quot; (Copy image address) มาวางที่นี่ได้ทันที
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Mode 2: Presets */}
+                  {avatarInputMode === 'preset' && (
+                    <div className="pt-3 border-t border-zinc-200/70 animate-in fade-in duration-200">
+                      <label className="block text-xs font-bold text-zinc-700 mb-2">
+                        เลือกรูปโปรไฟล์ตัวอย่างสำเร็จรูป (Preset Avatars)
+                      </label>
+                      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
+                        {PRESET_AVATARS.map((preset, idx) => {
+                          const isSelected = draftProfile.photoURL === preset.url && !avatarPreview;
+                          return (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => {
+                                setAvatarPreview('');
+                                setAvatarFile(null);
+                                setDraftProfile((prev) => ({ ...prev, photoURL: preset.url }));
+                              }}
+                              className={`group flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all cursor-pointer ${
+                                isSelected
+                                  ? 'border-zinc-900 bg-zinc-900 text-white shadow-xs ring-2 ring-zinc-900/10'
+                                  : 'border-zinc-200 bg-white hover:border-zinc-400 text-zinc-700'
+                              }`}
+                            >
+                              <div className="relative w-12 h-12 rounded-full overflow-hidden border border-zinc-200 shadow-2xs">
+                                <Image
+                                  src={preset.url}
+                                  alt={preset.label}
+                                  fill
+                                  sizes="48px"
+                                  unoptimized
+                                  className="object-cover group-hover:scale-105 transition-transform"
+                                />
+                              </div>
+                              <span className="text-[10px] font-semibold text-center truncate max-w-full">
+                                {preset.label}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mode 3: File Upload */}
+                  {avatarInputMode === 'upload' && (
+                    <div className="pt-3 border-t border-zinc-200/70 animate-in fade-in duration-200">
+                      <label className="block text-xs font-bold text-zinc-700 mb-1.5">
+                        อัปโหลดไฟล์รูปภาพจากอุปกรณ์
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        onChange={handleAvatarChange}
+                        className="block w-full text-xs text-zinc-600 file:mr-3 file:rounded-xl file:border-0 file:bg-zinc-900 file:px-3 py-1 file:py-2 file:text-xs file:font-bold file:text-white hover:file:bg-zinc-800 cursor-pointer"
+                      />
+                      <span className="mt-1.5 block text-[11px] text-zinc-500">
+                        JPEG, PNG หรือ WebP ขนาดไม่เกิน 5 MB (ระบบจะอัปโหลดขึ้น Firebase Storage หรือแปลงข้อมูลให้อัตโนมัติ)
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                   {profileFields.filter(({ key }) => key !== 'email').map(
