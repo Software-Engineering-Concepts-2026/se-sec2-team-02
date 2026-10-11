@@ -5,7 +5,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { Search, Plus, ArrowLeft, X, User, LogIn } from 'lucide-react';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { getFirebaseAuth } from '@/lib/firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { getFirebaseAuth, getFirebaseFirestore } from '@/lib/firebase';
 
 interface HeaderProps {
   currentView?: 'home' | 'search' | 'detail' | 'profile' | 'create';
@@ -34,18 +35,54 @@ export default function Header({
   const pathname = usePathname();
 
   const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
 
   useEffect(() => {
     try {
       const auth = getFirebaseAuth();
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         setCurrentUser(user);
+        if (user?.photoURL) {
+          setAvatarUrl(user.photoURL);
+        } else if (!user) {
+          setAvatarUrl('');
+        }
       });
       return () => unsubscribe();
     } catch (err) {
       console.warn('Firebase Auth warning in Header:', err);
     }
   }, []);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    try {
+      const db = getFirebaseFirestore();
+      const userDocRef = doc(db, 'USER', currentUser.uid);
+      const unsub = onSnapshot(
+        userDocRef,
+        (snap) => {
+          if (snap.exists()) {
+            const data = snap.data();
+            const pic =
+              (data.user_picture_url as string) ||
+              (data.photoURL as string) ||
+              currentUser.photoURL ||
+              '';
+            if (pic) {
+              setAvatarUrl(pic);
+            }
+          }
+        },
+        (err) => {
+          console.warn('Header user snapshot warning:', err);
+        }
+      );
+      return () => unsub();
+    } catch (err) {
+      console.warn('Header Firestore warning:', err);
+    }
+  }, [currentUser]);
 
   // Local state if controlled query isn't passed
   const [localQuery, setLocalQuery] = useState('');
@@ -124,6 +161,8 @@ export default function Header({
     else router.push('/');
   };
 
+  const displayedAvatar = avatarUrl || currentUser?.photoURL || '';
+
   // If in detail or create view, show back button
   if (activeView === 'detail' || activeView === 'create') {
     return (
@@ -152,9 +191,9 @@ export default function Header({
                 title="โปรไฟล์ของฉัน"
                 className="w-9 h-9 rounded-full bg-zinc-100 hover:bg-zinc-200 border border-zinc-250 flex items-center justify-center text-zinc-700 transition-all cursor-pointer overflow-hidden shadow-2xs"
               >
-                {currentUser.photoURL ? (
+                {displayedAvatar ? (
                   <Image
-                    src={currentUser.photoURL}
+                    src={displayedAvatar}
                     alt={currentUser.displayName || 'Profile'}
                     width={36}
                     height={36}
@@ -289,9 +328,9 @@ export default function Header({
                   : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border-zinc-250'
               }`}
             >
-              {currentUser.photoURL ? (
+              {displayedAvatar ? (
                 <Image
-                  src={currentUser.photoURL}
+                  src={displayedAvatar}
                   alt={currentUser.displayName || 'Profile'}
                   width={36}
                   height={36}

@@ -180,6 +180,7 @@ AI ไม่ได้ใช้ credential ในการ login หรือ pus
 * **Prompt 24:** "ช่วยแก้ เมื่อกดสมัครงาน หรือเพิ่มงานหากไม่ได้ login หรือ register จะวาร์ปไปหน้า login หากไม่ได้ login หรือ registerจะไม่สามารถสมัครงาน หรือเพิ่มงานได้" (พัฒนาระบบ Authentication Guard และ Redirect สู่หน้า Login อัตโนมัติ: ปรับปรุง `Header.tsx` ให้แสดงปุ่ม '+ เพิ่มงาน' และเมื่อผู้ใช้ที่ยังไม่ได้ล็อกอินคลิกจะวาร์ปไปหน้า `/auth` ทันที, ปรับปรุงปุ่ม Quick Apply ในหน้าแรก (`page.tsx`) และหน้าค้นหา (`search/page.tsx`) ให้ตรวจสอบสถานะการเข้าสู่ระบบ หากยังไม่ได้ล็อกอินจะ redirect ไป `/auth` โดยไม่เปิดโมดัล, ปรับปุ่ม 'ยื่นใบสมัคร' ในหน้ารายละเอียดงาน (`jobs/[id]/page.tsx`) ให้วาร์ปไป `/auth` ทันที, ป้องกันหน้า `/create` และ `/edit/[id]` ด้วย Auth Listener หากไม่ได้ล็อกอินจะ redirect ไป `/auth`, เสริม Auth Guard ใน `ApplyModal.tsx` และ `CreateJobModal.tsx`, พร้อมบล็อกการเพิ่มงานและสมัครงานของผู้ใช้นิรนามที่ระดับ Service Layer ใน `JobContext.tsx` ด้วย Error Toast แจ้งเตือนอย่างชัดเจน รันเทสต์ 19/19 ผ่าน (100%), Lint ผ่าน 0 errors 0 warnings, และ Build ผ่าน 100%)
 * **Prompt 25:** "แล้วก็อยากทำระบบการเปลี่ยนรูปโปรไฟล์ด้วยใน firebase สามารถเก็บรูปภาพในรูปแบบข้อลิ้ง URL ได้ไหม" (พัฒนาระบบเปลี่ยนรูปโปรไฟล์พร้อมรองรับการจัดเก็บรูปภาพในรูปแบบข้อความลิงก์ URL ใน Firebase: ชี้แจงว่าใน Firebase ทั้ง Cloud Firestore (`user_picture_url`) และ Firebase Authentication (`photoURL`) จัดเก็บรูปภาพในรูปแบบ String URL อยู่แล้ว 100%, พร้อมพัฒนา UI ใน `ProfileView.tsx` รองรับการเปลี่ยนรูปโปรไฟล์ 3 โหมด: 1) ใส่ลิงก์ URL รูปภาพโดยตรงจากเว็บ 2) เลือกรูปโปรไฟล์ตัวอย่างสำเร็จรูป 6 แบบ 3) อัปโหลดไฟล์รูปภาพจากอุปกรณ์ พร้อมระบบ Fallback เป็น Data URL หาก Firebase Storage ขัดข้อง บันทึกและซิงค์ข้อมูลตรงกับ Firestore และ Auth อัตโนมัติ รันเทสต์ 19/19 ผ่าน (100%), Lint ผ่าน 0 errors 0 warnings, และ Build ผ่าน 100%)
 * **Prompt 26:** "ในโหมด 3: อัปโหลดไฟล์จากเครื่อง เราสามารถแปลงไฟล์ JPEG, PNG, WebP ของผู้งานให้เป็น URL ก่อนที่จะบันทึกลง firebase ไหม" (พัฒนาระบบแปลงไฟล์รูปภาพจากเครื่องเป็น Data URL (Base64) อัตโนมัติก่อนบันทึก: เพิ่มฟังก์ชัน `convertFileToCompressedDataUrl` ใน `ProfileView.tsx` ใช้ HTML5 Canvas ครอปและบีบอัดภาพให้อยู่ในสัดส่วนสี่เหลี่ยมจัตุรัส 400x400px WebP ขนาดเบาเพียง ~20-40 KB ทันทีที่ผู้ใช้เลือกไฟล์, แสดงกล่องแจ้งเตือนความสำเร็จพร้อมช่อง Input แสดง Data URL และปุ่มคัดลอก URL ทันที, อัปเดต `storage.rules` ให้ครอบคลุมทุกพาธ และจัดเก็บ URL ลง Firestore และ Firebase Auth ได้อย่างราบรื่น รันเทสต์ 19/19 ผ่าน (100%), Lint ผ่าน 0 errors 0 warnings, และ Build ผ่าน 100%)
+* **Prompt 27:** "เมื่อเลือกรูปจากในเครื่องแล้วกดปุ่ม "บันทึกข้อมูล" มันขึ้นว่ากำลังบันทึกข้อมูล แล้วมันก็ขึ้นแบบนี้ไม่เสร็จสักที" (แก้ไขปัญหากดปุ่ม "บันทึกข้อมูล" ในหน้าโปรไฟล์แล้วค้างที่สถานะ "กำลังบันทึกข้อมูล" ไม่เสร็จสิ้น: ปลดการเรียก `uploadBytes` ไปยัง Firebase Storage ออกจาก `handleSaveProfile` เนื่องจากรูปภาพได้ถูกแปลงเป็น Data URL สำเร็จล่วงหน้าแล้ว และการเรียก Storage ที่ไม่มี Bucket หรือติดปัญหา CORS ทำให้ Firebase SDK รอ Timeout นานถึง 120 วินาที, นำ Data URL ที่แปลงไว้บันทึกลง Firestore `USER/{uid}` (`user_picture_url`, `photoURL`) โดยตรงทันที (< 200ms), ปรับ `updateProfile` ใน Firebase Auth ให้ส่ง `photoURL` เฉพาะเมื่อเป็น HTTP/HTTPS URL เพื่อป้องกันข้อผิดพลาดจาก Data URL, และอัปเดต `Header.tsx` ให้มี Real-time Listener ซิงค์รูปโปรไฟล์จาก Firestore ทันที รันเทสต์ 19/19 ผ่าน (100%), Lint ผ่าน 0 errors 0 warnings, และ Build สำเร็จ 100%)
 
 ### 3. Code Portion Generated & Human Modifications
 * **AI-Generated Portion (~95%):**
@@ -276,6 +277,9 @@ AI ไม่ได้ใช้ credential ในการ login หรือ pus
     - แปลงแท็ก `<img>` เป็น Next.js `<Image />` พร้อม `unoptimized`
   - ตรวจสอบและแก้ไข Build Type Errors และรันคำสั่ง `npm run lint`, `npm run build` และ `npm test` ผ่านสมบูรณ์ 100% (19/19 passing tests)
   - ปรับแต่งการตั้งค่าโปรเจกต์ Next.js และจัดทำคู่มือการ Deploy สู่ Vercel Platform ให้รองรับทั้ง Serverless และ Edge CDN อย่างสมบูรณ์
+  - แก้ไขปัญหา UI ค้างขณะบันทึกรูปโปรไฟล์ใน `ProfileView.tsx` และปรับปรุง Navbar Avatar Sync ใน `Header.tsx`:
+    - นำการเรียก `uploadBytes` ออกจาก `handleSaveProfile` เพื่อไม่ให้เกิดการค้างรอ Network Timeout ของ Firebase Storage และบันทึก Data URL ลง Firestore โดยตรงทันที (< 200ms)
+    - เพิ่ม Real-time Snapshot Listener ใน `Header.tsx` ซิงค์ `user_picture_url` จากคอลเลกชัน `USER/{uid}` ทำให้รูปบน Navbar อัปเดตทันทีแบบเรียลไทม์
 * **Human Written/Modified Portion (~5%):**
   - กำหนดข้อกำหนดการเปลี่ยนผ่านจาก Prototype สู่โครงสร้างโปรดักชันจริงภายใต้ `src/app`
   - ตัดสินใจตัดฟิลด์ระยะทาง, Line ID, ฟังก์ชันถูกใจงาน และปรับแต่งตำแหน่งปุ่มตามการใช้งานจริง
@@ -293,6 +297,7 @@ AI ไม่ได้ใช้ credential ในการ login หรือ pus
   - สั่งการให้เพิ่มแท็บ "กำลังรอ approve ใบสมัคร" ในหน้าโปรไฟล์เพื่อติดตามและจัดการใบสมัครงาน
   - แจ้งข้อผิดพลาด GitHub CI Actions จากไฟล์ `CI error.md` เพื่อให้แก้ไขให้พร้อมสำหรับการ Merge
   - สั่งการเตรียมความพร้อมสำหรับการนำโปรเจกต์ขึ้นรันบน Vercel
+  - แจ้งปัญหาเมื่อเลือกรูปจากในเครื่องแล้วกดปุ่ม "บันทึกข้อมูล" ค้างที่สถานะ "กำลังบันทึกข้อมูล" ไม่เสร็จสิ้น
   - ตรวจสอบความถูกต้องของการทำงานและการแสดงผลในระบบ
 
 

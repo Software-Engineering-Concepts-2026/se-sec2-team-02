@@ -16,7 +16,6 @@ import {
   getDocs,
   GeoPoint,
 } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -42,7 +41,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-import { getFirebaseAuth, getFirebaseFirestore, getFirebaseStorage } from '@/lib/firebase';
+import { getFirebaseAuth, getFirebaseFirestore } from '@/lib/firebase';
 import { useJobs } from '@/context/JobContext';
 import { ReviewItem } from '@/types/job';
 
@@ -154,7 +153,6 @@ export default function ProfileView() {
   const [profile, setProfile] = useState<ProfileDetails>(emptyProfile);
   const [draftProfile, setDraftProfile] =
     useState<ProfileDetails>(emptyProfile);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState('');
   const [avatarInputMode, setAvatarInputMode] = useState<'url' | 'preset' | 'upload'>('url');
 
@@ -327,7 +325,6 @@ export default function ProfileView() {
     });
 
     setMessage('');
-    setAvatarFile(null);
     setAvatarPreview('');
     setAvatarInputMode('url');
     setEditing(true);
@@ -342,7 +339,6 @@ export default function ProfileView() {
     });
 
     setMessage('');
-    setAvatarFile(null);
     setAvatarPreview('');
     setAvatarInputMode('url');
     setEditing(false);
@@ -370,7 +366,6 @@ export default function ProfileView() {
       if (dataUrl) {
         setAvatarPreview(dataUrl);
         setDraftProfile((prev) => ({ ...prev, photoURL: dataUrl }));
-        setAvatarFile(file);
         setMessage('แปลงไฟล์รูปภาพเป็น URL สำเร็จแล้ว พร้อมสำหรับบันทึก!');
       }
     } catch (err) {
@@ -383,7 +378,6 @@ export default function ProfileView() {
         }
       };
       reader.readAsDataURL(file);
-      setAvatarFile(file);
       setMessage('แปลงไฟล์รูปภาพเป็น URL เรียบร้อย');
     }
   };
@@ -403,51 +397,29 @@ export default function ProfileView() {
     try {
       const db = getFirebaseFirestore();
 
+      // ดึง URL รูปโปรไฟล์: ลำดับความสำคัญ avatarPreview (ถ้าแปลงไฟล์เสร็จแล้ว) -> draftProfile.photoURL -> profile.photoURL -> account.photoURL
+      const finalPhotoURL = (avatarPreview || draftProfile.photoURL?.trim() || profile.photoURL || account.photoURL || '').trim();
+
       const nextProfile: ProfileDetails = {
         name: draftProfile.name?.trim() ?? '',
         email: account.email ?? '',
-        phone:
-          draftProfile.phone?.trim() ?? '',
-        bio:
-          draftProfile.bio?.trim() ?? '',
-        photoURL: draftProfile.photoURL?.trim() || profile.photoURL || account.photoURL || '',
+        phone: draftProfile.phone?.trim() ?? '',
+        bio: draftProfile.bio?.trim() ?? '',
+        photoURL: finalPhotoURL,
       };
 
       // -----------------------------
       // ตรวจสอบชื่อ
       // -----------------------------
       if (!nextProfile.name) {
-        setMessage(
-          'กรุณากรอกชื่อ-นามสกุล'
-        );
+        setMessage('กรุณากรอกชื่อ-นามสกุล');
         setSaving(false);
         return;
       }
 
-      let photoURL = nextProfile.photoURL;
-      if (avatarFile) {
-        try {
-          const avatarRef = ref(
-            getFirebaseStorage(),
-            `USER/${account.uid}/avatar/profile-image`
-          );
-          const uploadedImage = await uploadBytes(avatarRef, avatarFile, {
-            contentType: avatarFile.type,
-          });
-          photoURL = await getDownloadURL(uploadedImage.ref);
-        } catch (storageErr) {
-          console.warn('Firebase Storage upload failed, fallback to Data URL / draft:', storageErr);
-          if (avatarPreview) {
-            photoURL = avatarPreview;
-          }
-        }
-      } else if (avatarPreview) {
-        photoURL = avatarPreview;
-      }
-
       const savedProfile: ProfileDetails = {
         ...nextProfile,
-        photoURL,
+        photoURL: finalPhotoURL,
       };
 
       const profilePayload = {
@@ -455,8 +427,8 @@ export default function ProfileView() {
         User_name: savedProfile.name,
         tel: savedProfile.phone,
         User_info: savedProfile.bio,
-        user_picture_url: photoURL,
-        photoURL: photoURL,
+        user_picture_url: finalPhotoURL,
+        photoURL: finalPhotoURL,
         updatedAt: serverTimestamp(),
         updated_up: serverTimestamp(),
       };
@@ -470,19 +442,21 @@ export default function ProfileView() {
         }, { merge: true }),
       ]);
 
-      // อัปเดตใน Firebase Authentication (ทั้ง displayName และ photoURL)
+      // อัปเดตใน Firebase Authentication (ทั้ง displayName และ photoURL เฉพาะกรณีเป็น HTTP URL มาตรฐาน)
       try {
-        await updateProfile(account, {
+        const authPayload: { displayName: string; photoURL?: string } = {
           displayName: savedProfile.name,
-          photoURL: photoURL || undefined,
-        });
+        };
+        if (finalPhotoURL && /^https?:\/\//i.test(finalPhotoURL) && finalPhotoURL.length <= 2048) {
+          authPayload.photoURL = finalPhotoURL;
+        }
+        await updateProfile(account, authPayload);
       } catch (authErr) {
         console.warn('Auth updateProfile error:', authErr);
       }
 
       setProfile(savedProfile);
       setDraftProfile(savedProfile);
-      setAvatarFile(null);
       setAvatarPreview('');
 
       setEditing(false);
@@ -500,14 +474,6 @@ export default function ProfileView() {
           : undefined;
 
       switch (errorCode) {
-        case 'storage/unauthorized':
-          setMessage('ไม่มีสิทธิ์อัปโหลดรูป กรุณาเผยแพร่ storage.rules แล้วลองใหม่');
-          break;
-
-        case 'storage/bucket-not-found':
-          setMessage('ไม่พบ Firebase Storage bucket กรุณาเปิดใช้ Storage ใน Firebase Console');
-          break;
-
         case 'permission-denied':
           setMessage(
             'Firestore ปฏิเสธสิทธิ์ กรุณาเผยแพร่ firestore.rules ใน Firebase Console แล้วลองใหม่'
@@ -916,7 +882,6 @@ export default function ProfileView() {
                           type="button"
                           onClick={() => {
                             setAvatarPreview('');
-                            setAvatarFile(null);
                             setDraftProfile((prev) => ({ ...prev, photoURL: '' }));
                           }}
                           title="ล้างรูปโปรไฟล์"
@@ -994,7 +959,6 @@ export default function ProfileView() {
                           value={draftProfile.photoURL || ''}
                           onChange={(e) => {
                             setAvatarPreview('');
-                            setAvatarFile(null);
                             setDraftProfile((prev) => ({ ...prev, photoURL: e.target.value.trim() }));
                           }}
                           placeholder="เช่น https://images.unsplash.com/... หรือ https://i.imgur.com/..."
@@ -1031,7 +995,6 @@ export default function ProfileView() {
                               type="button"
                               onClick={() => {
                                 setAvatarPreview('');
-                                setAvatarFile(null);
                                 setDraftProfile((prev) => ({ ...prev, photoURL: preset.url }));
                               }}
                               className={`group flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all cursor-pointer ${
