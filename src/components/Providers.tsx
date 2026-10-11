@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { JobProvider, useJobs } from '@/context/JobContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 import Toast from '@/components/Toast';
 
 function GlobalToast() {
@@ -12,9 +13,11 @@ function GlobalToast() {
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <JobProvider>
-      {children}
-      <GlobalToast />
-    </JobProvider>
+    <ThemeProvider>
+      <JobProvider>
+        {children}
+        <GlobalToast />
+      </JobProvider>
+    </ThemeProvider>
   );
 }

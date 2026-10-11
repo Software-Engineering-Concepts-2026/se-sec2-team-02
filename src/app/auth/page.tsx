@@ -298,21 +298,21 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-50 via-zinc-100/70 to-zinc-200/50 flex flex-col justify-between font-sans text-zinc-900 selection:bg-zinc-900 selection:text-white">
+    <div className="min-h-screen bg-gradient-to-b from-zinc-50 via-zinc-100/70 to-zinc-200/50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 flex flex-col justify-between font-sans text-zinc-900 dark:text-zinc-100 selection:bg-zinc-900 selection:text-white">
       {/* Top Header Bar */}
       <header className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between">
         <Link
           href="/"
-          className="flex items-center gap-2.5 text-zinc-900 hover:opacity-80 transition-opacity"
+          className="flex items-center gap-2.5 text-zinc-900 dark:text-zinc-100 hover:opacity-80 transition-opacity"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-zinc-900 to-zinc-700 text-white flex items-center justify-center font-black text-sm shadow-2xs">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-zinc-900 to-zinc-700 dark:from-zinc-800 dark:to-zinc-600 text-white flex items-center justify-center font-black text-sm shadow-2xs">
             JP
           </div>
           <div>
-            <div className="font-extrabold text-xl tracking-tight leading-none text-zinc-900">
+            <div className="font-extrabold text-xl tracking-tight leading-none text-zinc-900 dark:text-zinc-100">
               JOB Phayao
             </div>
-            <div className="text-[11px] font-medium text-zinc-500 mt-0.5">
+            <div className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400 mt-0.5">
               ศูนย์รวมงานพาร์ตไทม์ พะเยา
             </div>
           </div>
@@ -320,7 +320,7 @@ export default function AuthPage() {
 
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-600 hover:text-zinc-900 bg-white/80 hover:bg-white px-3.5 py-2 rounded-xl border border-zinc-200/80 shadow-2xs transition-all"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 bg-white/80 dark:bg-zinc-900/80 hover:bg-white dark:hover:bg-zinc-800 px-3.5 py-2 rounded-xl border border-zinc-200/80 dark:border-zinc-800 shadow-2xs transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>กลับหน้าหลัก</span>
@@ -329,16 +329,16 @@ export default function AuthPage() {
 
       {/* Main Card Container */}
       <main className="flex-1 flex items-center justify-center px-4 py-8 sm:py-12">
-        <div className="w-full max-w-[480px] bg-white rounded-3xl shadow-xl shadow-zinc-200/60 border border-zinc-200/90 p-6 sm:p-9 transition-all">
+        <div className="w-full max-w-[480px] bg-white dark:bg-zinc-900 rounded-3xl shadow-xl shadow-zinc-200/60 dark:shadow-black/40 border border-zinc-200/90 dark:border-zinc-800 p-6 sm:p-9 transition-all">
           {/* Mode Switcher Tabs */}
-          <div className="bg-zinc-100/90 p-1 rounded-2xl flex items-center mb-6 text-sm font-medium">
+          <div className="bg-zinc-100/90 dark:bg-zinc-800/90 p-1 rounded-2xl flex items-center mb-6 text-sm font-medium">
             <button
               type="button"
               onClick={() => switchMode('login')}
               className={`flex-1 py-2.5 rounded-xl transition-all duration-200 cursor-pointer ${
                 !isRegistering
-                  ? 'bg-white text-zinc-900 font-semibold shadow-xs'
-                  : 'text-zinc-500 hover:text-zinc-800'
+                  ? 'bg-white dark:bg-zinc-750 text-zinc-900 dark:text-zinc-100 font-semibold shadow-xs'
+                  : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'
               }`}
             >
               เข้าสู่ระบบ
@@ -348,8 +348,8 @@ export default function AuthPage() {
               onClick={() => switchMode('register')}
               className={`flex-1 py-2.5 rounded-xl transition-all duration-200 cursor-pointer ${
                 isRegistering
-                  ? 'bg-white text-zinc-900 font-semibold shadow-xs'
-                  : 'text-zinc-500 hover:text-zinc-800'
+                  ? 'bg-white dark:bg-zinc-750 text-zinc-900 dark:text-zinc-100 font-semibold shadow-xs'
+                  : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'
               }`}
             >
               สมัครสมาชิก
@@ -358,10 +358,10 @@ export default function AuthPage() {
 
           {/* Card Header */}
           <div className="text-center mb-6">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight">
               {!isRegistering ? 'เข้าสู่ระบบบัญชีของคุณ' : 'สร้างบัญชีผู้ใช้ใหม่'}
             </h1>
-            <p className="text-sm text-zinc-500 mt-1.5">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">
               {!isRegistering
                 ? 'เข้าสู่ระบบเพื่อค้นหางาน หรือจัดการประกาศรับสมัครงาน'
                 : 'เริ่มต้นหางานพาร์ตไทม์ หรือโพสต์งานในรั้วพะเยา'}
@@ -370,31 +370,31 @@ export default function AuthPage() {
 
           {/* Register Step Progress Indicator */}
           {isRegistering && (
-            <div className="mb-6 bg-zinc-50 border border-zinc-200/70 rounded-2xl p-3.5">
+            <div className="mb-6 bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200/70 dark:border-zinc-800 rounded-2xl p-3.5">
               <div className="flex items-center justify-between text-xs font-semibold mb-2.5 px-1">
                 <span
-                  className={registerStep === 1 ? 'text-zinc-900' : 'text-emerald-600'}
+                  className={registerStep === 1 ? 'text-zinc-900 dark:text-zinc-100' : 'text-emerald-600 dark:text-emerald-400'}
                 >
                   {registerStep === 1 ? 'ส่วนที่ 1: ข้อมูลบัญชี' : 'ส่วนที่ 1: เรียบร้อย ✓'}
                 </span>
                 <span
-                  className={registerStep === 2 ? 'text-zinc-900' : 'text-zinc-400'}
+                  className={registerStep === 2 ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-400 dark:text-zinc-500'}
                 >
                   ส่วนที่ 2: ข้อมูลส่วนตัว
                 </span>
               </div>
 
               {/* Progress Bar Track */}
-              <div className="w-full bg-zinc-200 h-2 rounded-full overflow-hidden flex">
+              <div className="w-full bg-zinc-200 dark:bg-zinc-700 h-2 rounded-full overflow-hidden flex">
                 <div
                   className={`h-full transition-all duration-300 rounded-full ${
-                    registerStep === 1 ? 'w-1/2 bg-zinc-900' : 'w-full bg-emerald-500'
+                    registerStep === 1 ? 'w-1/2 bg-zinc-900 dark:bg-white' : 'w-full bg-emerald-500'
                   }`}
                 />
               </div>
 
-              <div className="flex items-center justify-center gap-1.5 text-xs text-zinc-500 mt-2.5">
-                <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-zinc-200 text-zinc-700 text-[10px] font-bold">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 mt-2.5">
+                <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-[10px] font-bold">
                   {registerStep}
                 </span>
                 <span>
@@ -411,14 +411,14 @@ export default function AuthPage() {
               aria-live="polite"
               className={`mb-5 p-3.5 rounded-2xl text-sm flex items-start gap-2.5 animate-in fade-in duration-150 ${
                 messageType === 'success'
-                  ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
-                  : 'bg-rose-50 border border-rose-200 text-rose-800'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-300'
+                  : 'bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-800 dark:text-rose-300'
               }`}
             >
               {messageType === 'success' ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
               ) : (
-                <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
               )}
               <span className="flex-1 font-medium leading-relaxed">{message}</span>
             </div>
@@ -434,11 +434,11 @@ export default function AuthPage() {
                 {/* Name Field (Register only) */}
                 {isRegistering && (
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
                       ชื่อ-นามสกุล <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400 dark:text-zinc-500">
                         <User className="w-4 h-4" />
                       </div>
                       <input
@@ -447,7 +447,7 @@ export default function AuthPage() {
                         value={formData.name}
                         onChange={handleInputChange}
                         placeholder="ระบุชื่อและนามสกุลจริง"
-                        className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all text-zinc-900 placeholder:text-zinc-400"
+                        className="w-full pl-10 pr-4 py-2.5 text-sm bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10 focus:border-zinc-900 dark:focus:border-zinc-300 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                         required
                       />
                     </div>
@@ -456,12 +456,12 @@ export default function AuthPage() {
 
                 {/* Identifier (Email or Username) */}
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
                     อีเมล หรือ ชื่อผู้ใช้ (Email or Username){' '}
                     <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400 dark:text-zinc-500">
                       <Mail className="w-4 h-4" />
                     </div>
                     <input
@@ -471,7 +471,7 @@ export default function AuthPage() {
                       value={formData.identifier}
                       onChange={handleInputChange}
                       placeholder="jobup@gmail.com หรือ username"
-                      className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all text-zinc-900 placeholder:text-zinc-400"
+                      className="w-full pl-10 pr-4 py-2.5 text-sm bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10 focus:border-zinc-900 dark:focus:border-zinc-300 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                       required
                     />
                   </div>
@@ -480,7 +480,7 @@ export default function AuthPage() {
                 {/* Password */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="text-xs font-semibold text-zinc-700">
+                    <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                       รหัสผ่าน <span className="text-rose-500">*</span>
                     </label>
                     {!isRegistering && (
@@ -488,14 +488,14 @@ export default function AuthPage() {
                         type="button"
                         onClick={handlePasswordReset}
                         disabled={isSubmitting}
-                        className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer"
+                        className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
                       >
                         ลืมรหัสผ่าน ?
                       </button>
                     )}
                   </div>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400 dark:text-zinc-500">
                       <Lock className="w-4 h-4" />
                     </div>
                     <input
@@ -506,13 +506,13 @@ export default function AuthPage() {
                       onChange={handleInputChange}
                       placeholder="อย่างน้อย 8 ตัวอักษร"
                       minLength={8}
-                      className="w-full pl-10 pr-10 py-2.5 text-sm bg-white border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all text-zinc-900 placeholder:text-zinc-400"
+                      className="w-full pl-10 pr-10 py-2.5 text-sm bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10 focus:border-zinc-900 dark:focus:border-zinc-300 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400 hover:text-zinc-700 cursor-pointer"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 cursor-pointer"
                       tabIndex={-1}
                       aria-label={showPassword ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'}
                     >
@@ -528,11 +528,11 @@ export default function AuthPage() {
                 {/* Confirm Password (Register only) */}
                 {isRegistering && (
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
                       ยืนยันรหัสผ่าน <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400 dark:text-zinc-500">
                         <Lock className="w-4 h-4" />
                       </div>
                       <input
@@ -543,13 +543,13 @@ export default function AuthPage() {
                         onChange={handleInputChange}
                         placeholder="กรอกรหัสผ่านอีกครั้ง"
                         minLength={8}
-                        className="w-full pl-10 pr-10 py-2.5 text-sm bg-white border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all text-zinc-900 placeholder:text-zinc-400"
+                        className="w-full pl-10 pr-10 py-2.5 text-sm bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10 focus:border-zinc-900 dark:focus:border-zinc-300 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400 hover:text-zinc-700 cursor-pointer"
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 cursor-pointer"
                         tabIndex={-1}
                         aria-label={
                           showConfirmPassword ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'
@@ -571,7 +571,7 @@ export default function AuthPage() {
                     <button
                       type="button"
                       onClick={handleNextStep}
-                      className="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-semibold py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+                      className="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-950 font-semibold py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                     >
                       <span>ถัดไป: กรอกข้อมูลส่วนตัว (1/2)</span>
                       <ArrowRight className="w-4 h-4" />
@@ -580,7 +580,7 @@ export default function AuthPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-400 text-white font-semibold py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+                      className="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 disabled:bg-zinc-400 dark:disabled:bg-zinc-700 text-white dark:text-zinc-950 font-semibold py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                     >
                       {isSubmitting ? (
                         <>
@@ -597,10 +597,10 @@ export default function AuthPage() {
                 {/* Google Sign-In Divider */}
                 <div className="relative my-4">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-zinc-200" />
+                    <div className="w-full border-t border-zinc-200 dark:border-zinc-800" />
                   </div>
                   <div className="relative flex justify-center text-xs">
-                    <span className="bg-white px-3 text-zinc-400 font-medium">
+                    <span className="bg-white dark:bg-zinc-900 px-3 text-zinc-400 dark:text-zinc-500 font-medium">
                       หรือดำเนินการด้วย
                     </span>
                   </div>
@@ -611,7 +611,7 @@ export default function AuthPage() {
                   type="button"
                   onClick={handleGoogleSignIn}
                   disabled={isSubmitting}
-                  className="w-full border border-zinc-300 hover:border-zinc-400 bg-white hover:bg-zinc-50/80 text-zinc-700 font-medium py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-3 cursor-pointer shadow-2xs active:scale-[0.99]"
+                  className="w-full border border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600 bg-white dark:bg-zinc-800 hover:bg-zinc-50/80 dark:hover:bg-zinc-750 text-zinc-700 dark:text-zinc-200 font-medium py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-3 cursor-pointer shadow-2xs active:scale-[0.99]"
                 >
                   <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                     <path
@@ -645,11 +645,11 @@ export default function AuthPage() {
               <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-200">
                 {/* Phone Field */}
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
                     เบอร์โทรศัพท์สำหรับการติดต่อ <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400 dark:text-zinc-500">
                       <Phone className="w-4 h-4" />
                     </div>
                     <input
@@ -659,22 +659,22 @@ export default function AuthPage() {
                       value={formData.phone}
                       onChange={handleInputChange}
                       placeholder="เช่น 081-234-5678"
-                      className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all text-zinc-900 placeholder:text-zinc-400"
+                      className="w-full pl-10 pr-4 py-2.5 text-sm bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10 focus:border-zinc-900 dark:focus:border-zinc-300 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                       required
                     />
                   </div>
-                  <p className="text-[11px] text-zinc-500 mt-1">
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
                     เบอร์โทรศัพท์จะถูกนำไปใช้สำหรับติดต่อประสานงาน
                   </p>
                 </div>
 
                 {/* Address Field */}
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
                     ที่อยู่ หรือ หอพักปัจจุบัน <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
-                    <div className="absolute top-3 left-3.5 pointer-events-none text-zinc-400">
+                    <div className="absolute top-3 left-3.5 pointer-events-none text-zinc-400 dark:text-zinc-500">
                       <MapPin className="w-4 h-4" />
                     </div>
                     <textarea
@@ -683,11 +683,11 @@ export default function AuthPage() {
                       onChange={handleInputChange}
                       placeholder="เช่น หอพักหนองระบู หน้าพะเยา หรือ ระบุที่อยู่ของคุณ"
                       rows={3}
-                      className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all text-zinc-900 placeholder:text-zinc-400 resize-none"
+                      className="w-full pl-10 pr-4 py-2.5 text-sm bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10 focus:border-zinc-900 dark:focus:border-zinc-300 transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 resize-none"
                       required
                     />
                   </div>
-                  <p className="text-[11px] text-zinc-500 mt-1">
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
                     ช่วยให้ผู้ว่าจ้างทราบโซนพื้นที่หรือหอพักที่คุณสะดวกเดินทาง
                   </p>
                 </div>
@@ -701,7 +701,7 @@ export default function AuthPage() {
                       setMessage('');
                     }}
                     disabled={isSubmitting}
-                    className="flex-1 border border-zinc-300 hover:border-zinc-400 bg-white hover:bg-zinc-50 text-zinc-700 font-semibold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="flex-1 border border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-750 text-zinc-700 dark:text-zinc-300 font-semibold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <ArrowLeft className="w-4 h-4" />
                     <span>ย้อนกลับ</span>
@@ -710,7 +710,7 @@ export default function AuthPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-400 text-white font-semibold py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+                    className="flex-1 bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 disabled:bg-zinc-400 dark:disabled:bg-zinc-700 text-white dark:text-zinc-950 font-semibold py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                   >
                     {isSubmitting ? (
                       <>
@@ -730,14 +730,14 @@ export default function AuthPage() {
           </form>
 
           {/* Bottom Switch Prompt */}
-          <div className="mt-7 pt-5 border-t border-zinc-100 text-center text-xs text-zinc-500">
+          <div className="mt-7 pt-5 border-t border-zinc-100 dark:border-zinc-800 text-center text-xs text-zinc-500 dark:text-zinc-400">
             {isRegistering ? (
               <span>
                 มีบัญชี JOB Phayao อยู่แล้ว ?{' '}
                 <button
                   type="button"
                   onClick={() => switchMode('login')}
-                  className="font-semibold text-zinc-900 hover:underline cursor-pointer ml-1"
+                  className="font-semibold text-zinc-900 dark:text-zinc-100 hover:underline cursor-pointer ml-1"
                 >
                   เข้าสู่ระบบ
                 </button>
@@ -748,7 +748,7 @@ export default function AuthPage() {
                 <button
                   type="button"
                   onClick={() => switchMode('register')}
-                  className="font-semibold text-zinc-900 hover:underline cursor-pointer ml-1"
+                  className="font-semibold text-zinc-900 dark:text-zinc-100 hover:underline cursor-pointer ml-1"
                 >
                   สมัครสมาชิกใหม่ที่นี่
                 </button>
@@ -759,7 +759,7 @@ export default function AuthPage() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full text-center py-5 text-xs text-zinc-400">
+      <footer className="w-full text-center py-5 text-xs text-zinc-400 dark:text-zinc-600">
         &copy; {new Date().getFullYear()} JOB Phayao — แพลตฟอร์มหางานพาร์ตไทม์ พะเยา
       </footer>
     </div>

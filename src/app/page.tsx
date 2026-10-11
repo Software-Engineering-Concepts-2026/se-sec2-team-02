@@ -81,7 +81,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-zinc-900">
+    <div className="min-h-screen bg-slate-50/50 dark:bg-zinc-950 flex flex-col font-sans text-zinc-900 dark:text-zinc-100 transition-colors duration-200">
       {/* Universal Header */}
       <Header
         currentView="home"
@@ -109,16 +109,16 @@ export default function Home() {
         <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 pt-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <h2 className="text-xl sm:text-2xl font-black text-zinc-900 tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight">
                 ประกาศล่าสุด
               </h2>
-              <span className="text-xs font-bold px-3 py-1 rounded-full bg-zinc-200/80 text-zinc-700">
+              <span className="text-xs font-bold px-3 py-1 rounded-full bg-zinc-200/80 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
                 {filteredJobs.length} รายการ
               </span>
             </div>
             <button
               onClick={() => router.push('/search')}
-              className="inline-flex items-center gap-1 text-xs sm:text-sm text-zinc-500 hover:text-zinc-950 font-semibold transition-colors cursor-pointer group"
+              className="inline-flex items-center gap-1 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 font-semibold transition-colors cursor-pointer group"
             >
               <span>ดูทั้งหมด</span>
               <span className="group-hover:translate-x-0.5 transition-transform">&gt;</span>
@@ -145,16 +145,16 @@ export default function Home() {
               })}
             </div>
           ) : (
-            <div className="bg-white rounded-3xl border border-zinc-200/80 p-12 text-center my-6 shadow-2xs">
-              <p className="text-base font-bold text-zinc-800">
+            <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200/80 dark:border-zinc-800 p-12 text-center my-6 shadow-2xs">
+              <p className="text-base font-bold text-zinc-800 dark:text-zinc-200">
                 ไม่พบประกาศงานที่ตรงกับคำค้นหาหรือเงื่อนไข
               </p>
-              <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 max-w-sm mx-auto">
                 ลองเปลี่ยนคำค้นหา หรือกดปุ่มค้นหาเพื่อปรับตัวกรองอย่างละเอียด
               </p>
               <button
                 onClick={() => router.push('/search')}
-                className="mt-5 px-6 py-2.5 rounded-2xl bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-800 cursor-pointer shadow-xs hover:shadow-sm transition-all"
+                className="mt-5 px-6 py-2.5 rounded-2xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-bold hover:bg-zinc-800 dark:hover:bg-white cursor-pointer shadow-xs hover:shadow-sm transition-all"
               >
                 ไปที่หน้าค้นหาละเอียด
               </button>

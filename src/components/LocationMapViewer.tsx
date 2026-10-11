@@ -100,24 +100,24 @@ export default function LocationMapViewer({
   return (
     <div className="flex flex-col gap-3">
       {/* Real Interactive Map Display */}
-      <div className="relative w-full h-56 rounded-2xl overflow-hidden border border-zinc-200/80 shadow-inner group">
+      <div className="relative w-full h-56 rounded-2xl overflow-hidden border border-zinc-200/80 dark:border-zinc-800 shadow-inner group">
         <div ref={mapContainerRef} className="w-full h-full z-10" />
 
         {/* Coordinates Pill Badge on top */}
-        <div className="absolute top-2.5 left-2.5 z-20 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-xl border border-zinc-200 shadow-2xs text-[10px] font-mono font-bold text-zinc-700 flex items-center gap-1.5">
+        <div className="absolute top-2.5 left-2.5 z-20 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md px-2.5 py-1 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-2xs text-[10px] font-mono font-bold text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>GPS: {effectiveCoords.lat.toFixed(4)}, {effectiveCoords.lng.toFixed(4)}</span>
         </div>
       </div>
 
       {/* Location Details Info Box */}
-      <div className="p-3 bg-zinc-50/90 rounded-2xl border border-zinc-100 flex items-start gap-2.5">
+      <div className="p-3 bg-zinc-50/90 dark:bg-zinc-800/60 rounded-2xl border border-zinc-100 dark:border-zinc-700/60 flex items-start gap-2.5">
         <MapPin className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold text-zinc-900 truncate">
+          <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
             {locationName || 'เมืองพะเยา'}
           </p>
-          <p className="text-[11px] text-zinc-500 mt-0.5">
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
             พิกัดหมุดตำแหน่งจริงบนแผนที่จังหวัดพะเยา
           </p>
         </div>
@@ -128,9 +128,9 @@ export default function LocationMapViewer({
         href={googleMapsUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-full py-2.5 rounded-2xl border border-zinc-200 hover:border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-800 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs active:scale-98"
+        className="w-full py-2.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-white dark:bg-zinc-850 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs active:scale-98"
       >
-        <ExternalLink className="w-4 h-4 text-blue-600" />
+        <ExternalLink className="w-4 h-4 text-blue-600 dark:text-blue-400" />
         <span>เปิดนำทางบน Google Maps</span>
       </a>
     </div>

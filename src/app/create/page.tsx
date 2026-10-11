@@ -144,16 +144,16 @@ export default function CreateJobPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-zinc-900">
+    <div className="min-h-screen bg-slate-50/50 dark:bg-zinc-950 flex flex-col font-sans text-zinc-900 dark:text-zinc-100">
       <Header currentView="create" onBack={() => router.back()} />
 
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8">
         {/* Page Header */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight">
             เพิ่มประกาศงานใหม่
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-500 mt-1">
+          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
             ลงประกาศรับสมัครงานพาร์ตไทม์ ฟรีแลนซ์ หรืองานทั่วไปในจังหวัดพะเยา
           </p>
         </div>
@@ -163,16 +163,16 @@ export default function CreateJobPage() {
           {/* Left Column: Images & Contacts (5 Cols) */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             {/* Image Selection Card */}
-            <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-xs">
-              <h2 className="text-sm font-bold text-zinc-900 mb-1 flex items-center gap-2">
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 shadow-xs">
+              <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1 flex items-center gap-2">
                 <span>รูปภาพประกอบประกาศ</span>
               </h2>
-              <p className="text-xs text-zinc-500 mb-3">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">
                 เลือกธีมรูปภาพที่ตรงกับลักษณะงานของคุณ
               </p>
 
               {/* Main Preview Image */}
-              <div className="relative w-full h-48 rounded-xl overflow-hidden border border-zinc-200 bg-zinc-100 mb-3">
+              <div className="relative w-full h-48 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800 mb-3">
                 <Image
                   src={selectedImage}
                   alt="Selected Preview"
@@ -195,8 +195,8 @@ export default function CreateJobPage() {
                     onClick={() => setSelectedImage(img.path)}
                     className={`flex items-center gap-2 p-1.5 rounded-lg border text-left transition-all cursor-pointer ${
                       selectedImage === img.path
-                        ? 'border-zinc-900 bg-zinc-50 ring-2 ring-zinc-900/10'
-                        : 'border-zinc-200 hover:bg-zinc-50'
+                        ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-800 ring-2 ring-zinc-900/10 dark:ring-white/10'
+                        : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800'
                     }`}
                   >
                     <Image
@@ -207,7 +207,7 @@ export default function CreateJobPage() {
                       unoptimized
                       className="w-8 h-8 rounded-md object-cover shrink-0"
                     />
-                    <span className="text-[11px] font-medium text-zinc-800 line-clamp-1">
+                    <span className="text-[11px] font-medium text-zinc-800 dark:text-zinc-200 line-clamp-1">
                       {img.label}
                     </span>
                   </button>
@@ -216,17 +216,17 @@ export default function CreateJobPage() {
             </div>
 
             {/* Contact Information Card */}
-            <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-xs">
-              <h2 className="text-sm font-bold text-zinc-900 mb-1">
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 shadow-xs">
+              <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">
                 ข้อมูลผู้ประกาศและช่องทางติดต่อ
               </h2>
-              <p className="text-xs text-zinc-500 mb-4">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
                 ระบุข้อมูลเพื่อให้ผู้สมัครสามารถติดต่อสอบถามหรือสมัครงานได้
               </p>
 
               <div className="flex flex-col gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                     ชื่อผู้โพสต์ประกาศงาน (ผู้ว่าจ้าง) <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -235,40 +235,39 @@ export default function CreateJobPage() {
                     value={employerName}
                     onChange={(e) => setEmployerName(e.target.value)}
                     placeholder="เช่น พี่เอก หรือ เอกชัย (ผู้ว่าจ้าง)"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-300 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                     เบอร์โทรศัพท์ <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative flex items-center">
-                    <Phone className="w-4 h-4 text-zinc-400 absolute left-3" />
+                    <Phone className="w-4 h-4 text-zinc-400 dark:text-zinc-500 absolute left-3" />
                     <input
                       type="tel"
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="08X-XXX-XXXX"
-                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-300 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800"
                     />
                   </div>
                 </div>
 
-
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                     Facebook / เพจร้านค้า
                   </label>
                   <div className="relative flex items-center">
-                    <Globe className="w-4 h-4 text-zinc-400 absolute left-3" />
+                    <Globe className="w-4 h-4 text-zinc-400 dark:text-zinc-500 absolute left-3" />
                     <input
                       type="text"
                       value={facebook}
                       onChange={(e) => setFacebook(e.target.value)}
                       placeholder="ชื่อเพจ หรือ Facebook ส่วนตัว"
-                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-300 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800"
                     />
                   </div>
                 </div>
@@ -278,14 +277,14 @@ export default function CreateJobPage() {
 
           {/* Right Column: Job Details Form (7 Cols) */}
           <div className="lg:col-span-7 flex flex-col gap-6">
-            <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-xs flex flex-col gap-4">
-              <h2 className="text-base font-bold text-zinc-900 pb-2 border-b border-zinc-100">
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-xs flex flex-col gap-4">
+              <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 pb-2 border-b border-zinc-100 dark:border-zinc-800">
                 รายละเอียดงาน
               </h2>
 
               {/* Title */}
               <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-1">
+                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                   หัวข้อประกาศงาน <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -294,20 +293,20 @@ export default function CreateJobPage() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="เช่น พนักงานร้านกาแฟ (Barista), ติวเตอร์คณิตศาสตร์ ม.ปลาย"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-sm text-zinc-900 bg-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-300 focus:outline-hidden text-sm text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800"
                 />
               </div>
 
               {/* Category, Salary, Unit */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                     หมวดหมู่งาน
                   </label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value as JobCategory)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white cursor-pointer"
+                    className="w-full px-3 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-300 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800 cursor-pointer"
                   >
                     <option value="part-time">พาร์ทไทม์</option>
                     <option value="full-time">ประจำ</option>
@@ -318,7 +317,7 @@ export default function CreateJobPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                     ค่าตอบแทน <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -327,18 +326,18 @@ export default function CreateJobPage() {
                     min={1}
                     value={salary}
                     onChange={(e) => setSalary(Number(e.target.value))}
-                    className="w-full px-3 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
+                    className="w-full px-3 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-300 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                     หน่วยคิดเงิน
                   </label>
                   <select
                     value={salaryUnit}
                     onChange={(e) => setSalaryUnit(e.target.value as Job['salaryUnit'])}
-                    className="w-full px-3 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white cursor-pointer"
+                    className="w-full px-3 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-300 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800 cursor-pointer"
                   >
                     {COMPENSATION_UNIT_LIST.map((unit) => (
                       <option key={unit.key} value={unit.key}>
@@ -351,7 +350,7 @@ export default function CreateJobPage() {
 
               {/* Description */}
               <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-1">
+                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                   รายละเอียดของงานและหน้าที่ความรับผิดชอบ <span className="text-rose-500">*</span>
                 </label>
                 <textarea
@@ -360,30 +359,30 @@ export default function CreateJobPage() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="อธิบายรายละเอียดลักษณะงาน หน้าที่ความรับผิดชอบ คุณสมบัติผู้สมัคร และสิ่งที่ต้องเตรียม..."
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-300 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800"
                 />
               </div>
 
               {/* Work Hours & Openings */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                     เวลาทำงาน / กะ
                   </label>
                   <div className="relative flex items-center">
-                    <Clock className="w-4 h-4 text-zinc-400 absolute left-3" />
+                    <Clock className="w-4 h-4 text-zinc-400 dark:text-zinc-500 absolute left-3" />
                     <input
                       type="text"
                       value={workTime}
                       onChange={(e) => setWorkTime(e.target.value)}
                       placeholder="เช่น 18:00 - 22:00 น."
-                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-300 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                     จำนวนที่เปิดรับ (คน)
                   </label>
                   <input
@@ -391,26 +390,26 @@ export default function CreateJobPage() {
                     min={1}
                     value={openings}
                     onChange={(e) => setOpenings(Number(e.target.value))}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-300 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800"
                   />
                 </div>
               </div>
 
               {/* Location & Real Map Pinning */}
               <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-1">
+                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                   สถานที่ทำงาน <span className="text-rose-500">*</span>
                 </label>
                 <div className="flex gap-2">
                   <div className="relative flex-1 flex items-center">
-                    <MapPin className="w-4 h-4 text-zinc-400 absolute left-3" />
+                    <MapPin className="w-4 h-4 text-zinc-400 dark:text-zinc-500 absolute left-3" />
                     <input
                       type="text"
                       required
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                       placeholder="ระบุชื่อร้านค้า หรือตำแหน่งรอบพะเยา"
-                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-300 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800"
                     />
                   </div>
                   <button
@@ -418,18 +417,18 @@ export default function CreateJobPage() {
                     onClick={() => setIsMapModalOpen(true)}
                     className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 shadow-2xs active:scale-95 ${
                       hasPinned
-                        ? 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-bold'
-                        : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800'
+                        ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 hover:bg-rose-100 dark:hover:bg-rose-900/50 font-bold'
+                        : 'bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-750 text-zinc-800 dark:text-zinc-200'
                     }`}
                   >
-                    <MapPin className={`w-3.5 h-3.5 ${hasPinned ? 'text-rose-600' : 'text-zinc-600'}`} />
+                    <MapPin className={`w-3.5 h-3.5 ${hasPinned ? 'text-rose-600 dark:text-rose-400' : 'text-zinc-600 dark:text-zinc-400'}`} />
                     <span>{hasPinned ? 'แก้ไขหมุดแผนที่' : 'ปักหมุดแผนที่'}</span>
                   </button>
                 </div>
                 {hasPinned && (
-                  <p className="text-[11px] text-emerald-600 font-semibold mt-1.5 flex items-center gap-1">
+                  <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1.5 flex items-center gap-1">
                     <span>✓ ปักหมุดพิกัดจริงแล้ว:</span>
-                    <span className="font-mono bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
+                    <span className="font-mono bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-100 dark:border-emerald-900/50">
                       {coordinates.lat.toFixed(4)}, {coordinates.lng.toFixed(4)}
                     </span>
                   </p>
@@ -437,11 +436,11 @@ export default function CreateJobPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-4 border-t border-zinc-100 flex items-center justify-end">
+              <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-end">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-950 text-xs font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Check className="w-4 h-4" />
                   <span>{isSubmitting ? 'กำลังบันทึกและเผยแพร่...' : 'เผยแพร่ประกาศงาน'}</span>

@@ -60,49 +60,48 @@ export default function SearchPageView({
         <div>
           <button
             onClick={onBackToHome}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-zinc-900 transition-colors mb-2 cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors mb-2 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>กลับหน้าหลัก</span>
           </button>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight">
             ค้นหาและตัวกรองงานพาร์ตไทม์
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-500 mt-1">
+          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
             ค้นหางานรอบพะเยา ตามอัตราค่าตอบแทน และประเภทงานที่ต้องการ
           </p>
         </div>
 
         {/* Total Results Count */}
-        {/* Total Results Count */}
-        <div className="inline-flex items-center gap-2 self-start sm:self-auto bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-zinc-200/80 shadow-2xs">
-          <span className="text-xs text-zinc-500 font-medium">ผลการค้นหา:</span>
-          <span className="text-sm font-black text-zinc-900">{filteredAndSortedJobs.length} รายการ</span>
+        <div className="inline-flex items-center gap-2 self-start sm:self-auto bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 shadow-2xs">
+          <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">ผลการค้นหา:</span>
+          <span className="text-sm font-black text-zinc-900 dark:text-zinc-100">{filteredAndSortedJobs.length} รายการ</span>
         </div>
       </div>
 
       {/* Search Header Bar */}
-      <div className="bg-white/90 backdrop-blur-md rounded-3xl border border-zinc-200/80 p-4 sm:p-5 shadow-xs mb-8">
+      <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md rounded-3xl border border-zinc-200/80 dark:border-zinc-800 p-4 sm:p-5 shadow-xs mb-8">
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Main Search Input */}
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400 dark:text-zinc-500" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="ค้นหาชื่อตำแหน่งงาน, ร้านค้า, หน้ามอ, หรือตึกเรียน..."
-              className="w-full pl-12 pr-4 py-3 bg-zinc-50/80 hover:bg-zinc-100/70 focus:bg-white text-zinc-900 placeholder:text-zinc-400 rounded-2xl border border-zinc-200/80 focus:border-zinc-400 focus:ring-4 focus:ring-zinc-900/5 focus:outline-hidden text-sm transition-all"
+              className="w-full pl-12 pr-4 py-3 bg-zinc-50/80 dark:bg-zinc-800/80 hover:bg-zinc-100/70 dark:hover:bg-zinc-800 focus:bg-white dark:focus:bg-zinc-850 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 rounded-2xl border border-zinc-200/80 dark:border-zinc-700 focus:border-zinc-400 dark:focus:border-zinc-500 focus:ring-4 focus:ring-zinc-900/5 dark:focus:ring-white/5 focus:outline-hidden text-sm transition-all"
             />
           </div>
 
           {/* Sort Selector */}
           <div className="relative sm:w-56">
-            <ArrowUpDown className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
+            <ArrowUpDown className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'latest' | 'salary-desc' | 'salary-asc')}
-              className="w-full pl-10 pr-8 py-3 bg-zinc-50/80 hover:bg-zinc-100/70 focus:bg-white text-zinc-800 text-sm font-semibold rounded-2xl border border-zinc-200/80 focus:border-zinc-400 focus:ring-4 focus:ring-zinc-900/5 focus:outline-hidden transition-all appearance-none cursor-pointer"
+              className="w-full pl-10 pr-8 py-3 bg-zinc-50/80 dark:bg-zinc-800/80 hover:bg-zinc-100/70 dark:hover:bg-zinc-800 focus:bg-white dark:focus:bg-zinc-850 text-zinc-800 dark:text-zinc-200 text-sm font-semibold rounded-2xl border border-zinc-200/80 dark:border-zinc-700 focus:border-zinc-400 dark:focus:border-zinc-500 focus:ring-4 focus:ring-zinc-900/5 dark:focus:ring-white/5 focus:outline-hidden transition-all appearance-none cursor-pointer"
             >
               <option value="latest">เรียงลำดับ: ล่าสุด</option>
               <option value="salary-desc">ค่าตอบแทน: สูง &rarr; ต่ำ</option>
@@ -115,15 +114,15 @@ export default function SearchPageView({
       {/* 2-Column Layout: Sidebar Filters (Left) + Listings Grid (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Filter Sidebar (4 Cols on LG) */}
-        <aside className="lg:col-span-4 bg-white/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 p-6 shadow-xs space-y-6 lg:sticky lg:top-24 lg:self-start">
-          <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
-            <div className="flex items-center gap-2 text-zinc-900 font-bold text-base">
-              <Filter className="w-4 h-4 text-zinc-700" />
+        <aside className="lg:col-span-4 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 dark:border-zinc-800 p-6 shadow-xs space-y-6 lg:sticky lg:top-24 lg:self-start">
+          <div className="flex items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100 font-bold text-base">
+              <Filter className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
               <span>ตัวกรองละเอียด</span>
             </div>
             <button
               onClick={handleResetFilters}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>ล้างตัวกรอง</span>
@@ -132,7 +131,7 @@ export default function SearchPageView({
 
           {/* Category Filter */}
           <div>
-            <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wide mb-2.5">
+            <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide mb-2.5">
               ประเภทงาน
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -142,8 +141,8 @@ export default function SearchPageView({
                   onClick={() => setSelectedCategory(cat.key as JobCategory)}
                   className={`py-2 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer text-center ${
                     selectedCategory === cat.key
-                      ? 'bg-zinc-900 text-white shadow-xs ring-2 ring-zinc-900/10'
-                      : 'bg-zinc-100/80 hover:bg-zinc-200/70 text-zinc-700'
+                      ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-xs ring-2 ring-zinc-900/10 dark:ring-white/20'
+                      : 'bg-zinc-100/80 dark:bg-zinc-800 hover:bg-zinc-200/70 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300'
                   }`}
                 >
                   {cat.label}
@@ -153,12 +152,12 @@ export default function SearchPageView({
           </div>
 
           {/* Salary Filter Slider */}
-          <div className="pt-4 border-t border-zinc-100">
+          <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800">
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-bold text-zinc-700 uppercase tracking-wide">
+              <label className="text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
                 ค่าตอบแทนขั้นต่ำ
               </label>
-              <span className="text-xs font-bold text-zinc-900 bg-zinc-100 px-2.5 py-1 rounded-lg">
+              <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 bg-zinc-100 dark:bg-zinc-800 px-2.5 py-1 rounded-lg">
                 {minSalary === 0 ? 'ทั้งหมด' : `${minSalary} บาท/ชม.`}
               </span>
             </div>
@@ -169,9 +168,9 @@ export default function SearchPageView({
               step={5}
               value={minSalary}
               onChange={(e) => setMinSalary(Number(e.target.value))}
-              className="w-full accent-zinc-900 cursor-pointer"
+              className="w-full accent-zinc-900 dark:accent-zinc-100 cursor-pointer"
             />
-            <div className="flex justify-between text-[11px] text-zinc-400 mt-1">
+            <div className="flex justify-between text-[11px] text-zinc-400 dark:text-zinc-500 mt-1">
               <span>0 บาท</span>
               <span>100 บาท</span>
               <span>200+ บาท</span>
@@ -179,13 +178,13 @@ export default function SearchPageView({
           </div>
 
           {/* Status Checkbox */}
-          <div className="pt-4 border-t border-zinc-100">
-            <label className="flex items-center gap-2 text-xs font-medium text-zinc-700 cursor-pointer">
+          <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800">
+            <label className="flex items-center gap-2 text-xs font-medium text-zinc-700 dark:text-zinc-300 cursor-pointer">
               <input
                 type="checkbox"
                 checked={showOpenOnly}
                 onChange={(e) => setShowOpenOnly(e.target.checked)}
-                className="w-4 h-4 rounded text-zinc-900 accent-zinc-900 focus:ring-zinc-900"
+                className="w-4 h-4 rounded text-zinc-900 dark:text-zinc-100 accent-zinc-900 dark:accent-zinc-100 focus:ring-zinc-900"
               />
               <span>แสดงเฉพาะตำแหน่งที่ยังเปิดรับสมัคร</span>
             </label>
@@ -207,17 +206,17 @@ export default function SearchPageView({
               ))}
             </div>
           ) : (
-            <div className="bg-white/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 p-12 text-center shadow-2xs">
-              <div className="w-16 h-16 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 mx-auto mb-3">
+            <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 dark:border-zinc-800 p-12 text-center shadow-2xs">
+              <div className="w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 dark:text-zinc-500 mx-auto mb-3">
                 <Search className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-bold text-zinc-800">ไม่พบงานที่ตรงกับเงื่อนไขการค้นหา</h3>
-              <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
+              <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-200">ไม่พบงานที่ตรงกับเงื่อนไขการค้นหา</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 max-w-sm mx-auto">
                 กรุณาลองปรับลดเกณฑ์ตัวกรอง หรือเปลี่ยนคำค้นหาเพื่อดูประกาศงานอื่นๆ
               </p>
               <button
                 onClick={handleResetFilters}
-                className="mt-5 px-6 py-2.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold transition-all cursor-pointer shadow-xs hover:shadow-sm"
+                className="mt-5 px-6 py-2.5 rounded-2xl bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-white text-white dark:text-zinc-900 text-xs font-bold transition-all cursor-pointer shadow-xs hover:shadow-sm"
               >
                 ล้างตัวกรองทั้งหมด
               </button>

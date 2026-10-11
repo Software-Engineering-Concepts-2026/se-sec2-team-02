@@ -66,7 +66,7 @@ function SearchPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-zinc-900">
+    <div className="min-h-screen bg-slate-50/50 dark:bg-zinc-950 flex flex-col font-sans text-zinc-900 dark:text-zinc-100 transition-colors duration-200">
       <Header currentView="search" />
 
       <main className="flex-1 pb-16">

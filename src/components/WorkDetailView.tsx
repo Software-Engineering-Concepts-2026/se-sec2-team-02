@@ -105,7 +105,7 @@ export default function WorkDetailView({
         {/* Gallery Section (5 Cols on LG) */}
         <div className="lg:col-span-5 flex flex-col gap-3">
           {/* Main Large Image with Share icon */}
-          <div className="relative w-full h-72 sm:h-80 bg-zinc-100 rounded-3xl overflow-hidden border border-zinc-200/80 shadow-xs">
+          <div className="relative w-full h-72 sm:h-80 bg-zinc-100 dark:bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
             {activeImage ? (
               <Image
                 src={activeImage}
@@ -116,7 +116,7 @@ export default function WorkDetailView({
                 className="object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-zinc-400">
+              <div className="w-full h-full flex items-center justify-center text-zinc-400 dark:text-zinc-600">
                 ไม่มีรูปภาพ
               </div>
             )}
@@ -125,7 +125,7 @@ export default function WorkDetailView({
             <div className="absolute top-3.5 right-3.5 flex items-center gap-2">
               <button
                 onClick={() => onShare(job)}
-                className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center text-zinc-700 hover:text-blue-600 shadow-sm transition-all cursor-pointer active:scale-95 border border-white/60"
+                className="w-10 h-10 rounded-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:text-blue-600 dark:hover:text-blue-400 shadow-sm transition-all cursor-pointer active:scale-95 border border-white/60 dark:border-zinc-700/60"
                 aria-label="แชร์ลิงก์งาน"
               >
                 <Share2 className="w-4 h-4" />
@@ -133,7 +133,7 @@ export default function WorkDetailView({
             </div>
 
             {/* Category badge pill */}
-            <span className="absolute bottom-3.5 left-3.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-xs font-bold text-zinc-800 shadow-2xs border border-white/60">
+            <span className="absolute bottom-3.5 left-3.5 px-3 py-1 rounded-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md text-xs font-bold text-zinc-800 dark:text-zinc-200 shadow-2xs border border-white/60 dark:border-zinc-700/60">
               {job.categoryLabel}
             </span>
           </div>
@@ -146,7 +146,9 @@ export default function WorkDetailView({
                   key={idx}
                   onClick={() => setActiveImage(img)}
                   className={`relative h-20 rounded-2xl overflow-hidden border-2 transition-all cursor-pointer shadow-2xs ${
-                    activeImage === img ? 'border-zinc-900 ring-2 ring-zinc-900/10' : 'border-zinc-200 opacity-70 hover:opacity-100'
+                    activeImage === img
+                      ? 'border-zinc-900 dark:border-white ring-2 ring-zinc-900/10 dark:ring-white/10'
+                      : 'border-zinc-200 dark:border-zinc-800 opacity-70 hover:opacity-100'
                   }`}
                 >
                   <Image
@@ -164,59 +166,59 @@ export default function WorkDetailView({
 
         {/* Center: Job Meta Details (4 Cols on LG) */}
         <div className="lg:col-span-4 flex flex-col justify-start">
-          <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 tracking-tight leading-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight leading-tight">
             {job.title}
           </h1>
 
           {/* Salary Highlight Box */}
-          <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50/50 border border-blue-100/80 shadow-2xs">
-            <span className="text-xs font-bold text-blue-700 uppercase tracking-wider block">
+          <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50/50 dark:from-blue-950/40 dark:to-indigo-950/30 border border-blue-100/80 dark:border-blue-900/50 shadow-2xs">
+            <span className="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider block">
               อัตราค่าตอบแทน
             </span>
-            <div className="text-2xl sm:text-3xl font-black text-blue-600 mt-0.5">
-              {job.salary} <span className="text-sm font-semibold text-zinc-600">บาท/{job.salaryUnit}</span>
+            <div className="text-2xl sm:text-3xl font-black text-blue-600 dark:text-blue-400 mt-0.5">
+              {job.salary} <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">บาท/{job.salaryUnit}</span>
             </div>
           </div>
 
           {/* Overview List */}
-          <div className="mt-5 space-y-3 text-sm text-zinc-700 bg-white/95 backdrop-blur-md p-5 rounded-3xl border border-zinc-200/80 shadow-xs">
+          <div className="mt-5 space-y-3 text-sm text-zinc-700 dark:text-zinc-300 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md p-5 rounded-3xl border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
             <div className="flex items-center justify-between">
-              <span className="text-zinc-500 font-medium">หมวดหมู่</span>
-              <span className="font-bold text-zinc-900">{job.categoryLabel}</span>
+              <span className="text-zinc-500 dark:text-zinc-400 font-medium">หมวดหมู่</span>
+              <span className="font-bold text-zinc-900 dark:text-zinc-100">{job.categoryLabel}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-zinc-500 font-medium flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 text-zinc-400" /> วันที่เริ่ม
+              <span className="text-zinc-500 dark:text-zinc-400 font-medium flex items-center gap-1.5">
+                <Calendar className="w-4 h-4 text-zinc-400 dark:text-zinc-500" /> วันที่เริ่ม
               </span>
-              <span className="font-semibold text-zinc-800">{job.date || 'ทันที'}</span>
+              <span className="font-semibold text-zinc-800 dark:text-zinc-200">{job.date || 'ทันที'}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-zinc-500 font-medium flex items-center gap-1.5">
-                <Clock className="w-4 h-4 text-zinc-400" /> เวลาทำงาน
+              <span className="text-zinc-500 dark:text-zinc-400 font-medium flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-zinc-400 dark:text-zinc-500" /> เวลาทำงาน
               </span>
-              <span className="font-semibold text-zinc-800">{job.time || 'ตามตกลง'}</span>
+              <span className="font-semibold text-zinc-800 dark:text-zinc-200">{job.time || 'ตามตกลง'}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-zinc-500 font-medium flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-zinc-400" /> สถานที่
+              <span className="text-zinc-500 dark:text-zinc-400 font-medium flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-zinc-400 dark:text-zinc-500" /> สถานที่
               </span>
-              <span className="font-semibold text-zinc-800 text-right truncate max-w-[160px]">{job.location}</span>
+              <span className="font-semibold text-zinc-800 dark:text-zinc-200 text-right truncate max-w-[160px]">{job.location}</span>
             </div>
           </div>
         </div>
 
         {/* Right: Job Poster Profile Card (3 Cols on LG) */}
-        <div className="lg:col-span-3 bg-white/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 p-6 shadow-xs flex flex-col items-center text-center">
+        <div className="lg:col-span-3 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 dark:border-zinc-800 p-6 shadow-xs flex flex-col items-center text-center">
           <div className="flex items-center justify-between w-full mb-3">
-            <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
               ผู้โพสต์ประกาศงาน
             </span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-900">
               ผู้ว่าจ้าง
             </span>
           </div>
 
-          <div className="w-20 h-20 rounded-full bg-zinc-100 border-2 border-zinc-200 flex items-center justify-center text-zinc-600 my-1 overflow-hidden relative shadow-2xs">
+          <div className="w-20 h-20 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-600 dark:text-zinc-400 my-1 overflow-hidden relative shadow-2xs">
             {posterProfile?.avatar ? (
               <Image
                 src={posterProfile.avatar}
@@ -231,29 +233,29 @@ export default function WorkDetailView({
             )}
           </div>
 
-          <h3 className="text-base sm:text-lg font-black text-zinc-900 mt-2 truncate max-w-full">
+          <h3 className="text-base sm:text-lg font-black text-zinc-900 dark:text-zinc-100 mt-2 truncate max-w-full">
             {posterProfile?.name || job.employer.name}
           </h3>
-          <p className="text-xs text-zinc-500 mt-0.5">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
             สมาชิกตั้งแต่ {job.employer.memberSince}
           </p>
 
           {/* Rating Score Badge: Real Firestore data of the job poster */}
           {realRating && realRating.count > 0 ? (
-            <div className="flex items-center justify-center gap-1.5 mt-2.5 bg-amber-50 px-3 py-1 rounded-full border border-amber-100 text-amber-600 text-xs font-bold">
+            <div className="flex items-center justify-center gap-1.5 mt-2.5 bg-amber-50 dark:bg-amber-950/40 px-3 py-1 rounded-full border border-amber-100 dark:border-amber-900/50 text-amber-600 dark:text-amber-400 text-xs font-bold">
               <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
               <span>{realRating.average.toFixed(1)}</span>
-              <span className="text-zinc-400 font-normal">({realRating.count} รีวิวผู้โพสต์)</span>
+              <span className="text-zinc-400 dark:text-zinc-500 font-normal">({realRating.count} รีวิวผู้โพสต์)</span>
             </div>
           ) : (
-            <div className="flex items-center justify-center gap-1.5 mt-2.5 bg-zinc-50 px-3 py-1 rounded-full border border-zinc-200 text-zinc-500 text-xs font-medium">
-              <Star className="w-3.5 h-3.5 text-zinc-300" />
+            <div className="flex items-center justify-center gap-1.5 mt-2.5 bg-zinc-50 dark:bg-zinc-800/60 px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 text-xs font-medium">
+              <Star className="w-3.5 h-3.5 text-zinc-300 dark:text-zinc-600" />
               <span>ยังไม่มีรีวิวผู้โพสต์</span>
             </div>
           )}
 
           {isOwner && (
-            <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+            <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-2.5 py-0.5 rounded-full border border-blue-200 dark:border-blue-900">
               โพสต์ของคุณ
             </span>
           )}
@@ -261,15 +263,15 @@ export default function WorkDetailView({
           {isOwner ? (
             <Link
               href={`/edit/${job.id}`}
-              className="w-full mt-4 py-2.5 px-4 rounded-2xl border border-zinc-900 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold transition-all cursor-pointer shadow-2xs flex items-center justify-center gap-1.5"
+              className="w-full mt-4 py-2.5 px-4 rounded-2xl border border-zinc-900 dark:border-white bg-zinc-900 dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-950 text-xs font-bold transition-all cursor-pointer shadow-2xs flex items-center justify-center gap-1.5"
             >
-              <Edit3 className="w-3.5 h-3.5 text-white" />
+              <Edit3 className="w-3.5 h-3.5 text-white dark:text-zinc-950" />
               <span>แก้ไขโพสต์งานนี้</span>
             </Link>
           ) : (
             <Link
               href={`/review?userId=${job.userId || ''}&jobId=${job.id}`}
-              className="w-full mt-4 py-2.5 px-4 rounded-2xl border border-amber-300 hover:border-amber-500 bg-amber-50/60 hover:bg-amber-100/70 text-amber-900 text-xs font-bold transition-all cursor-pointer shadow-2xs flex items-center justify-center gap-1.5 active:scale-95"
+              className="w-full mt-4 py-2.5 px-4 rounded-2xl border border-amber-300 dark:border-amber-700 hover:border-amber-500 dark:hover:border-amber-600 bg-amber-50/60 dark:bg-amber-950/40 hover:bg-amber-100/70 dark:hover:bg-amber-900/60 text-amber-900 dark:text-amber-300 text-xs font-bold transition-all cursor-pointer shadow-2xs flex items-center justify-center gap-1.5 active:scale-95"
               title="ให้คะแนนและรีวิวผู้โพสต์ประกาศงาน (ไม่ใช่รีวิวร้าน)"
             >
               <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
@@ -282,72 +284,72 @@ export default function WorkDetailView({
       {/* Bottom Section: Details & Requirements (Left) + Location Map (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
         {/* Left Bottom Card: Description & Requirements (8 Cols) */}
-        <div className="lg:col-span-8 bg-white/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 p-6 sm:p-8 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-8 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 dark:border-zinc-800 p-6 sm:p-8 shadow-xs flex flex-col justify-between">
           <div className="space-y-6">
             {/* Description */}
             <div>
-              <h2 className="text-lg font-black text-zinc-900 mb-2.5 tracking-tight">
+              <h2 className="text-lg font-black text-zinc-900 dark:text-zinc-100 mb-2.5 tracking-tight">
                 รายละเอียดหน้าที่ความรับผิดชอบ
               </h2>
-              <p className="text-sm sm:text-base text-zinc-600 leading-relaxed whitespace-pre-line">
+              <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-line">
                 {job.description}
               </p>
             </div>
 
             {/* Requirements & Openings */}
-            <div className="pt-5 border-t border-zinc-100 grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="bg-zinc-50/90 p-4 rounded-2xl border border-zinc-100">
-                <span className="text-xs text-zinc-400 font-medium block">จำนวนที่เปิดรับ</span>
-                <span className="text-base font-black text-zinc-900 mt-0.5 block">{job.qualifications.openings} คน</span>
+            <div className="pt-5 border-t border-zinc-100 dark:border-zinc-800 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="bg-zinc-50/90 dark:bg-zinc-800/60 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-700/60">
+                <span className="text-xs text-zinc-400 dark:text-zinc-400 font-medium block">จำนวนที่เปิดรับ</span>
+                <span className="text-base font-black text-zinc-900 dark:text-zinc-100 mt-0.5 block">{job.qualifications.openings} คน</span>
               </div>
-              <div className="bg-zinc-50/90 p-4 rounded-2xl border border-zinc-100">
-                <span className="text-xs text-zinc-400 font-medium block">เพศที่รับ</span>
-                <span className="text-base font-black text-zinc-900 mt-0.5 block">{job.qualifications.gender}</span>
+              <div className="bg-zinc-50/90 dark:bg-zinc-800/60 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-700/60">
+                <span className="text-xs text-zinc-400 dark:text-zinc-400 font-medium block">เพศที่รับ</span>
+                <span className="text-base font-black text-zinc-900 dark:text-zinc-100 mt-0.5 block">{job.qualifications.gender}</span>
               </div>
-              <div className="bg-zinc-50/90 p-4 rounded-2xl border border-zinc-100">
-                <span className="text-xs text-zinc-400 font-medium block">อายุที่รับ</span>
-                <span className="text-base font-black text-zinc-900 mt-0.5 block">{job.qualifications.age}</span>
+              <div className="bg-zinc-50/90 dark:bg-zinc-800/60 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-700/60">
+                <span className="text-xs text-zinc-400 dark:text-zinc-400 font-medium block">อายุที่รับ</span>
+                <span className="text-base font-black text-zinc-900 dark:text-zinc-100 mt-0.5 block">{job.qualifications.age}</span>
               </div>
             </div>
 
             {/* Contacts */}
-            <div className="pt-5 border-t border-zinc-100">
-              <h3 className="text-base font-black text-zinc-900 mb-3 tracking-tight">
+            <div className="pt-5 border-t border-zinc-100 dark:border-zinc-800">
+              <h3 className="text-base font-black text-zinc-900 dark:text-zinc-100 mb-3 tracking-tight">
                 ช่องทางการติดต่อ
               </h3>
-              <div className="space-y-2 text-sm text-zinc-700">
+              <div className="space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
                 <div className="flex items-center gap-2">
                   <span className="w-24 text-zinc-400 font-medium">Facebook :</span>
-                  <span className="font-bold text-zinc-900">{job.contact.facebook || '-'}</span>
+                  <span className="font-bold text-zinc-900 dark:text-zinc-100">{job.contact.facebook || '-'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-24 text-zinc-400 font-medium">เบอร์โทรศัพท์ :</span>
-                  <span className="font-bold text-zinc-900">{job.contact.phone || '-'}</span>
+                  <span className="font-bold text-zinc-900 dark:text-zinc-100">{job.contact.phone || '-'}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Action Application or Edit Button */}
-          <div className="mt-8 pt-6 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-xs text-zinc-500">
+          <div className="mt-8 pt-6 border-t border-zinc-100 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-xs text-zinc-500 dark:text-zinc-400">
               {isOwner ? (
-                <span className="inline-flex items-center gap-1.5 text-blue-600 font-bold bg-blue-50 px-3.5 py-1.5 rounded-full border border-blue-200">
+                <span className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-bold bg-blue-50 dark:bg-blue-950/50 px-3.5 py-1.5 rounded-full border border-blue-200 dark:border-blue-900">
                   <User className="w-3.5 h-3.5" /> คุณเป็นผู้ประกาศงานนี้
                 </span>
               ) : job.status === 'open' ? (
-                <span className="inline-flex items-center gap-1.5 text-emerald-600 font-semibold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+                <span className="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/50 px-3.5 py-1 rounded-full border border-emerald-100 dark:border-emerald-900">
                   <CheckCircle2 className="w-4 h-4" /> เปิดรับสมัครปกติ
                 </span>
               ) : (
-                <span className="text-zinc-400 bg-zinc-100 px-3 py-1 rounded-full">ปิดรับสมัครตำแหน่งนี้แล้ว</span>
+                <span className="text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full">ปิดรับสมัครตำแหน่งนี้แล้ว</span>
               )}
             </div>
 
             {isOwner ? (
               <Link
                 href={`/edit/${job.id}`}
-                className="w-full sm:w-60 py-3 px-6 rounded-2xl text-sm sm:text-base font-bold transition-all shadow-sm cursor-pointer bg-zinc-900 hover:bg-zinc-800 text-white hover:shadow-md active:scale-95 flex items-center justify-center gap-2"
+                className="w-full sm:w-60 py-3 px-6 rounded-2xl text-sm sm:text-base font-bold transition-all shadow-sm cursor-pointer bg-zinc-900 dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-950 hover:shadow-md active:scale-95 flex items-center justify-center gap-2"
               >
                 <Edit3 className="w-4 h-4" />
                 <span>แก้ไขโพสต์งาน</span>
@@ -360,8 +362,8 @@ export default function WorkDetailView({
                   isApplied
                     ? 'bg-emerald-600 text-white cursor-default'
                     : job.status === 'open'
-                    ? 'bg-zinc-900 hover:bg-zinc-800 text-white hover:shadow-md active:scale-95'
-                    : 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
+                    ? 'bg-zinc-900 dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-950 hover:shadow-md active:scale-95'
+                    : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-600 cursor-not-allowed'
                 }`}
               >
                 {isApplied ? 'ยื่นสมัครแล้ว (รอพิจารณา)' : job.status === 'open' ? 'ยื่นใบสมัคร' : 'ปิดรับสมัคร'}
@@ -371,9 +373,9 @@ export default function WorkDetailView({
         </div>
 
         {/* Right Bottom Card: Map & Coordinates (4 Cols) */}
-        <div className="lg:col-span-4 bg-white/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 p-6 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-4 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl border border-zinc-200/80 dark:border-zinc-800 p-6 shadow-xs flex flex-col justify-between">
           <div>
-            <h2 className="text-base font-black text-zinc-900 mb-3 tracking-tight">
+            <h2 className="text-base font-black text-zinc-900 dark:text-zinc-100 mb-3 tracking-tight">
               ตำแหน่งสถานที่ทำงาน
             </h2>
 
