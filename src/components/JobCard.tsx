@@ -2,20 +2,36 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { MapPin, ArrowUpRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { MapPin, ArrowUpRight, Edit3 } from 'lucide-react';
 import { Job } from '@/types/job';
 
 interface JobCardProps {
   job: Job;
   onSelect: (job: Job) => void;
   onQuickApply?: (job: Job, e: React.MouseEvent) => void;
+  isOwner?: boolean;
+  onEdit?: (job: Job, e: React.MouseEvent) => void;
 }
 
 export default function JobCard({
   job,
   onSelect,
-  onQuickApply
+  onQuickApply,
+  isOwner = false,
+  onEdit,
 }: JobCardProps) {
+  const router = useRouter();
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onEdit) {
+      onEdit(job, e);
+    } else {
+      router.push(`/edit/${job.id}`);
+    }
+  };
+
   return (
     <div
       onClick={() => onSelect(job)}
@@ -42,16 +58,23 @@ export default function JobCard({
           {job.categoryLabel}
         </span>
 
-        {/* Status indicator on top right */}
-        <span
-          className={`absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[11px] font-bold backdrop-blur-md shadow-2xs ${
-            job.status === 'open'
-              ? 'bg-emerald-500/90 text-white'
-              : 'bg-zinc-800/80 text-zinc-300'
-          }`}
-        >
-          {job.status === 'open' ? 'เปิดรับ' : 'ปิดแล้ว'}
-        </span>
+        {/* Status indicator and Owner badge on top right */}
+        <div className="absolute top-3 right-3 flex items-center gap-1.5">
+          {isOwner && (
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500 text-white backdrop-blur-md shadow-2xs">
+              โพสต์ของคุณ
+            </span>
+          )}
+          <span
+            className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold backdrop-blur-md shadow-2xs ${
+              job.status === 'open'
+                ? 'bg-emerald-500/90 text-white'
+                : 'bg-zinc-800/80 text-zinc-300'
+            }`}
+          >
+            {job.status === 'open' ? 'เปิดรับ' : 'ปิดแล้ว'}
+          </span>
+        </div>
       </div>
 
       {/* Bottom Card Content */}
@@ -84,22 +107,32 @@ export default function JobCard({
 
         {/* Action Button at Bottom */}
         <div className="mt-4 pt-3 border-t border-zinc-100">
-          <button
-            onClick={(e) => {
-              if (onQuickApply && job.status === 'open') {
-                e.stopPropagation();
-                onQuickApply(job, e);
-              }
-            }}
-            disabled={job.status !== 'open'}
-            className={`w-full py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
-              job.status === 'open'
-                ? 'bg-zinc-900 hover:bg-zinc-800 text-white shadow-2xs hover:shadow-xs cursor-pointer active:scale-98'
-                : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
-            }`}
-          >
-            {job.status === 'open' ? 'สมัครด่วน' : 'ปิดรับสมัคร'}
-          </button>
+          {isOwner ? (
+            <button
+              onClick={handleEditClick}
+              className="w-full py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 bg-zinc-900 hover:bg-zinc-800 text-white shadow-2xs hover:shadow-xs cursor-pointer active:scale-98 flex items-center justify-center gap-1.5"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+              <span>แก้ไขโพสต์</span>
+            </button>
+          ) : (
+            <button
+              onClick={(e) => {
+                if (onQuickApply && job.status === 'open') {
+                  e.stopPropagation();
+                  onQuickApply(job, e);
+                }
+              }}
+              disabled={job.status !== 'open'}
+              className={`w-full py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
+                job.status === 'open'
+                  ? 'bg-zinc-900 hover:bg-zinc-800 text-white shadow-2xs hover:shadow-xs cursor-pointer active:scale-98'
+                  : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
+              }`}
+            >
+              {job.status === 'open' ? 'สมัครด่วน' : 'ปิดรับสมัคร'}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -14,6 +14,7 @@ interface SearchPageViewProps {
   onBackToHome: () => void;
   initialQuery?: string;
   initialCategory?: JobCategory;
+  currentUserId?: string;
 }
 
 export default function SearchPageView({
@@ -22,7 +23,8 @@ export default function SearchPageView({
   onQuickApply,
   onBackToHome,
   initialQuery = '',
-  initialCategory = 'all'
+  initialCategory = 'all',
+  currentUserId,
 }: SearchPageViewProps) {
   // Search & Filter State
   const [query, setQuery] = useState(initialQuery);
@@ -198,6 +200,7 @@ export default function SearchPageView({
                 <JobCard
                   key={job.id}
                   job={job}
+                  isOwner={Boolean(currentUserId && job.userId && currentUserId === job.userId)}
                   onSelect={onSelectJob}
                   onQuickApply={onQuickApply}
                 />

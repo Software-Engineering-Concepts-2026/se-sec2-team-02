@@ -40,6 +40,11 @@ export default function ApplyModal({
       router.push('/auth');
       return;
     }
+    if (user && job.userId && user.uid === job.userId) {
+      alert('คุณเป็นผู้ประกาศงานนี้ ไม่สามารถสมัครงานของตนเองได้');
+      onClose();
+      return;
+    }
     if (!applicantName || !phone) return;
 
     setIsSubmitting(true);

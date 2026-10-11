@@ -53,6 +53,11 @@ function SearchPageContent() {
       router.push('/auth');
       return;
     }
+    // เจ้าของโพสไม่สามารถสมัครงานของโพสตัวเองได้ ให้ไปหน้าแก้ไขแทน
+    if (job.userId && user.uid === job.userId) {
+      router.push(`/edit/${job.id}`);
+      return;
+    }
     setJobToApply(job);
   };
 
@@ -72,6 +77,7 @@ function SearchPageContent() {
           onBackToHome={handleBackToHome}
           initialQuery={initialQuery}
           initialCategory={initialCat}
+          currentUserId={currentUser?.uid}
         />
       </main>
 

@@ -62,6 +62,11 @@ export default function Home() {
       router.push('/auth');
       return;
     }
+    // เจ้าของโพสไม่สามารถสมัครงานของโพสตัวเองได้ ให้ไปหน้าแก้ไขแทน
+    if (job.userId && user.uid === job.userId) {
+      router.push(`/edit/${job.id}`);
+      return;
+    }
     setJobToApply(job);
   };
 
@@ -122,14 +127,22 @@ export default function Home() {
 
           {filteredJobs.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-              {filteredJobs.map((job) => (
-                <JobCard
-                  key={job.id}
-                  job={job}
-                  onSelect={handleSelectJob}
-                  onQuickApply={handleQuickApply}
-                />
-              ))}
+              {filteredJobs.map((job) => {
+                const isOwner = Boolean(currentUser && job.userId && currentUser.uid === job.userId);
+                return (
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                    isOwner={isOwner}
+                    onSelect={handleSelectJob}
+                    onQuickApply={handleQuickApply}
+                    onEdit={(jobToEdit, e) => {
+                      e.stopPropagation();
+                      router.push(`/edit/${jobToEdit.id}`);
+                    }}
+                  />
+                );
+              })}
             </div>
           ) : (
             <div className="bg-white rounded-3xl border border-zinc-200/80 p-12 text-center my-6 shadow-2xs">
