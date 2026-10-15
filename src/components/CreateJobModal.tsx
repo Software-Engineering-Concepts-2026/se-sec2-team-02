@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { X, Plus, Image as ImageIcon, MapPin } from 'lucide-react';
 import { Job, JobCategory, Coordinates } from '@/types/job';
 import { CATEGORY_LABELS, COMPENSATION_UNIT_LIST } from '@/constants/categories';
@@ -18,6 +19,7 @@ export default function CreateJobModal({
   onClose,
   onCreateJob
 }: CreateJobModalProps) {
+  const router = useRouter();
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<JobCategory>('part-time');
   const [salary, setSalary] = useState<number | ''>('');
@@ -71,6 +73,12 @@ export default function CreateJobModal({
       // offline or not logged in
     }
 
+    if (!currentUserId) {
+      onClose();
+      router.push('/auth');
+      return;
+    }
+
     const newJob: Job = {
       id: `job-${Date.now()}`,
       userId: currentUserId,
@@ -113,22 +121,22 @@ export default function CreateJobModal({
   return (
     <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
       {/* Modal Container: Max width XL, max height 90vh, flex column with scrollable body */}
-      <div className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-zinc-200/80 animate-in zoom-in-95 duration-200 overflow-hidden">
+      <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-zinc-200/80 dark:border-zinc-800 animate-in zoom-in-95 duration-200 overflow-hidden">
         
         {/* Fixed Header */}
-        <div className="px-6 py-4 border-b border-zinc-100 flex items-center justify-between shrink-0 bg-white">
+        <div className="px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between shrink-0 bg-white dark:bg-zinc-900">
           <div>
-            <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
               JOB WANTED PHAYAO
             </span>
-            <h2 className="text-lg sm:text-xl font-black text-zinc-900 leading-tight mt-0.5">
+            <h2 className="text-lg sm:text-xl font-black text-zinc-900 dark:text-zinc-100 leading-tight mt-0.5">
               สร้างประกาศรับสมัครงานใหม่
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-500 hover:text-zinc-800 transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-100 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -138,7 +146,7 @@ export default function CreateJobModal({
         <form id="createJobForm" onSubmit={handleSubmit} className="px-6 py-5 overflow-y-auto space-y-4 flex-1 text-sm">
           {/* Job Title */}
           <div>
-            <label className="block text-xs font-bold text-zinc-700 mb-1">
+            <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
               หัวข้อประกาศ / ตำแหน่งงาน <span className="text-rose-500">*</span>
             </label>
             <input
@@ -147,20 +155,20 @@ export default function CreateJobModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="เช่น พนักงานชงกาแฟพาร์ทไทม์ ช่วงเย็น"
-              className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-sm text-zinc-900 bg-zinc-50/50 focus:bg-white transition-colors"
+              className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-sm text-zinc-900 dark:text-zinc-100 bg-zinc-50/50 dark:bg-zinc-800 focus:bg-white dark:focus:bg-zinc-800 transition-colors placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
             />
           </div>
 
           {/* Category, Salary, Unit */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                 หมวดหมู่
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as JobCategory)}
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800"
               >
                 <option value="part-time">พาร์ทไทม์</option>
                 <option value="full-time">ประจำ</option>
@@ -171,7 +179,7 @@ export default function CreateJobModal({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                 ค่าตอบแทน <span className="text-rose-500">*</span>
               </label>
               <input
@@ -180,18 +188,18 @@ export default function CreateJobModal({
                 min={1}
                 value={salary}
                 onChange={(e) => setSalary(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
+                className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                 หน่วยคิดเงิน
               </label>
               <select
                 value={salaryUnit}
                 onChange={(e) => setSalaryUnit(e.target.value as Job['salaryUnit'])}
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800"
               >
                 {COMPENSATION_UNIT_LIST.map((unit) => (
                   <option key={unit.key} value={unit.key}>
@@ -204,7 +212,7 @@ export default function CreateJobModal({
 
           {/* Location */}
           <div>
-            <label className="block text-xs font-bold text-zinc-700 mb-1">
+            <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
               สถานที่ปฏิบัติงาน <span className="text-rose-500">*</span>
             </label>
             <div className="flex gap-2">
@@ -216,7 +224,7 @@ export default function CreateJobModal({
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="เช่น คาเฟ่หน้า ม.พะเยา"
-                  className="w-full pl-8 pr-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
+                  className="w-full pl-8 pr-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                 />
               </div>
               <button
@@ -224,18 +232,18 @@ export default function CreateJobModal({
                 onClick={() => setIsMapModalOpen(true)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 ${
                   hasPinned
-                    ? 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-bold'
-                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800'
+                    ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 hover:bg-rose-100 dark:hover:bg-rose-900/60 font-bold'
+                    : 'bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200'
                 }`}
               >
-                <MapPin className={`w-3.5 h-3.5 ${hasPinned ? 'text-rose-600' : 'text-zinc-600'}`} />
+                <MapPin className={`w-3.5 h-3.5 ${hasPinned ? 'text-rose-600 dark:text-rose-400' : 'text-zinc-600 dark:text-zinc-400'}`} />
                 <span>{hasPinned ? 'แก้ไขหมุด' : 'ปักหมุดแผนที่'}</span>
               </button>
             </div>
             {hasPinned && (
-              <p className="text-[11px] text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1 flex items-center gap-1">
                 <span>✓ ปักหมุดพิกัดจริง:</span>
-                <span className="font-mono bg-emerald-50 px-1 py-0.5 rounded border border-emerald-100">
+                <span className="font-mono bg-emerald-50 dark:bg-emerald-950/50 px-1 py-0.5 rounded border border-emerald-100 dark:border-emerald-900/50">
                   {coordinates.lat.toFixed(4)}, {coordinates.lng.toFixed(4)}
                 </span>
               </p>
@@ -245,7 +253,7 @@ export default function CreateJobModal({
           {/* Time & Date */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                 ช่วงเวลาทำงาน
               </label>
               <input
@@ -253,12 +261,12 @@ export default function CreateJobModal({
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
                 placeholder="เช่น 18:00 น. - 22:00 น."
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
+                className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                 วันที่เริ่มงาน
               </label>
               <input
@@ -266,7 +274,7 @@ export default function CreateJobModal({
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 placeholder="เช่น 15 พ.ค. 2569 หรือ ทันที"
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
+                className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               />
             </div>
           </div>
@@ -274,7 +282,7 @@ export default function CreateJobModal({
           {/* Qualifications: Openings, Gender, Age */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                 จำนวนที่รับ (คน)
               </label>
               <input
@@ -282,12 +290,12 @@ export default function CreateJobModal({
                 min={1}
                 value={openings}
                 onChange={(e) => setOpenings(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
+                className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                 เพศที่รับ
               </label>
               <input
@@ -295,12 +303,12 @@ export default function CreateJobModal({
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
                 placeholder="เช่น ไม่จำกัดเพศ"
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
+                className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                 อายุที่รับ
               </label>
               <input
@@ -308,15 +316,15 @@ export default function CreateJobModal({
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
                 placeholder="เช่น 18 ปีขึ้นไป"
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
+                className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               />
             </div>
           </div>
 
           {/* Image Selection */}
           <div>
-            <label className="block text-xs font-bold text-zinc-700 mb-1.5 flex items-center gap-1.5">
-              <ImageIcon className="w-3.5 h-3.5 text-zinc-500" />
+            <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 flex items-center gap-1.5">
+              <ImageIcon className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
               <span>เลือกรูปภาพธีมงาน</span>
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -327,8 +335,8 @@ export default function CreateJobModal({
                   onClick={() => setSelectedImage(img.path)}
                   className={`px-2.5 py-1.5 rounded-lg border text-xs transition-all cursor-pointer ${
                     selectedImage === img.path
-                      ? 'border-zinc-900 bg-zinc-900 text-white font-semibold'
-                      : 'border-zinc-200 bg-zinc-50 text-zinc-600 hover:bg-zinc-100'
+                      ? 'border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 font-semibold'
+                      : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
                   }`}
                 >
                   {img.label}
@@ -339,7 +347,7 @@ export default function CreateJobModal({
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-bold text-zinc-700 mb-1">
+            <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
               รายละเอียดหน้าที่ความรับผิดชอบ <span className="text-rose-500">*</span>
             </label>
             <textarea
@@ -348,28 +356,28 @@ export default function CreateJobModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="อธิบายลักษณะงาน คุณสมบัติผู้สมัคร และเงื่อนไขต่างๆ"
-              className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900 resize-none"
+              className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 resize-none"
             />
           </div>
 
           {/* Employer & Contacts */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
             <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
-                ชื่อผู้ประกาศ / ร้านค้า <span className="text-rose-500">*</span>
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
+                ชื่อผู้โพสต์ประกาศงาน (ผู้ว่าจ้าง) <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 required
                 value={employerName}
                 onChange={(e) => setEmployerName(e.target.value)}
-                placeholder="เช่น พี่เอก ร้านกาแฟ หรือ อาจารย์สมชาย"
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
+                placeholder="เช่น พี่เอก หรือ อาจารย์สมชาย (ผู้ว่าจ้าง)"
+                className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
+              <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
                 เบอร์โทรศัพท์ติดต่อ <span className="text-rose-500">*</span>
               </label>
               <input
@@ -378,13 +386,13 @@ export default function CreateJobModal({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="เช่น 089-xxx-xxxx"
-                className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
+                className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-zinc-700 mb-1">
+            <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
               Facebook
             </label>
             <input
@@ -392,24 +400,24 @@ export default function CreateJobModal({
               value={facebook}
               onChange={(e) => setFacebook(e.target.value)}
               placeholder="เช่น Facebook Page"
-              className="w-full px-3 py-2 rounded-xl border border-zinc-300 focus:border-zinc-900 focus:outline-hidden text-xs text-zinc-900"
+              className="w-full px-3 py-2 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:border-zinc-900 dark:focus:border-zinc-400 focus:outline-hidden text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
             />
           </div>
         </form>
 
         {/* Fixed Footer with Actions */}
-        <div className="px-6 py-3.5 border-t border-zinc-100 flex items-center justify-end gap-3 shrink-0 bg-zinc-50/80 backdrop-blur-xs">
+        <div className="px-6 py-3.5 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-end gap-3 shrink-0 bg-zinc-50/80 dark:bg-zinc-900/80 backdrop-blur-xs">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-600 hover:bg-zinc-200/70 transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200/70 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
           >
             ยกเลิก
           </button>
           <button
             type="submit"
             form="createJobForm"
-            className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 text-xs font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>เผยแพร่ประกาศ</span>

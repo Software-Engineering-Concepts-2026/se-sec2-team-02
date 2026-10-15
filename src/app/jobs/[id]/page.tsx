@@ -53,17 +53,17 @@ export default function JobDetailPage({ params }: JobDetailPageProps) {
 
   if (!job) {
     return (
-      <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-zinc-900">
+      <div className="min-h-screen bg-slate-50/50 dark:bg-zinc-950 flex flex-col font-sans text-zinc-900 dark:text-zinc-100">
         <Header currentView="detail" onBack={() => router.push('/search')} />
         <main className="flex-1 flex items-center justify-center p-6">
-          <div className="bg-white rounded-3xl border border-zinc-200/80 p-8 max-w-md w-full text-center shadow-xs">
-            <h1 className="text-xl font-bold text-zinc-900 mb-2">ไม่พบประกาศงาน</h1>
-            <p className="text-sm text-zinc-500 mb-6">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200/80 dark:border-zinc-800 p-8 max-w-md w-full text-center shadow-xs">
+            <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">ไม่พบประกาศงาน</h1>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">
               ประกาศงานนี้อาจถูกลบหรือหมดอายุไปแล้ว
             </p>
             <Link
               href="/search"
-              className="inline-block px-6 py-2.5 rounded-2xl bg-zinc-900 text-white text-xs font-bold hover:bg-zinc-800 transition-colors shadow-xs"
+              className="inline-block px-6 py-2.5 rounded-2xl bg-zinc-900 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 text-white text-xs font-bold hover:bg-zinc-800 transition-colors shadow-xs"
             >
               ค้นหาประกาศงานอื่น ๆ
             </Link>
@@ -77,7 +77,7 @@ export default function JobDetailPage({ params }: JobDetailPageProps) {
   const isApplied = appliedJobs.has(job.id);
 
   return (
-    <div className="min-h-screen bg-slate-50/50 flex flex-col font-sans text-zinc-900">
+    <div className="min-h-screen bg-slate-50/50 dark:bg-zinc-950 flex flex-col font-sans text-zinc-900 dark:text-zinc-100">
       <Header currentView="detail" onBack={() => router.back()} />
 
       <main className="flex-1 pb-16">
@@ -86,6 +86,18 @@ export default function JobDetailPage({ params }: JobDetailPageProps) {
           isApplied={isApplied}
           isOwner={isOwner}
           onOpenApplyModal={() => {
+            let user = currentUser;
+            if (!user) {
+              try {
+                user = getFirebaseAuth().currentUser;
+              } catch {
+                // ignore
+              }
+            }
+            if (!user) {
+              router.push('/auth');
+              return;
+            }
             if (isOwner) {
               showToast('คุณไม่สามารถสมัครงานที่คุณเป็นผู้ประกาศได้', 'info');
               return;
@@ -99,7 +111,7 @@ export default function JobDetailPage({ params }: JobDetailPageProps) {
       {/* Unified Footer */}
       <Footer />
 
-      {!isOwner && (
+      {!isOwner && currentUser && (
         <ApplyModal
           job={job}
           isOpen={isApplyModalOpen}

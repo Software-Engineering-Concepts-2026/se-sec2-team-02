@@ -223,18 +223,18 @@ function MapPickerModalContent({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-zinc-200 flex flex-col max-h-[92vh] overflow-hidden">
+      <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col max-h-[92vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-zinc-100 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100 shadow-2xs">
+            <div className="w-10 h-10 rounded-2xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-100 dark:border-rose-900/50 shadow-2xs">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-black text-base sm:text-lg text-zinc-900 leading-tight">
+              <h3 className="font-black text-base sm:text-lg text-zinc-900 dark:text-zinc-100 leading-tight">
                 ปักหมุดสถานที่ทำงานจริง (พะเยา)
               </h3>
-              <p className="text-xs text-zinc-500 mt-0.5">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                 คลิกบนแผนที่หรือลากหมุดแดงเพื่อระบุตำแหน่งที่ตั้งสถานที่ทำงาน
               </p>
             </div>
@@ -242,7 +242,7 @@ function MapPickerModalContent({
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-500 hover:text-zinc-800 flex items-center justify-center transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 flex items-center justify-center transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -251,13 +251,13 @@ function MapPickerModalContent({
         {/* Scrollable Body */}
         <div className="flex-1 overflow-y-auto py-3 space-y-3 pr-0.5">
           {/* Quick GPS Action Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-2.5 rounded-2xl border border-zinc-200/80">
+          <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-50 dark:bg-zinc-850/60 p-2.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-bold text-zinc-600 flex items-center gap-1">
-                <Compass className="w-3.5 h-3.5 text-zinc-400" />
+              <span className="text-[11px] font-bold text-zinc-600 dark:text-zinc-400 flex items-center gap-1">
+                <Compass className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
                 <span>พิกัดปัจจุบัน:</span>
               </span>
-              <span className="text-xs font-mono font-bold text-rose-600 bg-white px-2 py-0.5 rounded-lg border border-zinc-200 shadow-2xs">
+              <span className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400 bg-white dark:bg-zinc-800 px-2 py-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-2xs">
                 {currentCoords.lat.toFixed(4)}, {currentCoords.lng.toFixed(4)}
               </span>
             </div>
@@ -266,15 +266,15 @@ function MapPickerModalContent({
               type="button"
               onClick={handleUseCurrentLocation}
               disabled={isLocating}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-100 text-zinc-800 text-xs font-bold border border-zinc-200 transition-all cursor-pointer shadow-2xs active:scale-95 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-750 text-zinc-800 dark:text-zinc-200 text-xs font-bold border border-zinc-200 dark:border-zinc-700 transition-all cursor-pointer shadow-2xs active:scale-95 disabled:opacity-50"
             >
-              <Navigation className={`w-3.5 h-3.5 text-blue-600 ${isLocating ? 'animate-spin' : ''}`} />
+              <Navigation className={`w-3.5 h-3.5 text-blue-600 dark:text-blue-400 ${isLocating ? 'animate-spin' : ''}`} />
               <span>{isLocating ? 'กำลังดึงพิกัด GPS...' : 'ใช้ตำแหน่งปัจจุบันของฉัน'}</span>
             </button>
           </div>
 
           {/* Interactive Leaflet Map Container */}
-          <div className="relative w-full h-64 sm:h-72 rounded-2xl overflow-hidden border border-zinc-200 shadow-inner group">
+          <div className="relative w-full h-64 sm:h-72 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-inner group">
             <div ref={mapContainerRef} className="w-full h-full z-10" />
 
             {/* Instruction Overlay Pill */}
@@ -288,24 +288,24 @@ function MapPickerModalContent({
 
           {/* Location Name Input */}
           <div>
-            <label className="block text-xs font-bold text-zinc-700 mb-1">
+            <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1">
               ชื่อสถานที่ หรือ คำอธิบายจุดนัดพบ <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <MapPin className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <MapPin className="w-4 h-4 text-zinc-400 dark:text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={locationName}
                 onChange={(e) => setLocationName(e.target.value)}
                 placeholder="เช่น ร้านคาเฟ่หลัง ม.พะเยา, หอพักศรีตรัง ประตูกลาง, ตลาดแม่กา"
-                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-zinc-300 text-xs text-zinc-900 focus:border-zinc-900 focus:outline-hidden"
+                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs text-zinc-900 dark:text-zinc-100 focus:border-zinc-900 dark:focus:border-zinc-300 focus:outline-hidden"
               />
             </div>
           </div>
 
           {/* Popular Phayao Landmarks */}
           <div>
-            <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider block mb-1.5">
+            <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-1.5">
               แลนด์มาร์กยอดนิยมรอบพะเยา (คลิกเพื่อเลื่อนหมุดทันที)
             </span>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
@@ -318,12 +318,12 @@ function MapPickerModalContent({
                     onClick={() => handleSelectLandmark(lm)}
                     className={`text-left p-2 rounded-xl border transition-all text-xs cursor-pointer ${
                       isSelected
-                        ? 'border-rose-500 bg-rose-50/80 text-rose-900 font-bold shadow-2xs'
-                        : 'border-zinc-200 hover:border-zinc-300 bg-zinc-50/50 hover:bg-zinc-100/70 text-zinc-700'
+                        ? 'border-rose-500 bg-rose-50/80 dark:bg-rose-950/40 text-rose-900 dark:text-rose-200 font-bold shadow-2xs'
+                        : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-850/50 hover:bg-zinc-100/70 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300'
                     }`}
                   >
                     <p className="font-semibold truncate leading-tight text-[11px]">{lm.name}</p>
-                    <p className="text-[9px] text-zinc-400 truncate mt-0.5">{lm.desc}</p>
+                    <p className="text-[9px] text-zinc-400 dark:text-zinc-500 truncate mt-0.5">{lm.desc}</p>
                   </button>
                 );
               })}
@@ -332,18 +332,18 @@ function MapPickerModalContent({
         </div>
 
         {/* Footer Buttons */}
-        <div className="pt-3 border-t border-zinc-100 flex items-center justify-end gap-2 shrink-0">
+        <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-end gap-2 shrink-0">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl border border-zinc-200 text-zinc-600 text-xs font-semibold hover:bg-zinc-50 cursor-pointer transition-colors"
+            className="px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 text-xs font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer transition-colors"
           >
             ยกเลิก
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-xs"
+            className="px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-950 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-xs"
           >
             <Check className="w-4 h-4" />
             <span>ยืนยันพิกัดนี้</span>
