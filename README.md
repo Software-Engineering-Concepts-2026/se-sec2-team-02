@@ -1,6 +1,7 @@
 # Project: Jobs Phayao
 Theme : Community Conector
-A website developed to serve as a hub for connecting job seekers with employers in Phayao province, focusing on part-time, freelance, and general job opportunities in the area.
+
+ A website developed to serve as a hub for connecting job seekers with employers in Phayao province, focusing on part-time, freelance, and general job opportunities in the area.
 
  Team: 2 หาร
 - ญาณาธร ภาชนะ, GitHub: `YanathronPhachana`
