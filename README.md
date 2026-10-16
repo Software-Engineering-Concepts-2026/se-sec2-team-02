@@ -54,6 +54,7 @@ Key architectural decisions and diagrams are documented in the `/docs/architectu
 - **[C4 Models & Tech Stack](./docs/architecture/README.md)**
 - **[Architectural Decision Records (ADRs)](./docs/architecture/adr/)**
 - **[Base Tracer Bullet](./prototypes/sprint1)**
+- Base Design of UX/UI : https://www.figma.com/design/3rQGngRwTVC1QRPCzGxyHq/Untitled?node-id=0-1&t=dBZF32uYMfoiRiUk-1&fbclid=PAT01DUAUEeNpwZG9mAmV4dG4DYWVtAjEwAHNydGMGYXBwX2lkDzU2NzA2NzM0MzM1MjQyNwABp6ReXHS-DOc3L_JuNu_B9zOjg_WtC_zbHRnF6Lg84efkyqJNB7klxrY8F3EY_aem_2JSF5m3c5XfJ0tsdamU0YA
 
 ## 👥 Requirements
 
